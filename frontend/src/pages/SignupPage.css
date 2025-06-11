@@ -14,6 +14,7 @@
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
 }
 
 .signup_logo {
@@ -70,7 +71,7 @@
 }
 
 /* 주석:: 일반 <->기업 전환 */
-.company_signup {
+.change_toseller {
   width: 30%;
   background-color: #007bff;
   color: white;
@@ -82,8 +83,23 @@
   cursor: pointer;
   margin: 0 auto 2rem;
 }
+.change_touser {
+  width: 35%;
+  background-color: #007bff;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin: 0 auto 2rem;
+}
 
-.company_signup:hover {
+.change_toseller:hover {
+  background-color: #2077d3;
+}
+.change_touser:hover {
   background-color: #2077d3;
 }
 

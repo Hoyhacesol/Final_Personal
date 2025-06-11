@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../pages/LoginPage.css";
 import logo from "../assets/img/kickauction_logo.png";
-import emailicon from "../assets/img/icon-email.svg";
-import pwicon from "../assets/img/icon-password.svg";
+import emailicon from "../assets/img/icon_email.svg";
+import pwicon from "../assets/img/icon_password.svg";
 import socialg from "../assets/img/social_g.png";
 import socialk from "../assets/img/social_k.png";
 

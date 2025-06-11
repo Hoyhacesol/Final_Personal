@@ -11,20 +11,21 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [phone, setPhone] = useState("");
+  const [companyname, setCompanyname] = useState("");
+  const [companyaddress, setCompanyaddress] = useState("");
 
   const navigate = useNavigate();
 
   return (
     <div className="signup_container">
       <div className="signup_smallcontainer">
-        {/* 로고 */}
         <img src={logo} alt="킥옥션 로고" className="signup_logo" />
-        <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>판매업체 회원가입</h2>
 
-        {/* 전환 버튼 */}
-        <button type="button" className="change_toseller" onClick={() => navigate("/signups")}>
-          ↩ ㅤ업체 가입하기
+        <button type="button" className="change_touser" onClick={() => navigate("/signup")}>
+          ↩ ㅤ일반 유저 가입하기
         </button>
+
         <form className="signup_form">
           <div className="signup_input_container">
             <input type="email" className="email_input input" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -52,6 +53,14 @@ function SignupPage() {
             <button type="button" className="check_button">
               인증받기
             </button>
+          </div>
+
+          <div className="signup_input_container">
+            <input type="text" className="company_name_input input" placeholder="업체명" value={companyname} onChange={(e) => setPassword(e.target.value)} required />
+          </div>
+
+          <div className="signup_input_container">
+            <input type="text" className="company_address_input input" placeholder="업체 주소" value={companyaddress} onChange={(e) => setPassword(e.target.value)} required />
           </div>
 
           <button type="submit" className="login_button">
