@@ -160,3 +160,13 @@
 .login_button:hover {
   background-color: #4ba9af;
 }
+
+/* 주석: 에러 메시지 */
+.login_error,
+.email_error {
+  color: red;
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin: 0 auto;
+  min-height: 1.35rem;
+}

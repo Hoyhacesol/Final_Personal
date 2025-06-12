@@ -12,15 +12,30 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [phone, setPhone] = useState("");
+  const [resulterror, setResulterror] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [pwError, setPwError] = useState("");
+  const [pw2Error, setPw2Error] = useState("");
 
   const navigate = useNavigate();
+
+  //주석: 이메일 적합 검사
+  const validateEmail = (value) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(value)) {
+      setEmailError("올바른 이메일 형식이 아닙니다.");
+    } else {
+      setEmailError("");
+    }
+  };
 
   // 주석: 회원가입 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setResulterror("");
 
     if (password !== confirmPw) {
-      alert("비밀번호가 일치하지 않습니다.");
+      setResulterror("비밀번호가 일치하지 않습니다.");
       return;
     }
 
@@ -37,9 +52,9 @@ function SignupPage() {
       navigate("/login");
     } catch (err) {
       if (err.response && err.response.status === 409) {
-        alert(err.response.data); // 주석: 중복값 실패
+        setResulterror(err.response.data); // 주석: 중복값 실패
       } else {
-        alert("오류 발생: " + err.message); //주석: 그 외 오류
+        setResulterror("입력값이 잘못되었어요 😥"); //주석: 그 외 오류
       }
     }
   };
@@ -56,13 +71,27 @@ function SignupPage() {
           ↩ ㅤ업체 가입하기
         </button>
         <form className="signup_form" onSubmit={handleSubmit}>
+          {/* 주석: 이메일 */}
           <div className="signup_input_container">
-            <input type="email" className="email_input input" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input
+              type="email"
+              className="email_input input"
+              placeholder="이메일"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                validateEmail(e.target.value);
+              }}
+              required
+            />
             <button type="button" className="email_duplicheck">
               중복확인
             </button>
           </div>
 
+          <p className="email_error">{emailError || " "}</p>
+
+          {/* 주석: 닉네임 */}
           <div className="signup_input_container">
             <input type="text" className="nickname_input input" placeholder="닉네임" value={nickname} onChange={(e) => setNickname(e.target.value)} required />
             <button type="button" className="nickname_duplicheck">
@@ -83,6 +112,8 @@ function SignupPage() {
               인증받기
             </button>
           </div>
+
+          <p className="login_error">{resulterror || " "}</p>
 
           <button type="submit" className="login_button">
             가입하기
