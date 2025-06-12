@@ -21,7 +21,7 @@ function SignupPage() {
 
   //주석: 이메일 적합 검사
   const validateEmail = (value) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!regex.test(value)) {
       setEmailError("올바른 이메일 형식이 아닙니다.");
     } else {
@@ -89,7 +89,7 @@ function SignupPage() {
             </button>
           </div>
 
-          <p className="email_error">{emailError || " "}</p>
+          {emailError && <p className="email_error">{emailError}</p>}
 
           {/* 주석: 닉네임 */}
           <div className="signup_input_container">
