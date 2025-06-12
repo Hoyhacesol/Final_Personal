@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../pages/SignupPage.css";
 import logo from "../assets/img/kickauction_logo.png";
 import socialg from "../assets/img/social_g.png";
@@ -14,6 +15,35 @@ function SignupPage() {
 
   const navigate = useNavigate();
 
+  // 주석: 회원가입 처리
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPw) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:8080/api/members/signup", {
+        userId: email,
+        userName: nickname,
+        userPw: password,
+        phone: phone,
+      });
+
+      // 주석: 성공시 동작
+      alert(response.data);
+      navigate("/login");
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        alert(err.response.data); // 주석: 중복값 실패
+      } else {
+        alert("오류 발생: " + err.message); //주석: 그 외 오류
+      }
+    }
+  };
+
   return (
     <div className="signup_container">
       <div className="signup_smallcontainer">
@@ -25,7 +55,7 @@ function SignupPage() {
         <button type="button" className="change_toseller" onClick={() => navigate("/signups")}>
           ↩ ㅤ업체 가입하기
         </button>
-        <form className="signup_form">
+        <form className="signup_form" onSubmit={handleSubmit}>
           <div className="signup_input_container">
             <input type="email" className="email_input input" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <button type="button" className="email_duplicheck">
