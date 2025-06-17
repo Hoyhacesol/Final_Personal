@@ -8,7 +8,6 @@ const CommunityRead = lazy(() => import("../pages/community/ReadPage"))
 const CommunityWrite = lazy(() => import("../pages/community/WritePage"))
 const CommunityModify = lazy(() => import("../pages/community/ModifyPage"))
 
-
     return [
         {
             path: "list", element: <Suspense fallback={Loading}><CommunityList /></Suspense>
@@ -17,13 +16,13 @@ const CommunityModify = lazy(() => import("../pages/community/ModifyPage"))
             path: "", element: <Navigate replace to="list" />
         },
         {
-            path: "read:pno", element: <Suspense fallback={Loading}><CommunityRead /></Suspense>
+            path: "read/:pno", element: <Suspense fallback={Loading}><CommunityRead /></Suspense>
         },
         {
             path: "write", element: <Suspense fallback={Loading}><CommunityWrite /></Suspense>
         },
         {
-            path: "modify:tno", element: <Suspense fallback={Loading}><CommunityModify /></Suspense>
+            path: "modify/:pno", element: <Suspense fallback={Loading}><CommunityModify /></Suspense>
         }
     ]
 }

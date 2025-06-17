@@ -1,0 +1,204 @@
+/* WriteComponent.module.css */
+
+#writeComponent {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.write_header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px 30px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.write_header h2 {
+  color: #0C3D5A;
+  font-size: 2.2em;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.write_header button {
+    background: linear-gradient(135deg, #1771A7 0%, #15689A 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.write_header button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(23, 113, 167, 0.3);
+}
+
+.write_content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.write_content > div {
+  margin-bottom: 30px;
+}
+
+.write_content > div:last-child {
+  margin-bottom: 0;
+}
+
+.write_content label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #0C3D5A;
+  font-size: 1.1em;
+  position: relative;
+}
+
+.write_content label::after {
+  content: ' *';
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.write_content input[type="text"] {
+  width: 100%;
+  padding: 18px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  box-sizing: border-box;
+}
+
+.write_content input[type="text"]:focus {
+  outline: none;
+  border-color: #1F9CE7;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(31, 156, 231, 0.1);
+  transform: translateY(-2px);
+}
+
+.write_content textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 18px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.write_content textarea:focus {
+  outline: none;
+  border-color: #1F9CE7;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(31, 156, 231, 0.1);
+  transform: translateY(-2px);
+}
+
+/* 플레이스홀더 스타일 */
+.write_content input[type="text"]::placeholder,
+.write_content textarea::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* 호버 효과 */
+.write_content input[type="text"]:hover,
+.write_content textarea:hover {
+  border-color: #1771A7;
+  background: white;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  #writeComponent {
+    padding: 15px;
+  }
+
+  .write_header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .write_header h2 {
+    font-size: 1.8em;
+  }
+
+  .write_header button {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .write_content {
+    padding: 25px;
+  }
+
+  .write_content label {
+    font-size: 1em;
+  }
+
+  .write_content input[type="text"],
+  .write_content textarea {
+    padding: 15px;
+    font-size: 16px; /* iOS에서 줌 방지 */
+  }
+}
+
+@media (max-width: 480px) {
+  .write_header h2 {
+    font-size: 1.5em;
+  }
+
+  .write_content {
+    padding: 20px;
+  }
+
+  .write_content > div {
+    margin-bottom: 25px;
+  }
+}
+
+/* 애니메이션 효과 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#writeComponent {
+  animation: fadeIn 0.6s ease-out;
+}

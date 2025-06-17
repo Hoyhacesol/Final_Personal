@@ -3,12 +3,16 @@ import { createBrowserRouter } from "react-router-dom";
 
 import Layout from "../components/Layout";
 import communityRouter from "../router/communityRouter";
+import sellerRouter from "../router/sellerRouter";
+import requestRouter from "../router/requestRouter";
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Community = lazy(() => import("../pages/community/CommunityPage"));
-const Login = lazy(() => import("../pages/LoginPage"));
-const Signup = lazy(() => import("../pages/SignupPage"));
-const Signups = lazy(() => import("../pages/SignupPageSeller"));
+const Login = lazy(() => import("../pages/login/LoginPage"));
+const PreSignup = lazy(() => import("../pages/login/PreSignupPage"));
+const Signup = lazy(() => import("../pages/login/SignupPage"));
+const Signups = lazy(() => import("../pages/login/SignupPageSeller"));
+const Request = lazy(() => import("../pages/request/OrderMaster"));
 
 const Loading = <div>Loading...</div>;
 const root = createBrowserRouter([
@@ -26,6 +30,14 @@ const root = createBrowserRouter([
     element: (
       <Suspense fallback={Loading}>
         <Signup />
+      </Suspense>
+    ),
+  },
+  {
+    path: "presignup",
+    element: (
+      <Suspense fallback={Loading}>
+        <PreSignup />
       </Suspense>
     ),
   },
@@ -58,6 +70,19 @@ const root = createBrowserRouter([
           </Suspense>
         ),
         children: communityRouter(),
+      },
+      {
+        path: "request",
+        element: (
+          <Suspense fallback={Loading}>
+            <Request />
+          </Suspense>
+        ),
+        children: requestRouter(),
+      },
+      {
+        path: "sellerlist",
+        children: sellerRouter(),
       },
     ],
   },

@@ -1,7 +1,6 @@
 package com.sports.kickauction.service;
 
 import java.util.stream.Collectors;
-
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -11,14 +10,31 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.sports.kickauction.community.Community;
+
 import com.sports.kickauction.dto.PageRequestDTO;
 import com.sports.kickauction.dto.PageResponseDTO;
+import com.sports.kickauction.entity.Community;
 import com.sports.kickauction.dto.CommunityDTO;
 import com.sports.kickauction.repository.CommunityRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import com.sports.kickauction.dto.CommunityDTO;
+import com.sports.kickauction.entity.Community;
+import com.sports.kickauction.repository.CommunityRepository;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -26,56 +42,94 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class CommunityServiceImpl implements CommunityService {
 
-    // 자동주입 대상은 final로
+    @Value("${upload.path}")
+    private String uploadDir;
+
     private final ModelMapper modelMapper;
     private final CommunityRepository communityRepository;
 
     // 게시글 등록
+    // @Override
+    // public Long register(CommunityDTO communityDTO) {
+    // log.info("DTO → Entity 매핑: {}", communityDTO);
+
+    // // 기본값 처리
+    // if (communityDTO.getView() == null) {
+    // communityDTO.setView(0);
+    // }
+    // if (communityDTO.getPimage() == null) {
+    // communityDTO.setPimage("");
+    // }
+
+    // Community community = modelMapper.map(communityDTO, Community.class);
+    // Community saved = communityRepository.save(community);
+    // return saved.getPno();
+    // }
     @Override
-    public Long register(CommunityDTO communityDTO) {
-        log.info("CommunityDTO to Entity mapping: {}", communityDTO);
+    public CommunityDTO register(CommunityDTO dto, MultipartFile pimageFile) {
+        // 1) DEBUG: uploadDir 주입 값 확인
+        System.out.println("[DEBUG] uploadDir = " + uploadDir);
 
-        // viewCount, imageUrl 기본값 처리 (DTO에 값이 없으면 기본값 설정)
-        if (communityDTO.getViewCount() == null) {
-            communityDTO.setViewCount(0);
+        // 2) 이미지 저장
+        if (pimageFile != null && !pimageFile.isEmpty()) {
+            try {
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String filename = UUID.randomUUID() + "_" + pimageFile.getOriginalFilename();
+                Path filePath = uploadPath.resolve(filename);
+                pimageFile.transferTo(filePath.toFile());
+
+                dto.setPimage("/images/" + filename);
+            } catch (IOException e) {
+                e.printStackTrace(); // 스택트레이스 찍어보고
+                throw new RuntimeException("이미지 저장 실패: " + e.getMessage(), e);
+            }
         }
-        if (communityDTO.getImageUrl() == null) {
-            communityDTO.setImageUrl("");
+
+        // 3) 저장 & 반환
+        Community entity = modelMapper.map(dto, Community.class);
+        if (entity.getView() == null) {
+            entity.setView(0);
         }
-
-        Community community = modelMapper.map(communityDTO, Community.class);
-        Community saved = communityRepository.save(community);
-
-        return saved.getId();
+        Community saved = communityRepository.save(entity);
+        return modelMapper.map(saved, CommunityDTO.class);
     }
 
     // 게시글 조회
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CommunityDTO get(Long pno) {
-        log.info("Fetching community with id: {}", pno);
-        Community community = communityRepository.findById(pno)
-                .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 존재하지 않습니다."));
-        CommunityDTO dto = modelMapper.map(community, CommunityDTO.class);
-        return dto;
+         log.info("ID로 조회 (조회수 증가): {}", pno);
+        // 1) 엔티티 조회
+        Community entity = communityRepository.findById(pno)
+            .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
+        // 2) 조회수 1 증가
+        Integer current = entity.getView() != null ? entity.getView() : 0;
+        entity.setView(current + 1);
+        Community updated = communityRepository.saveAndFlush(entity);
+        // 3) DTO 변환
+        return modelMapper.map(updated, CommunityDTO.class);
     }
 
     // 게시글 수정
     @Override
     public void modify(CommunityDTO communityDTO) {
-        log.info("Modifying community: {}", communityDTO);
+        log.info("수정 요청 DTO: {}", communityDTO);
+        Long pno = communityDTO.getPno();
 
-        Community community = communityRepository.findById(communityDTO.getId())
-                .orElseThrow(() -> new IllegalArgumentException(communityDTO.getId() + "번 게시글이 존재하지 않습니다."));
+        Community community = communityRepository.findById(pno)
+                .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
 
-        // 변경 가능한 필드 업데이트
-        community.changeTitle(communityDTO.getTitle());
-        community.changeContent(communityDTO.getContent());
-        if (communityDTO.getViewCount() != null) {
-            community.changeViewCount(communityDTO.getViewCount());
-        }
-        if (communityDTO.getImageUrl() != null) {
-            community.changeImageUrl(communityDTO.getImageUrl());
+        // 변경 가능한 필드만
+        community.changePtitle(communityDTO.getPtitle());
+        community.changePcontent(communityDTO.getPcontent());
+        community.changePimage(communityDTO.getPimage());
+
+        if (communityDTO.getView() != null) {
+            community.setView(communityDTO.getView());
         }
 
         communityRepository.save(community);
@@ -84,7 +138,7 @@ public class CommunityServiceImpl implements CommunityService {
     // 게시글 삭제
     @Override
     public void remove(Long pno) {
-        log.info("Removing community with id: {}", pno);
+        log.info("삭제 요청 ID: {}", pno);
         communityRepository.deleteById(pno);
     }
 
@@ -92,12 +146,12 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional(readOnly = true)
     public PageResponseDTO<CommunityDTO> list(PageRequestDTO pageRequestDTO) {
-        log.info("Listing communities: {}", pageRequestDTO);
+        log.info("목록 요청: {}", pageRequestDTO);
 
         Pageable pageable = PageRequest.of(
                 pageRequestDTO.getPage() - 1,
                 pageRequestDTO.getSize(),
-                Sort.by("id").descending());
+                Sort.by("pno").descending());
 
         Page<Community> result = communityRepository.findAll(pageable);
 
@@ -113,5 +167,4 @@ public class CommunityServiceImpl implements CommunityService {
                 .totalCount(totalCount)
                 .build();
     }
-
 }

@@ -1,8 +1,9 @@
+import WriteComponent from "../../components/community/WriteComponent";
+
 const WritePage = () => {
     return (
-        <div className="text-3xl font-extrabold">
-            Community Write Page
-        </div>
+        <WriteComponent />
     );
 }
+
 export default WritePage;

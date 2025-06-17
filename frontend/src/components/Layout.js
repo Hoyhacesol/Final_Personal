@@ -6,7 +6,7 @@ const Layout = () => {
   return (
     <>
       <Nav />
-      <div style={{ paddingTop: "80px" }}>
+      <div id="wrap">
         <Outlet />
       </div>
     </>

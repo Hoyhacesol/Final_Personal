@@ -1,12 +1,14 @@
 package com.sports.kickauction.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.sports.kickauction.dto.CommunityDTO;
 import com.sports.kickauction.dto.PageRequestDTO;
 import com.sports.kickauction.dto.PageResponseDTO;
 
 public interface CommunityService {
 
-    Long register(CommunityDTO communityDto);
+    CommunityDTO register(CommunityDTO communityDto,MultipartFile pimageFile);
 
     CommunityDTO get(Long pno);
 

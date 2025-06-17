@@ -84,3 +84,39 @@
   background-color: #f9f9f9;
   color: #333;
 }
+
+/* 주석: 로그인 시 드롭다운 메뉴로 전환 */
+.user_dropdown {
+  position: relative;
+}
+
+.user_button {
+  background: none;
+  border: none;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dropdown_menu {
+  position: absolute;
+  right: -25px;
+  top: 120%;
+  background: white;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  z-index: 100;
+  text-align: center;
+}
+
+.dropdown_menu a {
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown_menu a:hover {
+  background-color: #f5f5f5;
+}

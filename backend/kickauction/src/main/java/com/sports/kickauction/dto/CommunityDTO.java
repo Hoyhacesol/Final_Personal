@@ -8,24 +8,24 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CommunityDTO {
-    /** 글ID */
-    private Long id;
+    /** 글ID (pno) */
+    private Long pno;
 
-    /** 회원번호 */
-    private Long memberId;
+    /** 회원번호 (mno) */
+    private Long mno;
 
-    /** 제목 */
-    private String title;
+    /** 제목 (ptitle) */
+    private String ptitle;
 
-    /** 내용 */
-    private String content;
+    /** 내용 (pcontent) */
+    private String pcontent;
 
-    /** 작성일 */
-    private LocalDateTime createdDate;
+    /** 작성일 (pregdate) */
+    private LocalDateTime pregdate;
 
-    /** 조회수 */
-    private Integer viewCount;
+    /** 조회수 (view) */
+    private Integer view;
 
-    /** 이미지 URL */
-    private String imageUrl;
+    /** 이미지 URL (pimage) */
+    private String pimage;
 }
