@@ -44,6 +44,16 @@ function LoginPage() {
     }
   };
 
+  // 주석: 구글 로그인
+  const handleGoogleSignup = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
+  // 주석: 카카오 로그인
+  const handleKakaoSignup = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
+  };
+
   return (
     <div className="login_container">
       <div className="login_smallcontainer">
@@ -74,8 +84,8 @@ function LoginPage() {
         </form>
 
         <div className="social_login_icons">
-          <img src={socialk} alt="소셜 아이콘 카카오"></img>
-          <img src={socialg} alt="소셜 아이콘 구글"></img>
+          <img src={socialk} alt="소셜 아이콘 카카오" onClick={handleKakaoSignup}></img>
+          <img src={socialg} alt="소셜 아이콘 구글" onClick={handleGoogleSignup}></img>
         </div>
 
         <div className="login_help">

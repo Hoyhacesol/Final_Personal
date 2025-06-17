@@ -22,6 +22,8 @@ public class MemberServiceImpl implements MemberService {
         String encodedPw = passwordEncoder.encode(member.getUserPw());
         member.setUserPw(encodedPw);
 
+        // 주석: 일반 회원가입 유저 SOCIAL값 1로 설정( 소셜 = 0 일반 = 1)
+        member.setSocial(1);
         return memberRepository.save(member);
     }
 

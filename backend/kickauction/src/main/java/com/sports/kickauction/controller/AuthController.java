@@ -33,15 +33,17 @@ public ResponseEntity<?> getLoginUser(Authentication authentication) {
     String email = null;
 
     if (principal instanceof org.springframework.security.core.userdetails.User userDetails) {
-        // 일반 로그인 사용자
+       
+        // 주석: 일반로그인
         email = userDetails.getUsername();
     } else if (principal instanceof OAuth2User) {
-        // 소셜 로그인 사용자 (구글 or 카카오)
+        // 주석: 소셜로그인(구글)
         OAuth2User oAuth2User = (OAuth2User) principal;
         email = (String) oAuth2User.getAttribute("email");
 
-        // 카카오는 kakao_account.email로 들어올 수 있음
+        // 주석: 소셜로그인(카카오)
         if (email == null) {
+            @SuppressWarnings("unchecked")
             Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
             if (kakaoAccount != null) {
                 email = (String) kakaoAccount.get("email");
@@ -56,6 +58,8 @@ public ResponseEntity<?> getLoginUser(Authentication authentication) {
     Member member = memberRepository.findByUserId(email)
             .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 회원 없음"));
 
-    return ResponseEntity.ok(Map.of("nickname", member.getUserName()));
+    return ResponseEntity.ok(Map.of(
+    "nickname", member.getUserName(),
+    "mno", member.getMno()));
 }
 }
