@@ -25,10 +25,16 @@ public class MemberController {
 
     // 매핑:이메일 체크
     @GetMapping("/email_check")
-    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
-        boolean exists = memberService.existsByUserId(email);
-        return ResponseEntity.ok(Map.of("exists", exists));
-    }
+        public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
+            boolean exists = memberService.existsByUserId(email);
+            return ResponseEntity.ok(Map.of("exists", exists));
+        }
+    // 매핑:닉네임 체크
+    @GetMapping("/nickname_check")
+        public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+            boolean exists = memberService.existsByUserName(nickname);
+            return ResponseEntity.ok(Map.of("exists", exists));
+        }
    
     // 매핑: 회원가입
     @PostMapping("/signup")

@@ -34,11 +34,11 @@ public class Member {
 
     @Column(nullable = false)
     @Builder.Default
-    private String role = "USER"; 
+    private String role = "USER";
 
     @Column(unique = true)
     private String userName;
 
-    @Column(length = 11, unique = true)
+    @Column(length = 13, unique = true)
     private String phone;
 }

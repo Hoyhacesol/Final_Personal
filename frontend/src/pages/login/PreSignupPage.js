@@ -84,7 +84,7 @@ function PreSignupPage() {
           </div>
 
           {/* 주석: 에러메시지- 중복데이터 발견 시 로그인버튼 생성ㅇ */}
-          {emailError && <p className="email_error">{emailError}</p>}
+          {emailError && <p className="error">{emailError}</p>}
           {isDuplicate && (
             <button className="login_link_button" onClick={() => navigate("/login")}>
               로그인하러 가기
