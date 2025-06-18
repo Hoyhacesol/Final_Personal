@@ -23,7 +23,7 @@
   margin-right: 10px;
 }
 
-/* 주석:: 탭 메뉴 관련 */
+/* 주석: 탭 메뉴 관련 */
 .nav_menu {
   display: flex;
   gap: 3rem;
@@ -57,7 +57,7 @@
   transition: background-color 0.65s ease;
 }
 
-/* 주석:: 탭 메뉴 hover & 활성화 탭 관련 */
+/* 주석: 탭 메뉴 hover & 활성화 탭 관련 */
 .nav_menu li:hover a,
 .nav_menu li.active a {
   color: #1f9ce7;
@@ -68,7 +68,7 @@
   background-color: #01aeff;
 }
 
-/* 주석:: 로그인/회원가입 영역 관련 */
+/* 주석: 로그인/회원가입 영역 관련 */
 .nav_auth {
   display: flex;
   gap: 0.8rem;
@@ -85,7 +85,7 @@
   color: #333;
 }
 
-/* 주석: 로그인 시 드롭다운 메뉴로 전환 */
+/* 주석: 로그인 시 드롭다운 메뉴 관련 스타일 */
 .user_dropdown {
   position: relative;
 }

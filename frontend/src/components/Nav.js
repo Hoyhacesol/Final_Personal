@@ -4,10 +4,11 @@ import "./Nav.css";
 import logo from "../assets/img/kickauction_logo.png";
 
 const Nav = () => {
-  const location = useLocation(); //주석:: 현재 위치한 탭을 인식해 가상요소 효과 적용.
+  const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // 주석: 현재 로그인 중인 유저의 닉네임을 받아와 GNB {user}에 표시
   useEffect(() => {
     fetch("http://localhost:8080/api/auth/me", {
       method: "GET",
@@ -35,10 +36,10 @@ const Nav = () => {
         credentials: "include",
       });
 
-      // 주석: 사용자 정보 초기화
+      // 주석:: 사용자 정보 초기화
       setUser(null);
 
-      //주석: 로그아웃 후 이동위치
+      //주석:: 로그아웃 후 이동위치
       window.location.href = "/";
     } catch (err) {
       console.error("로그아웃 실패", err);
@@ -47,12 +48,12 @@ const Nav = () => {
 
   return (
     <nav className="nav" id="header">
-      {/* 주석::로고 영역 */}
+      {/* 로고 영역 */}
       <Link to="/" className="nav_logo">
         <img src={logo} alt="킥옥션 로고" />
       </Link>
 
-      {/* 주석::메뉴 탭 영역 */}
+      {/* 메뉴 탭 영역 */}
       <ul className="nav_menu">
         <li className={location.pathname === "/request" ? "active" : ""}>
           <Link to="/request">견적 요청</Link>

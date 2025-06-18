@@ -22,7 +22,7 @@ function PreSignupPage() {
       setEmailError("");
     }
   };
-  // 주석: 다음 클릭 시 중복체크 & signuppage로 이동
+  // 주석: [다음] 클릭 시 중복체크 & signuppage로 이동
   const preNext = async (e) => {
     e.preventDefault();
 
@@ -91,6 +91,7 @@ function PreSignupPage() {
             </button>
           )}
 
+          {/* 추가데이터 입력 */}
           <button type="submit" className="pre_signup_button">
             계속
           </button>
@@ -99,6 +100,7 @@ function PreSignupPage() {
             <span>또는</span>
           </div>
 
+          {/* 소셜 회원가입 */}
           <button type="button" className="social_signup_k" onClick={handleKakaoSignup}>
             <img className="socialicon" src={socialk}></img>
             카카오 계정으로 회원가입

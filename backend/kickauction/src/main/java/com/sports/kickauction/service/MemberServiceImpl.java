@@ -15,14 +15,15 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 주석: 신규 회원 등록 register()
     @Override
     public Member register(Member member) {
         
-        // 주석: 사용자 비밀번호 암호화
+        // 주석:: 회원 비밀번호 암호화
         String encodedPw = passwordEncoder.encode(member.getUserPw());
         member.setUserPw(encodedPw);
 
-        // 주석: 일반 회원가입 유저 SOCIAL값 1로 설정( 소셜 = 0 일반 = 1)
+        // 주석:: 신규 일반 회원가입 유저 SOCIAL값 1로 설정( 소셜 = 0 일반 = 1)
         member.setSocial(1);
         return memberRepository.save(member);
     }

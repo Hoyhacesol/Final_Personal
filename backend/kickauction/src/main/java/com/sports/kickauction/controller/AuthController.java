@@ -23,8 +23,9 @@ public class AuthController {
 
     private final MemberRepository memberRepository;
 
+    // 주석: 로그인 중인지 확인
     @GetMapping("/me")
-public ResponseEntity<?> getLoginUser(Authentication authentication) {
+    public ResponseEntity<?> getLoginUser(Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인되지 않음");
     }
@@ -58,6 +59,7 @@ public ResponseEntity<?> getLoginUser(Authentication authentication) {
     Member member = memberRepository.findByUserId(email)
             .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 회원 없음"));
 
+            // 주석: 닉네임(user_name), mno 정보 반환
     return ResponseEntity.ok(Map.of(
     "nickname", member.getUserName(),
     "mno", member.getMno()));

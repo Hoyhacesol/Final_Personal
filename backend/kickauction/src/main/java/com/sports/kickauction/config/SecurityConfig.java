@@ -36,9 +36,9 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    @Bean
 
-    // 주석: csrf & 권한 (csrf - 현재 비활성화임)
+    // 주석: csrf & 권한없이 사용 가능한 페이지 목록 (csrf - 현재 비활성화임)
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
@@ -94,7 +94,7 @@ public class SecurityConfig {
         return source;
     }
 
-    // 비밀번호 암호화 인코더
+    // 주석: 비밀번호 암호화 인코더
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);

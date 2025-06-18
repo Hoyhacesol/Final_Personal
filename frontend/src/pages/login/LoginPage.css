@@ -33,6 +33,7 @@
   margin-bottom: 1rem;
 }
 
+/* 로그인 폼 입력창 스타일 */
 .login_input {
   width: 89%;
   padding: 0.8rem;
@@ -60,7 +61,7 @@
   background-color: #398085;
 }
 
-/* 주석:: 로그인 실패시 에러메시지 */
+/* 주석: 로그인 실패시 에러메시지 */
 .login_error {
   color: red;
   font-size: 0.9rem;
