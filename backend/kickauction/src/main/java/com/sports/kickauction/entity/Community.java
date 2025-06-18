@@ -20,6 +20,11 @@ public class Community {
     private Long pno;
 
     /** 회원번호 (mno) */
+    
+    // @ManyToOne
+    // @JoinColumn(name = "mno")
+    // private Member member;
+
     @Column(name = "mno", nullable = false)
     private Long mno;
 
@@ -42,6 +47,7 @@ public class Community {
     /** 이미지 URL (pimage) */
     @Column(name = "pimage", length = 255)
     private String pimage;
+
 
     // 편의 메서드 (선택)
     public void changePtitle(String ptitle) {

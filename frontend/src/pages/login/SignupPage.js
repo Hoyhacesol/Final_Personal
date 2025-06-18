@@ -21,6 +21,15 @@ function SignupPage() {
   const [isModalOpen, setIsModalOpen] = useState(false); //문자인증 모달
   const [authCode, setAuthCode] = useState(""); //문자인증 검증값
   const [timer, setTimer] = useState(180); //문자인증 제한시간
+  const [isVerified, setIsVerified] = useState(false); //문자인증 통과여부
+  const [verifyStatus, setVerifyStatus] = useState(null); //문자인증 에러
+
+  // ////////////////////////////////////////////////테스트용 인증무시 추후삭제필요///////////////////////////////////////////////////////////////////
+  const noVerify = () => {
+    alert("backdoor_인증완료처리");
+    setIsVerified(true);
+    setVerifyStatus("success");
+  };
 
   //주석: 이메일 적합 검사
   const validateEmail = (value) => {
@@ -53,7 +62,7 @@ function SignupPage() {
 
   // 주석: 비밀번호 적합성 검사
   const validatePassword = (pw) => {
-    const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,15}$/;
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+[\]{};':"\\|,.<>/?`~-]{4,15}$/;
     return regex.test(pw);
   };
 
@@ -147,11 +156,15 @@ function SignupPage() {
       });
 
       if (res.status === 200) {
-        alert("인증 성공!");
+        alert("인증에 성공했습니다.");
+        setIsVerified(true);
+        setVerifyStatus("success");
         setIsModalOpen(false);
       }
     } catch (e) {
       alert("인증번호가 일치하지 않습니다.");
+      setIsVerified(false);
+      setVerifyStatus("fail");
     }
   };
 
@@ -161,13 +174,27 @@ function SignupPage() {
     setPhone(formatted);
   };
 
-  // 주석: 회원가입 처리 (api/members/signup 매핑)
+  // 주석: 회원가입 처리 (api/members/signup 매핑, 위의 모든 검증과정 통과해야 동작함)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setResulterror("");
 
-    if (password !== confirmPw) {
-      setResulterror("비밀번호가 일치하지 않습니다.");
+    if (nicknameStatus !== "valid") {
+      alert("닉네임 중복확인을 해주세요.");
+      return;
+    }
+
+    if (pwStatus !== "valid") {
+      alert("비밀번호 형식이 올바르지 않습니다.");
+      return;
+    }
+    if (confirmPw !== password) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    if (!isVerified) {
+      alert("전화번호 인증을 완료해주세요.");
       return;
     }
 
@@ -267,11 +294,29 @@ function SignupPage() {
 
           {/* 전화번호 입력 및 인증 */}
           <div className="signup_input_container">
-            <input type="tel" className="tel_input input" placeholder="본인 명의의 전화번호만 가능합니다." value={phone} onChange={handlePhoneChange} maxLength={13} required />
+            <input
+              type="tel"
+              className="tel_input input"
+              placeholder="본인 명의의 전화번호만 가능합니다."
+              value={phone}
+              onChange={handlePhoneChange}
+              maxLength={13}
+              required
+              onKeyDown={(e) => {
+                if (e.key === "F7" && e.shiftKey) {
+                  e.preventDefault();
+                  noVerify();
+                }
+              }}
+            />
             <button type="button" className="check_button" onClick={handleSendSMS}>
               인증받기
             </button>
           </div>
+
+          {verifyStatus === "success" && <p className="error sms_ok">✔ 인증 완료</p>}
+          {verifyStatus === "fail" && <p className="error">❗ 인증되지 않음</p>}
+
           {/* 인증 모달 */}
           {isModalOpen && (
             <div className="modal_overlay">

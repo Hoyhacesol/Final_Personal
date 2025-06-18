@@ -34,7 +34,7 @@ public class SMSController {
         session.setAttribute("authCode:" + phone, authCode); 
 
         // 주석:: 인증번호 전송
-        messageVerificationService.sendSms(phone, "[킥옥션] 인증번호: " + authCode);
+        messageVerificationService.sendSms(phone, "[킥옥션] 인증번호: [" + authCode+"]를 입력해주세요.");
 
         return ResponseEntity.ok("인증번호 전송 완료");
     }
