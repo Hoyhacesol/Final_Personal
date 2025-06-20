@@ -1,8 +1,8 @@
 import "../../css/Pagination.css";
 
-const Pagination = ({ current, pageList, prev, next, prevPage, nextPage, onPageChange }) => {
+const Pagination = ({ current, pageList, prev, next, prevPage, nextPage, onPageChange, className}) => {
   return (
-    <div className="pagination">
+    <div className={`pagination ${className || ""}`}>
       {prev && (
         <button onClick={() => onPageChange(prevPage)}>&lt; 이전</button>
       )}

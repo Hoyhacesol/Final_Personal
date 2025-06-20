@@ -11,9 +11,17 @@ export const getOne = async (pno) => {
 };
 
 export const getList = async (pageParam) => {
-    const { page, size } = pageParam
-    const res = await axios.get(`${prefix}/list`, { params: { page: page, size: size } })
-    return res.data
+    const { page, size, type, keyword } = pageParam;
+
+  // 기본 파라미터
+  const params = { page, size };
+
+  // type, keyword가 있으면 params에 추가
+  if (type)    params.type = type;
+  if (keyword) params.keyword = keyword;
+
+  const res = await axios.get(`${prefix}/list`, { params });
+  return res.data;
 }
 
 export const postWrite = async (communityObj) => {

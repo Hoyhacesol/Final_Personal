@@ -25,9 +25,6 @@ public class Seller {
     @JoinColumn(name = "mno")
     private Member member;
 
-    @OneToOne(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private SellerIntro sellerIntro;
-
     private String sname;
     private String slocation;
 }

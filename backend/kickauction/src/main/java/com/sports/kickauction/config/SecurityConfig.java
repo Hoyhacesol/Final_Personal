@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -42,15 +43,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            // .csrf(csrf -> csrf
+            // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .cors(withDefaults())
+            //api/display/** 안넣으면 이미지 문제생길시 허용이안됨 */
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "presignup", "presignups", "/signup", "signups", "/login", "/api/**",
-                                "/images/**")
+                                "/images/**","/api/display/**")
                 .permitAll()
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginProcessingUrl("/login") 
                 .successHandler((req, res, auth) -> {
+                    SecurityContextHolder.getContext().setAuthentication(auth); //인증 세션 만들기
                     res.setStatus(HttpServletResponse.SC_OK);
                 })
                 .failureHandler((req, res, ex) -> {
@@ -78,7 +83,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // 프론트 개발 서버 주소
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        //setAllowedOrigins(...) 대신 → setAllowedOriginPatterns(...) 사용함
+        //이유: setAllowCredentials(true)와 함께 사용할 수 있기 때문
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
         // 허용 HTTP 메서드
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // 허용 헤더

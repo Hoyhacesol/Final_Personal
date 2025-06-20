@@ -39,9 +39,8 @@ public class CommunityController {
     }
 
     @GetMapping("/list")
-    public PageResponseDTO<CommunityDTO> list(PageRequestDTO pageRequestDTO) {
-        log.info(pageRequestDTO);
-        return service.list(pageRequestDTO);
+    public ResponseEntity<PageResponseDTO<CommunityDTO>> list(PageRequestDTO pageRequestDTO) {
+        return new ResponseEntity<>(service.list(pageRequestDTO), HttpStatus.OK);
     }
 
     // @PostMapping("/")

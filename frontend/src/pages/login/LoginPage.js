@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/Authcontext";
+import { checkAuth } from "../../api/authApi"; // 로그인 후 사용자 정보 조회용 API
 import "../login/LoginPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
 import emailicon from "../../assets/img/icon_email.svg";
@@ -9,6 +11,7 @@ import socialk from "../../assets/img/social_k.png";
 
 function LoginPage() {
   const location = useLocation();
+  const redirectPath = location.state?.from || "/";
   const searchParams = new URLSearchParams(location.search);
   const loginError = searchParams.get("error");
   const [userid, setUserid] = useState("");
@@ -16,6 +19,7 @@ function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [remember, setRemember] = useState(false); //이메일기억
+  const { setUser } = useAuth(); // 전역 사용자 상태 업데이트 함수
 
   // 주석: 이메일 기억하기
   useEffect(() => {
@@ -36,7 +40,7 @@ function LoginPage() {
     formData.append("password", passwd);
 
     try {
-      const res = await fetch("/login", {
+      const res = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -49,13 +53,21 @@ function LoginPage() {
         throw new Error("로그인 실패");
       }
 
+      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
+      const userData = await checkAuth();
+
+      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
+      // 로그인 후 업체목록페이지에서 새로고침해야 권한이 적용(업체 등록 버튼이 보임)되길래 추가함
+      setUser(userData);
+      console.log("userData:", userData);
+
       if (remember) {
         localStorage.setItem("rememberedEmail", userid);
       } else {
         localStorage.removeItem("rememberedEmail");
       }
 
-      navigate("/");
+      navigate(redirectPath);
     } catch (err) {
       setError("이메일 또는 비밀번호가 계정 정보와 일치하지 않습니다.");
     }

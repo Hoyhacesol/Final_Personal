@@ -17,6 +17,7 @@ import com.sports.kickauction.entity.Community;
 import com.sports.kickauction.dto.CommunityDTO;
 import com.sports.kickauction.repository.CommunityRepository;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -41,23 +42,12 @@ public class CommunityServiceImpl implements CommunityService {
     private final ModelMapper modelMapper;
     private final CommunityRepository communityRepository;
 
-    // 게시글 등록
-    // @Override
-    // public Long register(CommunityDTO communityDTO) {
-    // log.info("DTO → Entity 매핑: {}", communityDTO);
+    @PostConstruct
+    public void initModelMapper() {
+        modelMapper.typeMap(CommunityDTO.class, Community.class)
+                .addMappings(mapper -> mapper.skip(Community::setPregdate));
+    }
 
-    // // 기본값 처리
-    // if (communityDTO.getView() == null) {
-    // communityDTO.setView(0);
-    // }
-    // if (communityDTO.getPimage() == null) {
-    // communityDTO.setPimage("");
-    // }
-
-    // Community community = modelMapper.map(communityDTO, Community.class);
-    // Community saved = communityRepository.save(community);
-    // return saved.getPno();
-    // }
     @Override
     public CommunityDTO register(CommunityDTO dto, MultipartFile pimageFile) {
         // 1) DEBUG: uploadDir 주입 값 확인
@@ -95,10 +85,10 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public CommunityDTO get(Long pno) {
-         log.info("ID로 조회 (조회수 증가): {}", pno);
+        log.info("ID로 조회 (조회수 증가): {}", pno);
         // 1) 엔티티 조회
         Community entity = communityRepository.findById(pno)
-            .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
         // 2) 조회수 1 증가
         Integer current = entity.getView() != null ? entity.getView() : 0;
         entity.setView(current + 1);
@@ -146,10 +136,41 @@ public class CommunityServiceImpl implements CommunityService {
                 pageRequestDTO.getSize(),
                 Sort.by("pno").descending());
 
-        Page<Community> result = communityRepository.findAll(pageable);
+        Page<Community> result;
+        String type = pageRequestDTO.getType();
+        String keyword = pageRequestDTO.getKeyword();
+
+        if (keyword != null && !keyword.isBlank()) {
+            switch (type) {
+                case "t": // 제목 검색
+                    result = communityRepository
+                            .findByPtitleContainingIgnoreCase(keyword, pageable);
+                    break;
+                case "c": // 내용 검색
+                    result = communityRepository
+                            .findByPcontentContainingIgnoreCase(keyword, pageable);
+                    break;
+                case "tc": // 제목+내용 검색
+                default:
+                    result = communityRepository
+                            .findByPtitleContainingIgnoreCaseOrPcontentContainingIgnoreCase(
+                                    keyword, keyword, pageable);
+                    break;
+            }
+        } else {
+            // 검색어가 없으면 전체 목록
+            result = communityRepository.findAll(pageable);
+        }
 
         List<CommunityDTO> dtoList = result.getContent().stream()
-                .map(community -> modelMapper.map(community, CommunityDTO.class))
+                .map(entity -> {
+                    CommunityDTO cd = modelMapper.map(entity, CommunityDTO.class);
+                    // entity.member 는 @ManyToOne 으로 가져온 Member 엔티티
+                    if (entity.getMember() != null) {
+                        cd.setWriterName(entity.getMember().getUserName());
+                    }
+                    return cd;
+                })
                 .collect(Collectors.toList());
 
         long totalCount = result.getTotalElements();

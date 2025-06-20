@@ -7,46 +7,71 @@
      gap: 1rem;
  }
 
-.btn {
-    background: linear-gradient(135deg, #1771A7 0%, #15689A 100%);
-    color: white;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(23, 113, 167, 0.3);
-}
-
  .search_box {
      display: flex;
      gap: 0.5rem;
      flex: 1;
-     max-width: 400px;
+     justify-content: center;
  }
 
- .search_box .search_input {
+ .search_box input {
      flex: 1;
      padding: 12px 16px;
      border: 2px solid #e0e6ed;
      border-radius: 12px;
      font-size: 1rem;
      transition: border-color 0.3s ease;
+     max-width: 400px;
  }
 
- .search_box .search_input:focus {
+ .search_box input:focus {
      outline: none;
      border-color: #1F9CE7;
      box-shadow: 0 0 0 3px rgba(31, 156, 231, 0.1);
+ }
+
+ .search_box select {
+     appearance: none;
+     -webkit-appearance: none;
+     -moz-appearance: none;
+     background: #fff;
+     padding: 8px 12px 8px 12px;
+     border: 2px solid #ddd;
+     border-radius: 6px;
+     font-size: 1rem;
+     cursor: pointer;
+     transition: border-color .3s, box-shadow .3s;
+     min-width: 80px;
+ }
+
+ .search_box select:focus {
+     outline: none;
+     border-color: #1F9CE7;
+     box-shadow: 0 0 0 3px rgba(31, 156, 231, 0.2);
+ }
+
+ .search_box select:hover {
+     border-color: #bbb;
+ }
+
+ .btn {
+     background: linear-gradient(135deg, #1771A7 0%, #15689A 100%);
+     color: white;
+     border: none;
+     padding: 12px 24px;
+     border-radius: 12px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     text-decoration: none;
+     display: inline-flex;
+     align-items: center;
+     gap: 8px;
+ }
+
+ .btn:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 8px 25px rgba(23, 113, 167, 0.3);
  }
 
  .board_table {

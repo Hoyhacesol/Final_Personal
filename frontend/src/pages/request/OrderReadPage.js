@@ -6,37 +6,11 @@ import axios from 'axios'; // axios 임포트
 import BContentP11 from "../../components/requestComponents/bContentP11";
 import Hero from "../../components/requestComponents/bHero";
 
-// const quoteDetail_ = {
-//   title: "[장소+장비] 축구 종합 대여 요청",
-//   location: "서울특별시 관악구/금천구/동작구/서초구",
-//   date: "2025/07/09",
-//   timeDesc: "시간협의가능",
-//   timeLeft: "3:11:07"
-// };
-
-// const companies_ = [
-//   { location: "업체지역", reviewCount: 0, description: "축구화 사이즈별로 10켤레 제공", price: "159,000" },
-//   { location: "업체지역", reviewCount: 0, description: "축구화 사이즈별로 10켤레 제공", price: "150,000" },
-//   { location: "업체지역", reviewCount: 0, description: "축구화 사이즈별로 10켤레 제공", price: "149,900" },
-//   { location: "업체지역", reviewCount: 0, description: "축구화 사이즈별로 10켤레 제공", price: "149,000" }
-// ];
-
 const heroContent = {
   mainTitle: "견적 상세",
   subTitle: "지금 KICK!",
   notion: "KICK AUCTION이 중개합니다"
 };
-
-// const OrderReadPage = () => {
-//   return (
-//     <>
-//       <div className="bg-cover bg-center min-h-screen pt-12">
-//         <Hero {...heroContent} />
-//         <BContentP11 quote={quoteDetail} companies={companies} />
-//       </div>
-//     </>
-//   );
-// };
 
 const OrderReadPage = () => {
   const { ono } = useParams(); // URL에서 ono 값 가져오기
@@ -52,18 +26,35 @@ const OrderReadPage = () => {
         const response = await axios.get(`/api/orders/${ono}`); // 백엔드 API 호출
         const data = response.data;
 
-        // 백엔드에서 받은 데이터를 프론트엔드 상태에 맞게 매핑
+        // data.datetime이 존재하는지 먼저 확인
+        const rawDatetime = data.datetime;
+        let datePart = '';
+        let timePart = '시간협의가능';
+
+        if (rawDatetime) { // rawDatetime이 undefined, null, 빈 문자열이 아닌 경우에만 처리
+          const parts = rawDatetime.split('|');
+          if (parts.length > 0) {
+            datePart = parts[0].trim().split(' ')[0]; // 날짜 부분 (공백으로 또 나눌 수 있으니 첫 번째만)
+            if (parts.length > 1) {
+              timePart = parts[1].trim(); // 시간 부분
+            }
+          } else {
+            // '|'이 없을 경우 전체를 날짜로 간주하거나, 다른 처리
+            datePart = rawDatetime.trim().split(' ')[0];
+          }
+        }
+
         // 백엔드 OrderController의 getOrder 메서드에서 보내는 필드명에 맞게 매핑.
         setQuoteDetail({
           title: data.sport, // playType -> sport로 매핑됨
           location: data.region, // olocation -> region으로 매핑됨
-          date: data.datetime.split(' ')[0], // datetime에서 날짜 부분만 추출
-          timeDesc: data.datetime.includes('|') ? data.datetime.split('|')[1].trim() : "시간협의가능", // datetime에서 시간 부분 추출
-          // timeLeft는 백엔드에서 받지 않으므로 프론트에서 목업 유지 또는 로직 추가 필요
-          timeLeft: "3:11:07" // 마감 임박은 프론트에서 자체적으로 계산하거나 백엔드에서 받아와야 함
-                               // 현재는 백엔드에서 받지 않으므로 임시로 목업 유지
+          date: datePart, // datetime 날짜
+          timeDesc: timePart, // datetime 시간
+          timeLeft: "3:11:07"
+          // 현재는 백엔드에서 받지 않으므로 임시로 목업 유지
         });
 
+        // NOTE :
         // 업체 목록 데이터는 백엔드 OrderController에서 직접 반환하지 않으므로,
         // 이 부분은 별도의 API가 있거나, 또는 getOrderDetails 응답에 포함되어야 함.
         // 현재 코드 상으로는 `companies` 데이터가 백엔드 응답에 포함되어 있지 않다.

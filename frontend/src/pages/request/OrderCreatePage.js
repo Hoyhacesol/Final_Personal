@@ -13,40 +13,36 @@ import Hero from "../../components/requestComponents/bHero";
   };
 
 
-// const OrderCreatePage = () => {
-//   // console.log("OrderForm: ", BContentP08);
-//   // console.log("Hero: ", Hero);
-//   return (
-//     <>
-//       {/* <Header /> */}
-//       <div
-//         className="bg-cover bg-center min-h-screen pt-12"
-//         // style={{ backgroundImage: "url('/stadium-bg.jpg')" }}
-//       >
-//         <Hero {...createHero} />
-//         <BContentP08 />
-//       </div>
-//       {/* <Footer /> */}
-//     </>
-//   );
-// };
-
 const OrderCreatePage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    sport: '',
-    rental: '필요없어요', // 기본값 설정
+    sport: '축구',
+    rental: '필요해요', // 기본값 설정
     rentalItems: '',
-    detail: '',
     region: '',
-    datetime: '',
+    datetime: null,
+    timeDetail: "",
     people: '',
     request: '',
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+
+    let newFormData = { ...formData, [name]: value };
+
+    // '장비 대여 여부'가 '필요없어요'로 변경되었을 때, 관련 필드 비우기
+    if (name === 'rental' && value === '필요없어요') {
+        newFormData.rentalItems = '';
+        newFormData.detail = '';
+    }
+    
+    // datetime 필드가 DatePicker에서 넘어오는 경우 Date 객체 처리
+    if (name === 'datetime' && value instanceof Date) {
+        newFormData.datetime = value;
+    }
+
+    setFormData(newFormData);
   };
 
   const handleSubmit = async (e) => {
@@ -54,24 +50,20 @@ const OrderCreatePage = () => {
 
     try {
       const dataToSend = { ...formData };
-      // '필요없어요'를 선택했을 경우 rentalItems와 detail을 비웁니다.
       if (formData.rental === '필요없어요') {
         dataToSend.rentalItems = '';
         dataToSend.detail = '';
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 
-      // 백엔드 API (POST 요청) - 이 부분은 OrderController에 없으니 추가 필요
-      // 현재 컨트롤러에는 POST /api/orders 로 생성 API가 없다.
-      // 이 예시에서는 POST /api/orders 에 데이터를 보낸다고 가정하고,
-      // 백엔드에서 성공적으로 생성 후 ono를 반환한다고 가정
+      console.log(dataToSend);
       const response = await axios.post('/api/orders', dataToSend);
       const newOno = response.data.ono; // 백엔드에서 생성된 ono를 반환한다고 가정
 
-      alert("견적 요청이 성공적으로 생성되었습니다.");
+      alert("견적 생성 성공");
       navigate(`/request/read/${newOno}`); // 생성 후 상세 페이지로 이동
     } catch (err) {
-      alert("견적 생성에 실패했습니다.");
+      alert("견적 생성 실패");
       console.error("Error creating order:", err);
     }
   };

@@ -19,7 +19,7 @@ const sellerRouter = () => [
     path: "register",
     element: (
       <Suspense fallback={Loading}>
-        <SellerRegister mno={16} />
+        <SellerRegister/>
       </Suspense>
     ),
   },

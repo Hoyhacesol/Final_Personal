@@ -1,31 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/Authcontext";
 import "./Nav.css";
 import logo from "../assets/img/kickauction_logo.png";
 import logo2 from "../assets/img/kickauction_logo.png";
-console.log("로고 경로:", logo2);
 
 const Nav = () => {
   const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // 주석: 현재 로그인 중인 유저의 닉네임을 받아와 GNB {user}에 표시
-  useEffect(() => {
-    fetch("http://localhost:8080/api/auth/me", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => {
-        setUser(data);
-      })
-      .catch(() => setUser(null));
-  }, []);
+  const [latestRequestCount, setLatestRequestCount] = useState(null);
+  const { user, setUser } = useAuth();
 
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
@@ -39,10 +25,10 @@ const Nav = () => {
         method: "POST",
         credentials: "include",
       });
-      // 주석:: 사용자 정보 초기화
-      setUser(null);
       //주석:: 로그아웃 후 이동위치
-      window.location.href = "/";
+      setUser(null);
+      navigate(location.pathname);
+      // window.location.href = "/";
     } catch (err) {
       console.error("로그아웃 실패", err);
     }
@@ -62,19 +48,19 @@ const Nav = () => {
 
         {/* 메뉴 탭 영역 */}
         <ul className="nav_menu">
-          <li className={location.pathname === "/request" ? "active" : ""}>
+          <li className={location.pathname.startsWith("/request") ? "active" : ""}>
             <Link to="/request">견적 요청</Link>
           </li>
-          <li className={location.pathname === "/bid" ? "active" : ""}>
+          <li className={location.pathname.startsWith("/bid") ? "active" : ""}>
             <Link to="/bid">견적 입찰</Link>
           </li>
-          <li className={location.pathname === "/sellerlist" ? "active" : ""}>
+          <li className={location.pathname.startsWith("/sellerlist") ? "active" : ""}>
             <Link to="/sellerlist">등록된 업체 목록</Link>
           </li>
-          <li className={location.pathname === "/community" ? "active" : ""}>
+          <li className={location.pathname.startsWith("/community") ? "active" : ""}>
             <Link to="/community">자유게시판</Link>
           </li>
-          <li className={location.pathname === "/help" ? "active" : ""}>
+          <li className={location.pathname.startsWith("/help") ? "active" : ""}>
             <Link to="/help">고객센터</Link>
           </li>
         </ul>
@@ -82,22 +68,36 @@ const Nav = () => {
         {/* 로그인/회원가입 or 사용자 메뉴 */}
         <div className="nav_auth">
           {!user ? (
-            <Link to="/login" className="loginbtn">
+            <Link to="/login" state={{ from: location.pathname }} className="loginbtn">
               로그인 / 회원가입
             </Link>
           ) : (
             <div className="user_dropdown">
               <button onClick={toggleDropdown} className="user_button">
-                {user.nickname} 님 ▼
+                {user.nickname} 님{" "}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#555">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
               </button>
-              {dropdownOpen && (
-                <div className="dropdown_menu">
-                  <Link to="/mypage">마이페이지</Link>
-                  <a href="#" onClick={handleLogout}>
+              <div className={`user_dropdown_box ${dropdownOpen ? "open" : ""}`}>
+                <img className="profile_img_dropdown" src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
+                <p>
+                  안녕하세요! <br />
+                  <strong>{user.nickname}</strong> 님
+                </p>
+                <p className="recentsuggest">
+                  {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
+                  최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
+                </p>
+                <div className="sidebar_buttons">
+                  <Link to="/mypage" className="dropdown_btn">
+                    마이페이지
+                  </Link>
+                  <button onClick={handleLogout} className="dropdown_btn">
                     로그아웃
-                  </a>
+                  </button>
                 </div>
-              )}
+              </div>
             </div>
           )}
         </div>
@@ -125,7 +125,7 @@ const Nav = () => {
               <img className="profile_img" src={`http://localhost:8080/images/baseprofile.png`} alt="비로그인 프로필 사진" />
               <p>비로그인 상태입니다.</p>
               <div className="sidebar_buttons">
-                <Link to="/login" onClick={handleLinkClick} className="sidebar_btn">
+                <Link to="/login" state={{ from: location.pathname }} onClick={handleLinkClick} className="sidebar_btn">
                   로그인
                 </Link>
                 <Link to="/presignup" onClick={handleLinkClick} className="sidebar_btn">
@@ -140,9 +140,18 @@ const Nav = () => {
                 안녕하세요! <br />
                 <strong>{user.nickname}</strong> 님
               </p>
-              <Link to="/mypage" onClick={handleLinkClick} className="sidebar_btn_black">
-                마이페이지
-              </Link>
+              <p className="recentsuggest">
+                {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
+                최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
+              </p>
+              <div className="sidebar_buttons">
+                <Link to="/mypage" onClick={handleLinkClick} className="sidebar_btn2">
+                  마이페이지
+                </Link>
+                <button onClick={handleLogout} className="sidebar_btn2">
+                  로그아웃
+                </button>
+              </div>
             </>
           )}
         </div>

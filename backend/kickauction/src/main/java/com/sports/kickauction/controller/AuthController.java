@@ -62,6 +62,9 @@ public class AuthController {
             // 주석: 닉네임(user_name), mno 정보 반환
     return ResponseEntity.ok(Map.of(
     "nickname", member.getUserName(),
-    "mno", member.getMno()));
+    "role",member.getRole(), // 권한 확인 필요함
+    "mno", member.getMno(),
+    "profileimg", member.getProfileimg()
+    ));
 }
 }

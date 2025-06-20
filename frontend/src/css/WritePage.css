@@ -1,5 +1,3 @@
-/* WriteComponent.module.css */
-
 #writeComponent {
   max-width: 1000px;
   margin: 0 auto;
@@ -109,9 +107,11 @@
   font-size: 16px;
   transition: all 0.3s ease;
   background: #fafafa;
-  resize: vertical;
   font-family: inherit;
   box-sizing: border-box;
+  height: 350px;       /* 원하는 고정 높이 */
+  overflow-y: auto;    /* 내부 스크롤만 */
+  resize: vertical;    /* 사용자가 직접 늘리는 것만 허용 */
 }
 
 .write_content textarea:focus {

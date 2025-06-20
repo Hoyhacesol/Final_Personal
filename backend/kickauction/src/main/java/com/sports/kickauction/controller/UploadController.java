@@ -43,7 +43,11 @@ public class UploadController {
         if (!uploadDir.exists()) uploadDir.mkdirs();
 
         for (MultipartFile file : files) {
-            if (!file.getContentType().startsWith("image")) continue;
+        // 이미지인지 검사 (MIME 타입)
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            continue; // 이미지가 아니면 무시
+        }
 
             String uuid = UUID.randomUUID().toString();
             String originalName = file.getOriginalFilename();
@@ -69,10 +73,20 @@ public class UploadController {
     }
 
     @GetMapping("/display")
-    public ResponseEntity<Resource> display(@RequestParam String file) throws IOException {
-        Resource resource = new FileSystemResource(uploadPath + File.separator + file);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", Files.probeContentType(resource.getFile().toPath()));
-        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    public ResponseEntity<Resource> display(@RequestParam("file") String file) throws IOException {
+    Path filePath = Paths.get(uploadPath, file); 
+
+    Resource resource = new FileSystemResource(filePath);
+
+    if (!resource.exists()) {
+        return ResponseEntity.notFound().build();
     }
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("Content-Type", Files.probeContentType(filePath));
+    return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+
 }
+

@@ -12,15 +12,6 @@ const modifyHero = {
   notion: "바뀐 일정? 바로 반영 가능!"
 };
 
-// const OrderModifyPage = () => {
-//   return (
-//     <div className="bg-cover bg-center min-h-screen pt-12">
-//       <Hero {...modifyHero} />
-//       <BContentP09 />
-//     </div>
-//   );
-// };
-
 const OrderModifyPage = () => {
   const { ono } = useParams(); // URL에서 ono 값 가져오기
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅

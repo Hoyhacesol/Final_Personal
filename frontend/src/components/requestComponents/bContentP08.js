@@ -1,7 +1,10 @@
 // 견적 신청
 
-import React from 'react'; // React 임포트 필요
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+// 오류 발생시 참고 -> tailwind처럼 처음 사용시 npm install react-datepicker & date-fns 두개 필요***
+import DatePicker from "react-datepicker"; 
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const formFields = {
   left: [
@@ -22,12 +25,6 @@ const formFields = {
       label: "대여할 장비 목록",
       name: "rentalItems",
       placeholder: "예: 축구화, 장갑, 조끼 등"
-    },
-    {
-      type: "textarea",
-      label: "상세 조건",
-      name: "detail",
-      placeholder: "예: 인조잔디, 270mm 이상 축구화"
     }
   ],
   right: [
@@ -35,20 +32,24 @@ const formFields = {
       type: "text",
       label: "지역",
       name: "region",
-      placeholder: "지역(시/도/군)을 입력해주세요",
+      placeholder: "지역(시/도)을 입력해주세요",
       error: true
     },
     {
-      type: "text",
-      label: "날짜 및 상세 시간",
-      name: "datetime",
-      placeholder: "예: 2025/06/02 | 몇시 가능해요"
+      type: "date",
+      label: "날짜",
+      name: "datetime"
     },
     {
       type: "text",
+      label: "상세 시간",
+      name: "timeDetail",
+      placeholder: "시작 시간을 입력해주세요"
+    },
+    {
+      type: "number",
       label: "인원",
       name: "people",
-      placeholder: "예: 11명"
     },
     {
       type: "textarea",
@@ -60,12 +61,16 @@ const formFields = {
 };
 
 
-const renderField = (field) => { 
+const renderField = (field ,value, handleChange, isReadOnly = false) => { 
+  const currentPlaceholder = isReadOnly ? "" : field.placeholder;
+
   switch (field.type) {
     case "select":
-      return (<select name={field.name} className="w-full border px-3 py-2 rounded">
-        {field.options.map((option, idx) => (<option key={idx}>{option}</option>))}
-      </select>);
+      return (
+        <select name={field.name} value={value} onChange={handleChange} className="w-full border px-3 py-2 rounded">
+          {field.options.map((option, idx) => (<option key={idx}>{option}</option>))}
+        </select>
+      );
     case "radio":
         return (
             <div className="flex gap-4 mt-1">
@@ -74,52 +79,105 @@ const renderField = (field) => {
                         <input
                             type="radio"
                             name={field.name}
-                            value={option} // value 속성 추가
-                            // checked={selectedValue === option} // (선택 사항) 상태 관리 시 현재 선택된 값 표시
-                            // onChange={handleRadioChange} // (필수) onChange 핸들러 추가
+                            value={option}
+                            checked={value === option}
+                            onChange={handleChange}
                         /> {option}
                     </label>
                 ))}
             </div>
         );
     case "text":
-      return (<input type="text" name={field.name} className={`w-full border px-3 py-2 rounded ${field.error ? "border-red-500" : ""}`} placeholder={field.placeholder} />);
+      return (
+        <input
+          type="text"
+          name={field.name}
+          value={value}
+          onChange={handleChange}
+          className={`w-full border px-3 py-2 rounded ${field.error ? "border-red-500" : ""}`}
+          placeholder={currentPlaceholder}
+          readOnly={isReadOnly}
+        />
+      );
     case "textarea":
-      return (<textarea name={field.name} rows="3" className="w-full border px-3 py-2 rounded" placeholder={field.placeholder} />);
+      return (
+        <textarea
+          name={field.name}
+          value={value}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          rows="3"
+          placeholder={currentPlaceholder}
+          readOnly={isReadOnly}
+        />
+      );
+    case "number": // <-- 새로운 case 추가
+      return (
+          <input
+              type="number" // type을 "number"로 설정
+              name={field.name}
+              value={value}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded"
+              readOnly={isReadOnly}
+              min="1"
+              max="50"
+              step="1"
+          />
+      );
+    case "date":
+      return (
+        <DatePicker
+          selected={value}
+          onChange={(date) => handleChange({ target: { name: field.name, value: date } })}
+          className="w-full border px-3 py-2 rounded"
+          dateFormat="yyyy/MM/dd"
+          placeholderText="날짜를 선택하세요"
+        />
+      );
     default:
       return null;
   }
 };
 
-const BContentP08 = () => {
-  const navigate = useNavigate(); // useNavigate 훅
+const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
+  const [isRentalItemsReadOnly, setIsRentalItemsReadOnly] = useState(false);
+  const [isDetailReadOnly, setIsDetailReadOnly] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // 페이지 새로고침 방지
-
-    console.log("폼이 제출되었습니다!");
-
-    navigate('/request');
-  };
+  useEffect(() => {
+    if (formData.rental === '필요없어요') {
+      setIsRentalItemsReadOnly(true);
+      setIsDetailReadOnly(true);
+    } 
+    else {
+      setIsRentalItemsReadOnly(false);
+      setIsDetailReadOnly(false);
+    }
+  }, [formData.rental]); // formData.rental 값이 변경될 때마다 이 훅 실행
 
   return (
     <form onSubmit={handleSubmit} className="flex justify-center gap-6 px-4 py-10">
-      {/* 왼쪽 폼 */}
       <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
         {formFields.left.map((field, idx) => (
           <div key={idx} className="mt-4">
             <label className="block font-semibold mb-1">{field.label}</label>
-            {renderField(field)}
+            {/* {renderField(field, formData[field.name], handleChange)} */}
+            {
+              field.name === 'rentalItems' ?
+                renderField(field, formData[field.name], handleChange, isRentalItemsReadOnly) :
+                  field.name === 'detail' ?
+                    renderField(field, formData[field.name], handleChange, isDetailReadOnly) :
+                      renderField(field, formData[field.name], handleChange)
+            }
           </div>
         ))}
       </div>
 
-      {/* 오른쪽 폼 */}
       <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
         {formFields.right.map((field, idx) => (
           <div key={idx} className="mt-4">
             <label className="block font-semibold mb-1">{field.label}</label>
-            {renderField(field)}
+            {renderField(field, formData[field.name], handleChange)}
           </div>
         ))}
         <button

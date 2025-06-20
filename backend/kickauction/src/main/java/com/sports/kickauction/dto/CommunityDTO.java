@@ -14,6 +14,9 @@ public class CommunityDTO {
     /** 회원번호 (mno) */
     private Long mno;
 
+    /** 회원 닉네임 (user_name) */
+    private String writerName;
+
     /** 제목 (ptitle) */
     private String ptitle;
 

@@ -1,0 +1,58 @@
+.error-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  background-color: #fffbe6;
+  color: #333;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.error-page-container h1 {
+  font-size: 2.2rem;
+  color: #e74c3c;
+  margin-bottom: 16px;
+}
+
+.error-page-container p {
+  font-size: 1.1rem;
+  margin-bottom: 24px;
+  color: #555;
+}
+
+.error-page-container .error-code {
+  font-size: 1rem;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.error-page-container button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.error-page-container button:hover {
+  background-color: #2980b9;
+}
+
+/* 등장 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

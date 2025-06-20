@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor 
-public class SellerIntro {
+public class SellerIntro extends BaseEntity{
 
     @Id
     private Long mno;
@@ -23,7 +23,6 @@ public class SellerIntro {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "mno")
-    @ToString.Exclude
     private Seller seller;
 
     private String introContent;

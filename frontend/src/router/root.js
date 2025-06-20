@@ -5,6 +5,7 @@ import Layout from "../components/Layout";
 import communityRouter from "../router/communityRouter";
 import sellerRouter from "../router/sellerRouter";
 import requestRouter from "../router/requestRouter";
+import ErrorPage from "../pages/ErrorPage";
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Community = lazy(() => import("../pages/community/CommunityPage"));
@@ -71,6 +72,10 @@ const root = createBrowserRouter([
           </Suspense>
         ),
       },
+      {
+          path: "error",
+          element: <ErrorPage />,  
+      },  
       {
         path: "community",
         element: (
