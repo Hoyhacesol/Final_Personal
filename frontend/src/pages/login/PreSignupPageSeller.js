@@ -6,7 +6,7 @@ import logo from "../../assets/img/kickauction_logo.png";
 import socialg from "../../assets/img/social_g.png";
 import socialk from "../../assets/img/social_k.png";
 
-function PreSignupPage() {
+function PreSignupPageSeller() {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [isDuplicate, setIsDuplicate] = useState(false);
@@ -22,7 +22,7 @@ function PreSignupPage() {
       setEmailError("");
     }
   };
-  // 주석: [다음] 클릭 시 중복체크 & signuppage로 이동
+  // 주석: [다음] 클릭 시 중복체크 & signuppageseller로 이동
   const preNext = async (e) => {
     e.preventDefault();
 
@@ -39,7 +39,7 @@ function PreSignupPage() {
         setEmailError("이미 가입된 이메일입니다.");
         setIsDuplicate(true);
       } else {
-        navigate("/signup", { state: { email } });
+        navigate("/signupseller", { state: { email } });
         setIsDuplicate(false);
       }
     } catch (err) {
@@ -63,11 +63,11 @@ function PreSignupPage() {
         <Link to="/">
           <img src={logo} alt="킥옥션 로고" className="signup_logo" />
         </Link>
-        <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>업체 회원가입</h2>
 
         {/* 전환 버튼 */}
-        <button type="button" className="change_toseller" onClick={() => navigate("/presignupseller")}>
-          ↩ ㅤ업체 가입하기
+        <button type="button" className="change_touser" onClick={() => navigate("/presignup")}>
+          ↩ ㅤ일반 유저로 가입하기
         </button>
         <form className="signup_form" onSubmit={preNext}>
           {/* 주석: 이메일 */}
@@ -104,11 +104,11 @@ function PreSignupPage() {
 
           {/* 소셜 회원가입 */}
           <button type="button" className="social_signup_k" onClick={handleKakaoSignup}>
-            <img className="socialicon" src={socialk}></img>
+            <img className="socialicon" src={socialk} alt="소셜_회원가입_카카오 아이콘"></img>
             카카오 계정으로 회원가입
           </button>
           <button type="button" className="social_signup_g" onClick={handleGoogleSignup}>
-            <img className="socialicon" src={socialg}></img>
+            <img className="socialicon" src={socialg} alt="소셜_회원가입_구글 아이콘"></img>
             구글 계정으로 회원가입
           </button>
         </form>
@@ -117,4 +117,4 @@ function PreSignupPage() {
   );
 }
 
-export default PreSignupPage;
+export default PreSignupPageSeller;

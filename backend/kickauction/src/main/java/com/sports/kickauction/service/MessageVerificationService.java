@@ -28,7 +28,7 @@ public class MessageVerificationService {
         message.setText(content);        // 메시지 
 
         try {
-           messageService.send(message); // ✅ 핵심 메서드
+           messageService.send(message); //문자 수신 메서드
         } catch (Exception e) {
             throw new RuntimeException("SMS 전송 실패: " + e.getMessage());
         }

@@ -2,6 +2,7 @@ package com.sports.kickauction.dto;
 
 import lombok.*;
 
+@Data
 @Getter
 @Setter
 @Builder

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import "../login/LoginPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
@@ -15,6 +15,16 @@ function LoginPage() {
   const [passwd, setPasswd] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [remember, setRemember] = useState(false); //이메일기억
+
+  // 주석: 이메일 기억하기
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setUserid(savedEmail);
+      setRemember(true);
+    }
+  }, []);
 
   // 주석: 로그인 버튼 클릭 시 Spring Security POST요청
   const handleLogin = async (e) => {
@@ -39,6 +49,12 @@ function LoginPage() {
         throw new Error("로그인 실패");
       }
 
+      if (remember) {
+        localStorage.setItem("rememberedEmail", userid);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+
       navigate("/");
     } catch (err) {
       setError("이메일 또는 비밀번호가 계정 정보와 일치하지 않습니다.");
@@ -58,7 +74,9 @@ function LoginPage() {
   return (
     <div className="login_container">
       <div className="login_smallcontainer">
-        <img src={logo} alt="킥옥션 로고" className="login_logo" />
+        <Link to="/">
+          <img src={logo} alt="킥옥션 로고" className="login_logo" />
+        </Link>
 
         <form className="form_1" onSubmit={handleLogin}>
           {/* 이메일 입력 */}
@@ -75,7 +93,7 @@ function LoginPage() {
           {/* 이메일 기억 */}
           <div className="login_remember">
             <label>
-              <input type="checkbox" />
+              <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
               이메일 기억하기
             </label>
           </div>

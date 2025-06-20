@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useRef } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import "../login/SignupPage.css";
 import logo from "../../assets/img/kickauction_logo.png";
@@ -21,6 +21,7 @@ function SignupPage() {
   const [isModalOpen, setIsModalOpen] = useState(false); //문자인증 모달
   const [authCode, setAuthCode] = useState(""); //문자인증 검증값
   const [timer, setTimer] = useState(180); //문자인증 제한시간
+  const timerRef = useRef(null); //문자인증 제한시간 추적-초기화
   const [isVerified, setIsVerified] = useState(false); //문자인증 통과여부
   const [verifyStatus, setVerifyStatus] = useState(null); //문자인증 에러
 
@@ -109,12 +110,13 @@ function SignupPage() {
   //주석: 문자인증 타이머
   const startTimer = () => {
     let count = 180;
-    const interval = setInterval(() => {
+    timerRef.current = setInterval(() => {
       count -= 1;
       setTimer(count);
 
       if (count <= 0) {
-        clearInterval(interval);
+        clearInterval(timerRef.current);
+        timerRef.current = null;
         setIsModalOpen(false);
         alert("인증 시간이 만료되었습니다.");
       }
@@ -123,6 +125,15 @@ function SignupPage() {
 
   // 주석: 문자인증
   const handleSendSMS = async () => {
+    // 주석: 인증x인 상태에서만 가능
+    if (verifyStatus === "success") {
+      alert("이미 인증에 성공하셨습니다.");
+      return;
+    }
+
+    clearInterval(timerRef.current); //주석:이전 타이머 제거
+    timerRef.current = null;
+
     const cleanedPhone = phone.replace(/-/g, ""); // 주석: 하이픈(-) 제거
 
     if (!/^010\d{8}$/.test(cleanedPhone)) {
@@ -131,9 +142,13 @@ function SignupPage() {
     }
 
     try {
-      const res = await axios.post("http://localhost:8080/api/sms/send", {
-        phone: cleanedPhone,
-      });
+      const res = await axios.post(
+        "http://localhost:8080/api/sms/send",
+        {
+          phone: cleanedPhone,
+        },
+        { withCredentials: true }
+      );
 
       if (res.status === 200) {
         setIsModalOpen(true);
@@ -150,13 +165,19 @@ function SignupPage() {
     const cleanPhone = phone.replace(/-/g, "");
 
     try {
-      const res = await axios.post("http://localhost:8080/api/sms/verify", {
-        phone: cleanPhone,
-        code: authCode,
-      });
+      const res = await axios.post(
+        "http://localhost:8080/api/sms/verify",
+        {
+          phone: cleanPhone,
+          code: authCode,
+        },
+        { withCredentials: true }
+      );
 
       if (res.status === 200) {
         alert("인증에 성공했습니다.");
+        clearInterval(timerRef.current);
+        timerRef.current = null;
         setIsVerified(true);
         setVerifyStatus("success");
         setIsModalOpen(false);
@@ -168,10 +189,22 @@ function SignupPage() {
     }
   };
 
+  //모달 닫기
+  const handleCloseModal = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setIsModalOpen(false);
+  };
+
   const handlePhoneChange = (e) => {
     const raw = e.target.value;
     const formatted = formatPhoneNumber(raw);
     setPhone(formatted);
+
+    setIsVerified(false);
+    setVerifyStatus(null);
   };
 
   // 주석: 회원가입 처리 (api/members/signup 매핑, 위의 모든 검증과정 통과해야 동작함)
@@ -222,7 +255,9 @@ function SignupPage() {
     <div className="signup_container">
       <div className="signup_smallcontainer">
         {/* 로고 */}
-        <img src={logo} alt="킥옥션 로고" className="signup_logo" />
+        <Link to="/">
+          <img src={logo} alt="킥옥션 로고" className="signup_logo" />
+        </Link>
         <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
 
         {/* 전환 버튼 */}
@@ -330,10 +365,10 @@ function SignupPage() {
                 <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className="auth_input" />
 
                 <div className="modal_buttons">
-                  <button className="modal_button" onClick={handleVerifySMS}>
+                  <button type="button" className="modal_button" onClick={handleVerifySMS}>
                     확인
                   </button>
-                  <button className="modal_button cancel" onClick={() => setIsModalOpen(false)}>
+                  <button type="button" className="modal_button cancel" onClick={handleCloseModal}>
                     닫기
                   </button>
                 </div>
