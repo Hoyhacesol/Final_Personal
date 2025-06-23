@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { getSellerRegisterInfo, getSellerRegistered } from "../../api/SellerApi";
+import "../../css/Sharesheet.css";
 import "../mypage/MyPage.css";
 
 const MyPage = () => {
@@ -38,50 +39,68 @@ const MyPage = () => {
 
       {/* 회원 정보 */}
       <section className="mypage_section">
-        <h3 className="section_title">· 회원정보</h3>
+        <h3 className="section_title">내 정보</h3>
 
         {/* 프사 */}
         <div className="profile_image_wrapper">
           <img key={user.profileimg} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}?t=${new Date().getTime()}`} alt="프로필 이미지" className="profile_image" />
         </div>
-
-        <p className="user_name">
-          <strong>{user.nickname}</strong> 님<br />
-          <span className="user_email">({user.user_id})</span>
-        </p>
-        <Link to="/updateinfo">
-          <button className="blue_btn">회원정보 수정</button>
-        </Link>
+        <div className="myinfo_wrapper">
+          <p className="user_name">
+            <strong>{user.nickname}</strong> 님<br />
+            <span className="user_email">({user.user_id})</span>
+          </p>
+          <Link to="/updateinfo">
+            <button className="update_button">회원정보 수정</button>
+          </Link>
+        </div>
       </section>
 
       {/* 견적 정보 */}
       <section className="mypage_section">
-        <h3 className="section_title">· 내 견적</h3>
-        <button className="blue_btn">진행 중 / 완료된 견적 보러가기</button>
+        <div className="myrequest_wrapper">
+          <h3 className="section_title">내 견적</h3>
+          <div className="request_info_container">
+            <div className="request_texts">
+              <p className="request_info">
+                현재 진행중 견적: <strong className="textcolor1">n</strong>개
+              </p>
+              <p className="request_info">
+                완료된 견적: <strong className="textcolor2">n</strong>개
+              </p>
+            </div>
+            <button className="request_info_button">견적 상세정보</button>
+          </div>
+        </div>
       </section>
 
       {/* 업체 정보 (SELLER 전용) */}
       {user?.role === "SELLER" && (
         <section className="mypage_section">
-          <h3 className="section_title">· 등록 업체 정보</h3>
+          <div className="mycomp_wrapper">
+            <h3 className="section_title">내 업체 정보</h3>
+            <div className="mycomp_container">
+              {company ? (
+                <div className="company_infos">
+                  <p className="company_name">
+                    {" "}
+                    <strong>{company.sname}</strong>
+                  </p>
+                  <p className="company_address"> {company.slocation}</p>
+                </div>
+              ) : (
+                <p className="company_infos">❔❔ 등록된 업체가 없습니다.</p>
+              )}
 
-          {company ? (
-            <div className="company_info">
-              <span>· {company.sname}</span>
-              <span>· {company.slocation}</span>
+              {isRegistered ? (
+                <button className="comp_info_button">업체정보 수정</button>
+              ) : (
+                <button className="comp_info_button2" disabled>
+                  수정 전 <br></br>업체소개 작성 필요
+                </button>
+              )}
             </div>
-          ) : (
-            <p className="company_info">등록된 업체가 없습니다.</p>
-          )}
-
-          {/* 수정 버튼 */}
-          {isRegistered ? (
-            <button className="blue_btn">업체정보 수정</button>
-          ) : (
-            <button className="blue_btn disabled_btn" disabled>
-              업체정보 수정은 업체소개 작성 이후에 가능합니다
-            </button>
-          )}
+          </div>
         </section>
       )}
     </div>

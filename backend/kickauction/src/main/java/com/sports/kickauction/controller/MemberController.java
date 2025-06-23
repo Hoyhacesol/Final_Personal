@@ -20,7 +20,6 @@ import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.service.MemberService;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController

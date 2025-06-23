@@ -1,14 +1,15 @@
 .mypage_container {
   max-width: 500px;
   margin: 2rem auto;
-  background: rgb(233, 231, 231);
+  background: rgb(230, 230, 230);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .mypage_title {
-  font-size: 1.5rem;
+  font-family: "PaperlogyMD";
+  font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 2rem;
 }
@@ -19,40 +20,195 @@
 
 .section_title {
   color: #18a89b;
-  margin-bottom: 0.75rem;
+  font-family: "NotoSansRG";
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
   font-weight: 600;
 }
+
+/* 내 정보 영역 */
 
 .profile_image {
   width: 200px;
   height: 200px;
   border-radius: 12px;
   border: none;
+  margin-bottom: 1rem;
 }
 
+.myinfo_wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .user_name {
+  font-family: "PaperlogyMD";
   font-size: 1.25rem;
   margin-bottom: 1rem;
+  float: left;
+}
+.user_email {
+  font-family: "NotoSansSB";
+  font-size: 1.25rem;
 }
 
-.company_info {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.blue_btn {
+.update_button {
   background-color: #007bff;
-  color: white;
+  color: rgb(247, 255, 255);
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1rem;
   border-radius: 8px;
-  font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.4s ease;
+  font-family: "NotoSansSB";
+  font-size: 1rem;
+  float: right;
+}
+.update_button:hover {
+  background-color: #0059b3;
 }
 
-.blue_btn:hover {
+/* 견적 영역  */
+
+.myrequest_wrapper {
+  margin-bottom: 2rem;
+}
+
+.request_info_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.request_texts {
+  display: flex;
+  flex-direction: column;
+  font-family: "PaperlogyMD";
+}
+
+.request_info {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0.2rem 0;
+}
+
+.textcolor1 {
+  color: #18a89b;
+}
+.textcolor2 {
+  color: rgba(34, 139, 131, 0.671);
+}
+
+.request_info_button {
+  background-color: #007bff;
+  color: rgb(247, 255, 255);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.4s ease;
+  font-family: "NotoSansSB";
+  font-size: 1rem;
+  float: right;
+}
+
+.request_info_button:hover {
   background-color: #0059b3;
+}
+
+/* 내 업체 영역  */
+
+.mycomp_wrapper {
+  margin-bottom: 2rem;
+}
+
+.mycomp_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.company_infos {
+  display: flex;
+  flex-direction: column;
+}
+
+.company_name {
+  font-family: "NotoSansSB";
+  font-size: 1.65rem;
+  margin: 0.2rem 0;
+}
+.company_address {
+  font-family: "PaperlogyMD";
+  font-size: 1.1rem;
+  margin: 0.2rem 0;
+}
+
+.comp_info_button {
+  background-color: #007bff;
+  color: rgb(247, 255, 255);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.4s ease;
+  font-family: "NotoSansSB";
+  font-size: 1rem;
+  float: right;
+}
+
+.request_info_button:hover {
+  background-color: #0059b3;
+}
+
+.comp_info_button2 {
+  background-color: #a8a8a8;
+  color: rgb(90, 90, 90);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  transition: background 0.4s ease;
+  font-family: "NotoSansSB";
+  font-size: 0.75rem;
+  float: right;
+}
+
+/* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
+@media (max-width: 479px) {
+  .mypage_container {
+    margin-top: 5rem;
+    max-width: 21rem;
+    padding: 1rem 1rem;
+  }
+
+  .update_button {
+    padding: 0.3rem 0.5rem;
+    font-family: "NotoSansSB";
+    font-size: 1rem;
+  }
+
+  .request_info {
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0.2rem 0;
+  }
+
+  .request_info_button {
+    padding: 0.3rem 0.5rem;
+    font-family: "NotoSansSB";
+    font-size: 1rem;
+  }
+
+  .comp_info_button {
+    padding: 0.3rem 0.5rem;
+    font-family: "NotoSansSB";
+    font-size: 1rem;
+  }
+
+  .comp_info_button2 {
+    padding: 1rem 1rem;
+    font-size: 0.75rem;
+  }
 }
