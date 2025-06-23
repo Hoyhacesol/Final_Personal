@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../login/SignupPage.css";
-import logo from "../../assets/img/kickauction_logo.png";
+import logo from "../../assets/img/logo_v2.png";
 import socialg from "../../assets/img/social_g.png";
 import socialk from "../../assets/img/social_k.png";
 
@@ -66,9 +66,10 @@ function PreSignupPageSeller() {
         <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>업체 회원가입</h2>
 
         {/* 전환 버튼 */}
-        <button type="button" className="change_touser" onClick={() => navigate("/presignup")}>
-          ↩ ㅤ일반 유저로 가입하기
-        </button>
+        <div className="change_touser">
+          <Link to="/presignup">＃ 장비 대여·판매 업체로 가입하시겠어요?</Link>
+        </div>
+
         <form className="signup_form" onSubmit={preNext}>
           {/* 주석: 이메일 */}
           <div className="signup_input_container">

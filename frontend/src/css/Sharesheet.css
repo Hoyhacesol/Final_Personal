@@ -1,0 +1,16 @@
+/* 폰트 */
+
+@font-face {
+  font-family: "NotoSansRG";
+  src: url(../assets/fonts/NotoSans_RG.ttf);
+}
+
+@font-face {
+  font-family: "NotoSansSB";
+  src: url(../assets/fonts/NotoSans_SB.ttf);
+}
+
+@font-face {
+  font-family: "PaperlogyMD";
+  src: url(../assets/fonts/Paperlogy_MD.ttf);
+}

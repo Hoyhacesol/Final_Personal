@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
-import { checkAuth } from "../../api/authApi"; // 로그인 후 사용자 정보 조회용 API
+import { checkAuth } from "../../api/authApi";
 import "../login/LoginPage.css";
-import logo from "../../assets/img/kickauction_logo.png";
+import "../../css/Sharesheet.css";
+import logo from "../../assets/img/logo_v2.png";
 import emailicon from "../../assets/img/icon_email.svg";
 import pwicon from "../../assets/img/icon_password.svg";
 import socialg from "../../assets/img/social_g.png";
@@ -53,11 +54,9 @@ function LoginPage() {
         throw new Error("로그인 실패");
       }
 
-      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
+      // 주석: 로그인 성공 후 내 정보 요청
       const userData = await checkAuth();
 
-      // 로그인 성공 후 → 프론트에서 로그인 상태를 인식하기 위해 서버에 내 정보 요청
-      // 로그인 후 업체목록페이지에서 새로고침해야 권한이 적용(업체 등록 버튼이 보임)되길래 추가함
       setUser(userData);
       console.log("userData:", userData);
 
@@ -103,10 +102,11 @@ function LoginPage() {
           </div>
 
           {/* 이메일 기억 */}
-          <div className="login_remember">
-            <label>
+          <div className="login_checkbox">
+            <label className="l_checkbox">
               <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-              이메일 기억하기
+              <span className="checkmark" />
+              <span className="l_text">이메일 기억하기</span>
             </label>
           </div>
 
@@ -121,13 +121,17 @@ function LoginPage() {
 
         {/* 소셜 로그인 아이콘 */}
         <div className="social_login_icons">
-          <img src={socialk} alt="소셜 아이콘 카카오" onClick={handleKakaoSignup}></img>
-          <img src={socialg} alt="소셜 아이콘 구글" onClick={handleGoogleSignup}></img>
+          <div className="social_icon_wrapper" onClick={handleKakaoSignup}>
+            <img src={socialk} alt="소셜 아이콘 카카오" />
+          </div>
+          <div className="social_icon_wrapper" onClick={handleGoogleSignup}>
+            <img src={socialg} alt="소셜 아이콘 구글" />
+          </div>
         </div>
 
         {/* 회원정보 찾기 / 회원가입 */}
         <div className="login_help">
-          <Link to="/findid">아이디/비밀번호 찾기</Link>
+          <Link to="/findinfo">아이디/비밀번호 찾기</Link>
           <span>|</span>
           <Link to="/presignup">킥옥션 회원가입</Link>
         </div>

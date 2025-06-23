@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.service.MemberService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -87,7 +89,7 @@ public class MemberController {
     memberService.registerSeller(member, dto.getSname(), dto.getSlocation());
 
     return ResponseEntity.ok("환영합니다! 회원가입이 완료되었습니다.");
-}
+    }
 
     // 매핑: 프로필사진 업로드
     @PostMapping("/upload_profile")
@@ -101,7 +103,7 @@ public class MemberController {
 
     try {
         // 파일폴더
-        String uploadDir = "C:/uploads/";
+        String uploadDir = "C:/upload/";
 
         // 파일명:
         String originalName = file.getOriginalFilename();
@@ -125,5 +127,114 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 저장 실패: " + e.getMessage());
     }
 }
-    
+
+    // 매핑: 회원정보 업데이트
+    @PutMapping("/update")
+    public ResponseEntity<?> updateMember(
+        @RequestParam Long mno,
+        @RequestParam String userName,
+        @RequestParam String userPw,
+        @RequestParam String phone,
+        @RequestParam(required = false) MultipartFile profileimg,
+        @RequestParam(required = false) String remove
+    ) {
+        try {
+            Member existing = memberService.findById(mno);
+            if (existing == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원이 존재하지 않습니다.");
+            }
+            if (!existing.getUserName().equals(userName) && memberService.existsByUserName(userName)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 닉네임입니다.");
+            }
+            if (!existing.getPhone().equals(phone) && memberService.existsByPhone(phone)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("중복된 전화번호입니다.");
+            }
+
+            // 수정 적용
+            existing.setUserName(userName);
+            existing.setPhone(phone);
+            existing.setUserPw(userPw); 
+
+            // 파일 업로드 경로
+                String uploadDir = "C:/upload/";
+                String currentImg = existing.getProfileimg();
+
+            // 1) 프로필 이미지 삭제 요청 처리
+                if ("true".equals(remove)) {
+                    if (currentImg != null && !currentImg.equals("baseprofile.png")) {
+                        File oldFile = new File(uploadDir + currentImg);
+                        if (oldFile.exists()) oldFile.delete();
+                    }
+                    existing.setProfileimg("baseprofile.png");
+                }
+
+                // 2) 새 프로필 이미지 업로드 처리
+                if (profileimg != null && !profileimg.isEmpty()) {
+                    // 기존 이미지 삭제
+                    if (currentImg != null && !currentImg.equals("baseprofile.png")) {
+                        File oldFile = new File(uploadDir + currentImg);
+                        if (oldFile.exists()) oldFile.delete();
+                    }
+
+                    String ext = profileimg.getOriginalFilename()
+                            .substring(profileimg.getOriginalFilename().lastIndexOf("."));
+                    String newFileName = UUID.randomUUID() + ext;
+                    File dest = new File(uploadDir + newFileName);
+                    profileimg.transferTo(dest);
+
+                    existing.setProfileimg(newFileName);
+                }
+
+            memberService.updateMember(existing);
+            return ResponseEntity.ok(Map.of("filename", existing.getProfileimg()));
+
+        } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 처리 중 오류 발생");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
+            }
+    }
+
+    // 매핑: 전화번호 입력받아 이메일 찾기
+
+    @GetMapping("/find-id")
+    public ResponseEntity<?> findEmailByPhone(@RequestParam String phone) {
+        Member member = memberService.findByPhone(phone);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 번호로 저장된 회원 데이터를 찾을 수 없어요😥");
+        }
+        // 이메일 반환(마스킹처리됨)
+        String maskedEmail = maskEmail(member.getUserId());
+        return ResponseEntity.ok(Map.of("email", maskedEmail));
+    }
+
+    // 이메일 마스킹
+    private String maskEmail(String email) {
+    int atIndex = email.indexOf("@");
+    if (atIndex <= 2) {
+        return "*".repeat(atIndex) + email.substring(atIndex);
+    }
+    return "**" + email.substring(2);
+}
+
+// 매핑: 이메일, 전화번호 인증 후 비밀번호 재설정
+@PutMapping("/reset_password")
+public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+    String email = request.get("email");
+    String phone = request.get("phone").replaceAll("-", ""); 
+    String newPw = request.get("newPw");
+
+    Member member = memberService.findByUserIdAndPhone(email, phone);
+    if (member == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 정보로 가입된 사용자를 찾을 수 없습니다.");
+    }
+
+    member.setUserPw(newPw); 
+    memberService.updateMember(member);
+
+    return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+}
+
 }

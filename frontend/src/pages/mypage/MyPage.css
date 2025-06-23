@@ -1,0 +1,58 @@
+.mypage_container {
+  max-width: 500px;
+  margin: 2rem auto;
+  background: rgb(233, 231, 231);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.mypage_title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.mypage_section {
+  margin-bottom: 2rem;
+}
+
+.section_title {
+  color: #18a89b;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.profile_image {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  border: none;
+}
+
+.user_name {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.company_info {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.blue_btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.blue_btn:hover {
+  background-color: #0059b3;
+}

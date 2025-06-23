@@ -73,6 +73,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     .userName(finalNickname)
                     .social(0) // 주석:0 =소셜
                     .role("USER")
+                    .profileimg("baseprofile.png")
                     .build();
                 return memberRepository.save(newMember);
             });

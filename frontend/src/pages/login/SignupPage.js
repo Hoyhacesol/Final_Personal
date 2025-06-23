@@ -261,9 +261,9 @@ function SignupPage() {
         <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
 
         {/* 전환 버튼 */}
-        <button type="button" className="change_toseller" onClick={() => navigate("/presignups")}>
-          ↩ ㅤ업체 가입하기
-        </button>
+        <div className="change_toseller">
+          <Link to="/presignupseller">＃ 장비 대여·판매 업체로 가입하시겠어요?</Link>
+        </div>
 
         <form className="signup_form" onSubmit={handleSubmit}>
           {/* 이메일 */}

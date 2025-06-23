@@ -26,8 +26,8 @@ body {
 }
 
 .nav_logo img {
-  height: 40px;
-  margin-right: 10px;
+  height: 65px;
+  margin-left: 3rem;
 }
 
 /* 주석: 탭 메뉴 관련 */
@@ -47,8 +47,8 @@ body {
   text-decoration: none;
   color: black;
   padding-bottom: 6px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 1.18rem;
+  font-family: "NotoSansSB";
+  font-size: 1.22rem;
   font-weight: 500;
   margin-left: 2.56rem;
   transition: color 0.3s ease;
@@ -90,6 +90,7 @@ body {
   border: 1px solid #ccc;
   background-color: #f9f9f9;
   color: #333;
+  font-family: "NotoSansSB";
 }
 
 /* 주석: 로그인 시 드롭다운 메뉴 관련 스타일 */
@@ -224,6 +225,7 @@ body {
   color: azure;
   margin: 0.6rem auto;
   line-height: 1.75;
+  font-family: "NotoSansRG";
 }
 
 .sidebar_buttons {
@@ -236,7 +238,7 @@ body {
   width: 50%;
   padding: 0.35rem 0.25rem;
   border-radius: 8px;
-  font-weight: 600;
+  font-family: "NotoSansSB";
   border: 1.5px solid #444;
   background-color: #ffffff;
   color: #222;
@@ -283,6 +285,7 @@ body {
   padding-left: 4px;
   transition: all 0.3s ease;
   text-decoration: none;
+  font-family: "NotoSansRG";
 }
 
 .sidebar nav a::before {
@@ -353,7 +356,7 @@ body {
     transform: translateX(-50%);
   }
   .mobile_logo {
-    width: 170px;
+    width: 120px;
     height: auto;
     display: block;
   }

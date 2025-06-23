@@ -1,0 +1,166 @@
+.findinfo_container {
+  width: 100%;
+  max-width: 400px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.findinfo_container h2 {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.tab_menu {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ccc;
+  width: 100%;
+}
+
+.tab_menu button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: #777;
+  position: relative;
+  z-index: 1;
+}
+
+.tab_menu button.active {
+  color: #00bcd4;
+}
+
+.active_line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  height: 2px;
+  background-color: #00bcd4;
+  transition: transform 0.3s ease;
+}
+
+.tab_content {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.tab_content.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.input_group {
+  margin-bottom: 1.5rem;
+}
+
+.input_group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.input_group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.input_row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input_row input {
+  flex: 1;
+}
+
+.input_row button {
+  background: #333;
+  color: white;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.main_btn {
+  width: 100%;
+  background: #333;
+  color: white;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal_container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal_container h3 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.modal_container input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.modal_container button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.error {
+  font-size: 0.85rem;
+  color: red;
+  margin-top: -0.75rem;
+  margin-bottom: 1rem;
+}

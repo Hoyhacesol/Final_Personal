@@ -20,7 +20,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
-
+    
     // 주석: 신규 회원 등록 register()
     @Override
     public Member register(Member member) {
@@ -49,6 +49,7 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsByPhone(phone);
     }
 
+    // 주석: 프로필 이미지 업로드
     @Override
     public boolean updateProfileImg(Long mno, String newFileName) {
         Optional<Member> opt = memberRepository.findById(mno);
@@ -84,4 +85,31 @@ public class MemberServiceImpl implements MemberService {
         sellerRepository.save(seller);
     }
     
+    @Override
+    public Member findById(Long mno) {
+        return memberRepository.findById(mno).orElse(null);
+    }
+
+    // 주석: 회원정보 업데이트
+    @Override
+    public void updateMember(Member member) {
+
+        // 주석:: 비번암호화
+    String encodedPw = passwordEncoder.encode(member.getUserPw());
+    member.setUserPw(encodedPw);
+        // 주석:: 저장
+    memberRepository.save(member); 
+    }
+
+    // 주석: 전화번호로 이메일 찾기
+    @Override
+    public Member findByPhone(String phone) {
+        return memberRepository.findByPhone(phone).orElse(null);
+    }
+
+    // 주석: 전화번호+이메일로 비밀번호 재설정
+    @Override
+    public Member findByUserIdAndPhone(String email, String phone) {
+        return memberRepository.findByUserIdAndPhone(email, phone).orElse(null);
+    }
 }   

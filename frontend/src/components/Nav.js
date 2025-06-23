@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/Authcontext";
 import "./Nav.css";
-import logo from "../assets/img/kickauction_logo.png";
-import logo2 from "../assets/img/kickauction_logo.png";
+import "../css/Sharesheet.css";
+// import logo from "../assets/img/kickauction_logo.png";
+import logo2 from "../assets/img/logo_v2.png";
 
 const Nav = () => {
   const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
+
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -25,6 +27,7 @@ const Nav = () => {
         method: "POST",
         credentials: "include",
       });
+
       //주석:: 로그아웃 후 이동위치
       setUser(null);
       navigate(location.pathname);
@@ -43,7 +46,7 @@ const Nav = () => {
       <nav className="nav" id="header">
         {/* 로고 영역 */}
         <Link to="/" className="nav_logo">
-          <img src={logo} alt="킥옥션 로고" />
+          <img src={logo2} alt="킥옥션 로고" />
         </Link>
 
         {/* 메뉴 탭 영역 */}
@@ -90,7 +93,7 @@ const Nav = () => {
                   최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
                 </p>
                 <div className="sidebar_buttons">
-                  <Link to="/mypage" className="dropdown_btn">
+                  <Link to="/mypage" className="dropdown_btn" onClick={() => setDropdownOpen(false)}>
                     마이페이지
                   </Link>
                   <button onClick={handleLogout} className="dropdown_btn">
