@@ -111,7 +111,7 @@
 
 .change_touser a {
   font-size: 0.9rem;
-  color: #25774e;
+  color: #6532f0;
   text-decoration: none;
   font-weight: 500;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -192,6 +192,20 @@
 .pre_signup_button {
   width: 50%;
   background: linear-gradient(90deg, #4ba9af, #3dbbc4);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 0.9rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  margin: 1rem auto;
+}
+
+.pre_signup_button_seller {
+  width: 50%;
+  background: linear-gradient(90deg, #1154ae, #1166d4);
   color: white;
   font-weight: bold;
   border: none;
@@ -343,5 +357,13 @@
     margin-top: 1rem;
     cursor: pointer;
     margin: 1rem auto;
+  }
+
+  .signup_title {
+    font-family: "PaperlogyMD";
+    margin-bottom: 0.75rem;
+    font-size: 1.45rem;
+    text-align: center;
+    font-weight: 500;
   }
 }

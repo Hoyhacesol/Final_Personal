@@ -2,7 +2,8 @@ import React, { useState, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import "../login/SignupPage.css";
-import logo from "../../assets/img/kickauction_logo.png";
+import "../../css/Sharesheet.css";
+import logo from "../../assets/img/logo_v2.png";
 
 function SignupPage() {
   const location = useLocation();
@@ -258,7 +259,7 @@ function SignupPage() {
         <Link to="/">
           <img src={logo} alt="킥옥션 로고" className="signup_logo" />
         </Link>
-        <h2 style={{ textAlign: "center", marginBottom: "0.75rem", fontSize: "1.25rem", fontWeight: "500" }}>일반 유저 회원가입</h2>
+        <h2 className="signup_title">일반 유저 회원가입</h2>
 
         {/* 전환 버튼 */}
         <div className="change_toseller">
