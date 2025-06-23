@@ -1,17 +1,44 @@
+body {
+  background-color: #f8f8f8;
+}
 .mypage_container {
   max-width: 500px;
   margin: 2rem auto;
-  background: rgb(230, 230, 230);
+  background: rgb(255, 255, 255);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.mypage_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.role_change_button {
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  background-color: #4b5563; /* gray-700 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.4s ease;
+  font-family: "NotoSansSB";
+}
+
+.role_change_button:hover {
+  background-color: #374151; /* gray-800 */
 }
 
 .mypage_title {
   font-family: "PaperlogyMD";
   font-size: 2.25rem;
   font-weight: 700;
-  margin-bottom: 2rem;
 }
 
 .mypage_section {
@@ -66,6 +93,29 @@
 }
 .update_button:hover {
   background-color: #0059b3;
+}
+
+.role_badge {
+  display: inline-block;
+  padding: 4.5px 8px;
+  font-size: 0.85rem;
+  color: white;
+  border-radius: 4px;
+  margin-left: 0.6rem;
+  vertical-align: middle;
+}
+
+.badge_user {
+  background-color: #5cfd9a;
+  color: black;
+}
+
+.badge_seller {
+  background-color: #c695ff;
+}
+
+.badge_admin {
+  background-color: #ff542a;
 }
 
 /* 견적 영역  */
@@ -135,6 +185,11 @@
   flex-direction: column;
 }
 
+.company_no {
+  font-family: "NotoSansSB";
+  font-size: 1.45rem;
+  margin: 0.2rem 0;
+}
 .company_name {
   font-family: "NotoSansSB";
   font-size: 1.65rem;
@@ -175,6 +230,75 @@
   float: right;
 }
 
+/* seller데이터 입력 모달 */
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal_container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modal_container h3 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.modal_container input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal_buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.modal_buttons button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal_buttons button:first-child {
+  background-color: #3ebaf0;
+  color: white;
+}
+
+.modal_buttons button:last-child {
+  background-color: #ccc;
+  color: #333;
+}
+
+.modal_buttons button:hover {
+  opacity: 0.9;
+}
+
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
 @media (max-width: 479px) {
   .mypage_container {
@@ -183,10 +307,16 @@
     padding: 1rem 1rem;
   }
 
+  .user_email {
+    max-width: 200px;
+    white-space: normal;
+    display: inline-block;
+    word-break: break-all;
+  }
   .update_button {
     padding: 0.3rem 0.5rem;
     font-family: "NotoSansSB";
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .request_info {
@@ -210,5 +340,11 @@
   .comp_info_button2 {
     padding: 1rem 1rem;
     font-size: 0.75rem;
+  }
+
+  .company_no {
+    font-family: "NotoSansSB";
+    font-size: 1rem;
+    margin: 0.2rem 0;
   }
 }

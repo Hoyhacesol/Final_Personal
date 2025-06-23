@@ -112,4 +112,53 @@ public class MemberServiceImpl implements MemberService {
     public Member findByUserIdAndPhone(String email, String phone) {
         return memberRepository.findByUserIdAndPhone(email, phone).orElse(null);
     }
+
+    // 주석: SELLER로 ROLE 변경 (기존데이터 X)
+    @Override
+    @Transactional
+    public void changeToSeller(Long mno, String sname, String slocation) {
+        Member member = memberRepository.findById(mno)
+        .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+
+        if (member == null) return;
+
+        member.setRole("SELLER");
+        memberRepository.save(member);
+        
+        
+        if (sellerRepository.existsById(mno)) {
+             return;
+        }
+
+        Seller seller = Seller.builder()
+        .member(member)
+        .sname(sname)
+        .slocation(slocation)
+        .build();
+
+        sellerRepository.save(seller);
+    }
+
+    // 주석: 기존 SELLER데이터 가진 회원 SELLER로 변경 시 
+    @Override
+    @Transactional
+    public void updateSeller(Long mno) {
+        Member member = memberRepository.findById(mno).orElse(null);
+        if (member != null) {
+            member.setRole("SELLER"); 
+            memberRepository.save(member);
+        }
+    }
+
+    // 주석: USER로 ROLE 변경
+    @Override
+    @Transactional
+    public void changeToUser(Long mno) {
+    Member member = memberRepository.findById(mno).orElse(null);
+    if (member == null) return;
+
+    member.setRole("USER");
+    memberRepository.save(member);
+    }
+
 }   

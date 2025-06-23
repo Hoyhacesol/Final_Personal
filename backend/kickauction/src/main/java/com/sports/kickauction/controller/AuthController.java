@@ -65,6 +65,7 @@ public class AuthController {
     response.put("role", member.getRole());
     response.put("mno", member.getMno());
     response.put("user_id", member.getUserId());
+    response.put("social", member.getSocial());
 
     // 주석: 소셜 사용자-조건부 파싱
     if (member.getProfileimg() != null) {

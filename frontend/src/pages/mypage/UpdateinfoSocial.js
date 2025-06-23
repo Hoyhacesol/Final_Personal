@@ -5,7 +5,7 @@ import axios from "axios";
 import "../mypage/Updateinfo.css";
 import "../../css/Sharesheet.css";
 
-function Updateinfo() {
+function UpdateinfoSocial() {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
@@ -15,11 +15,7 @@ function Updateinfo() {
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
   const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
   const [nicknameStatus, setNicknameStatus] = useState(null);
-  const [pwStatus, setPwStatus] = useState(null);
-  const [pw2Error, setPw2Error] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [timer, setTimer] = useState(180);
@@ -77,39 +73,6 @@ function Updateinfo() {
       }
     } catch {
       setNicknameStatus("error");
-    }
-  };
-
-  // 주석: 비밀번호 적합성 검사
-  const validatePassword = (pw) => {
-    const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+[\]{};':"\\|,.<>/?`~-]{4,15}$/;
-    return regex.test(pw);
-  };
-
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPassword(value);
-
-    if (value === "") {
-      setPwStatus(null);
-    } else if (validatePassword(value)) {
-      setPwStatus("valid");
-    } else {
-      setPwStatus("invalid");
-    }
-  };
-
-  // 주석: 비밀번호 일치 검사
-  const handleConfirmPwChange = (e) => {
-    const value = e.target.value;
-    setConfirmPw(value);
-
-    if (value === "") {
-      setPw2Error("");
-    } else if (value !== password) {
-      setPw2Error("비밀번호가 일치하지 않습니다.");
-    } else {
-      setPw2Error("✔ 비밀번호 일치");
     }
   };
 
@@ -232,13 +195,10 @@ function Updateinfo() {
 
     if (nickname !== user.nickname && nicknameStatus !== "valid") return alert("닉네임 중복확인을 해주세요.");
     if (phone !== user.phone && !isVerified) return alert("전화번호 인증을 완료해주세요.");
-    if (password && !validatePassword(password)) return alert("비밀번호 형식이 올바르지 않습니다.");
-    if (password && password !== confirmPw) return alert("비밀번호가 일치하지 않습니다.");
 
     const formData = new FormData();
     formData.append("mno", user.mno);
     formData.append("userName", nickname);
-    formData.append("userPw", password);
     formData.append("phone", phone);
 
     if (file) {
@@ -366,27 +326,6 @@ function Updateinfo() {
             </div>
           )}
 
-          {/* 비밀번호 & 비밀번호 확인     */}
-          <div className="signup_input_container">
-            <input type="password" className={`password_input input ${pwStatus}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
-          </div>
-
-          {pwStatus === "invalid" && <p className="error">❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
-          {pwStatus === "valid" && <p className="error password_ok">✔ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
-
-          <div className="signup_input_container">
-            <input
-              type="password"
-              className={`password_check_input input ${confirmPw && confirmPw === password ? "valid" : confirmPw && confirmPw !== password ? "invalid" : ""}`}
-              placeholder="비밀번호 재입력"
-              value={confirmPw}
-              onChange={handleConfirmPwChange}
-              required
-            />
-          </div>
-
-          {pw2Error && <p className={`password_check_message ${confirmPw === password ? "error pw2_ok" : "error"}`}>{pw2Error}</p>}
-
           <button type="submit" className="login_button">
             정보 수정하기
           </button>
@@ -396,4 +335,4 @@ function Updateinfo() {
   );
 }
 
-export default Updateinfo;
+export default UpdateinfoSocial;

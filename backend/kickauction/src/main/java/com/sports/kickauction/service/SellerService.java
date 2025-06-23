@@ -7,6 +7,7 @@ import com.sports.kickauction.dto.SellerRegisterDTO;
 import com.sports.kickauction.dto.SellerRegisterReadDTO;
 
 public interface SellerService {
+    boolean existsSeller(Long mno);
     SellerReadDTO getSellerByMno(Long mno);
     void registerSeller(Long mno, SellerRegisterDTO dto);
     SellerPageResponseDTO<SellerReadDTO> getSellerList(SellerPageRequestDTO sellerPageRequestDTO);

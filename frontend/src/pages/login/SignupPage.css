@@ -50,6 +50,7 @@
   width: 100%;
   box-sizing: border-box;
   padding-right: 100px;
+  font-family: "NotoSansRG";
 }
 
 .email_input_pre {
@@ -187,6 +188,7 @@
   margin-top: 1rem;
   cursor: pointer;
   margin: 1rem auto;
+  font-family: "NotoSansRG";
 }
 
 .pre_signup_button {
@@ -201,6 +203,7 @@
   margin-top: 1rem;
   cursor: pointer;
   margin: 1rem auto;
+  font-family: "NotoSansRG";
 }
 
 .pre_signup_button_seller {
@@ -227,7 +230,7 @@
   font-size: 0.95rem;
   margin: -1.1rem auto 0;
   min-height: 1.35rem;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "NotoSansRG";
   font-weight: 400;
 }
 

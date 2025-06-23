@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
@@ -45,12 +46,14 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             // .csrf(csrf -> csrf
             // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .cors(withDefaults())
+            // .cors(withDefaults())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             //api/display/** 안넣으면 이미지 문제생길시 허용이안됨 */
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/", "presignup", "presignups", "/signup", "signups", "/login", "/api/**",
-                                "/images/**","/api/display/**")
-                .permitAll()
+                                "/images/**","/api/display/**", "api/members/**")
+                .permitAll()    
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginProcessingUrl("/login") 
@@ -87,7 +90,7 @@ public class SecurityConfig {
         //이유: setAllowCredentials(true)와 함께 사용할 수 있기 때문
         config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
         // 허용 HTTP 메서드
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
         // 허용 헤더
         config.setAllowedHeaders(List.of("*"));
         // 쿠키 전송 허용하려면 true

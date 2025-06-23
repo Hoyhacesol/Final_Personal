@@ -17,9 +17,11 @@
   margin-top: 2rem;
 }
 
-.signup_logo {
-  height: 43px;
-  margin: 1rem auto 1.5rem;
+.signup_title {
+  font-family: "PaperlogyMD";
+  margin-bottom: 0.75rem;
+  font-size: 2.25rem;
+  font-weight: 700;
 }
 
 .signup_form {
@@ -28,6 +30,34 @@
   gap: 0.75rem;
 }
 
+/* 프사 변경 영역 */
+.img_input_container {
+  margin-bottom: 0.8rem;
+}
+.img_input_container img {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.img_buttons {
+  display: flex;
+  justify-content: space-evenly;
+  width: 180px;
+  margin-top: 0.75rem;
+}
+.img_buttons button {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 70px;
+  color: black;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  font-family: "NotoSansRG";
+}
+.img_buttons .delete_button {
+  background-color: rgba(255, 0, 0, 0.596);
+}
+
+/* 전체 input field */
 .signup_input_container {
   position: relative;
   margin-bottom: 0.8rem;
@@ -41,18 +71,9 @@
   width: 100%;
   box-sizing: border-box;
   padding-right: 100px;
+  font-family: "NotoSansRG";
 }
 
-.email_input_pre {
-  padding: 0.8rem;
-  font-size: 1rem;
-  border-bottom: 1px solid #ccc;
-  border-radius: 6px;
-  width: 60%;
-  box-sizing: border-box;
-  margin: 0 auto;
-  display: block;
-}
 /* 주석:: 중복확인  */
 .email_duplicheck,
 .nickname_duplicheck,
@@ -63,6 +84,7 @@
   transform: translateY(-50%);
   background-color: #000000;
   color: white;
+  font-family: "NotoSansRG";
   font-weight: 500;
   font-size: 0.7rem;
   border: none;
@@ -80,98 +102,10 @@
   color: azure;
 }
 
-/* 주석:: 일반 <->기업 전환 */
-.change_toseller {
-  width: 30%;
-  background-color: #007bff;
-  color: white;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  margin: 0 auto 2rem;
-}
-.change_touser {
-  width: 35%;
-  background-color: #007bff;
-  color: white;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  margin: 0 auto 2rem;
-}
-
-.change_toseller:hover {
-  background-color: #2077d3;
-}
-.change_touser:hover {
-  background-color: #2077d3;
-}
-
-/* 주석: 구분선 */
-.divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: #575656;
-  margin: 1.5rem 0;
-  font-size: 14px;
-}
-
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #ddd;
-  margin: 0 0.75rem;
-}
-
-/* 주석:: 소셜 회원가입 */
-.social_signup_k {
-  width: 85%;
-  background-color: #f6e05e;
-  color: #3c1e1e;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  padding: 0.8rem;
-  font-size: 1rem;
-  cursor: pointer;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-}
-
-.social_signup_g {
-  width: 85%;
-  background-color: #ffffff;
-  color: #333;
-  font-weight: 500;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 0.8rem;
-  font-size: 1rem;
-  cursor: pointer;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-}
-
-.socialicon {
-  width: 25px;
-  height: 25px;
-  margin-right: 1rem;
-}
-
 /* 주석:: submit버튼 */
 .login_button {
   width: 95%;
-  background-color: #4ba9af;
+  background: linear-gradient(90deg, #4ba9af, #3dbbc4);
   color: white;
   font-weight: bold;
   border: none;
@@ -181,33 +115,17 @@
   margin-top: 1rem;
   cursor: pointer;
   margin: 1rem auto;
-}
-
-.pre_signup_button {
-  width: 15%;
-  background-color: #4ba9af;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 0.9rem;
-  font-size: 1rem;
-  margin-top: 1rem;
-  cursor: pointer;
-  margin: 1rem auto;
-}
-
-.login_button:hover {
-  background-color: #4ba9af;
+  font-family: "NotoSansRG";
 }
 
 /* 주석: 에러 메시지 */
 .error {
   color: red;
-  font-size: 0.9rem;
-  font-weight: 400;
+  font-size: 0.95rem;
   margin: -1.1rem auto 0;
   min-height: 1.35rem;
+  font-family: "NotoSansRG";
+  font-weight: 400;
 }
 
 .nickname_ok {
@@ -221,19 +139,6 @@
 }
 .sms_ok {
   color: green;
-}
-
-/* 주석: 중복확인 후 로그인버튼 */
-.login_link_button {
-  background: none;
-  border: none;
-  border-radius: 5px;
-  background-color: #000000;
-  color: rgb(255, 255, 255);
-  font-size: 0.85rem;
-  margin: 0.25rem auto 0;
-  cursor: pointer;
-  width: 25%;
 }
 
 /* 주석: 문자인증 모달 디자인 */
@@ -298,4 +203,13 @@
 
 .modal_button.cancel {
   background-color: rgb(73, 27, 180);
+}
+
+/* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
+@media (max-width: 479px) {
+  .signup_smallcontainer {
+    margin-top: 5rem;
+    max-width: 21rem;
+    padding: 1rem 1rem;
+  }
 }
