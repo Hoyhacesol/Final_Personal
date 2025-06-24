@@ -237,11 +237,11 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.63);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .modal_container {
@@ -258,9 +258,12 @@ body {
   margin-bottom: 1rem;
   font-size: 1.25rem;
   color: #333;
+  font-family: "NotoSansRG";
+  font-weight: 700;
 }
 
 .modal_container input {
+  font-family: "NotoSansRG";
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
@@ -271,28 +274,25 @@ body {
 
 .modal_buttons {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .modal_buttons button {
-  flex: 1;
-  padding: 0.75rem 1rem;
+  width: 38%;
+  padding: 0.6rem 0;
+  font-weight: bold;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.modal_buttons button:first-child {
-  background-color: #3ebaf0;
+  background-color: #000000;
   color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 0.65rem;
 }
 
 .modal_buttons button:last-child {
-  background-color: #ccc;
-  color: #333;
+  background-color: rgb(73, 27, 180);
+  color: white;
 }
 
 .modal_buttons button:hover {

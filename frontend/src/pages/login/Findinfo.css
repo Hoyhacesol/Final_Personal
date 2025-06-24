@@ -1,18 +1,23 @@
+body {
+  background-color: #f8f8f8;
+}
+
 .findinfo_container {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   margin: 2rem auto;
   background: white;
   padding: 2rem;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   font-family: "Noto Sans KR", sans-serif;
 }
 
 .findinfo_container h2 {
+  font-family: "NotoSansRG";
   text-align: center;
-  font-size: 1.75rem;
-  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: 700;
   margin-bottom: 2rem;
 }
 
@@ -28,6 +33,7 @@
 .tab_menu button {
   flex: 1;
   padding: 0.75rem 1rem;
+  font-family: "NotoSansRG";
   font-size: 1rem;
   background: none;
   border: none;
@@ -39,7 +45,7 @@
 }
 
 .tab_menu button.active {
-  color: #00bcd4;
+  color: #01d5f1;
 }
 
 .active_line {
@@ -48,7 +54,7 @@
   left: 0;
   width: 50%;
   height: 2px;
-  background-color: #00bcd4;
+  background-color: #01d5f1;
   transition: transform 0.3s ease;
 }
 
@@ -69,6 +75,7 @@
 
 .input_group label {
   display: block;
+  font-family: "NotoSansRG";
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
 }
@@ -86,6 +93,17 @@
   gap: 0.5rem;
 }
 
+.newpw_input {
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 100px;
+  font-family: "NotoSansRG";
+}
+
 .input_row input {
   flex: 1;
 }
@@ -93,7 +111,7 @@
 .input_row button {
   background: #333;
   color: white;
-  padding: 0.75rem 1rem;
+  padding: 0 1rem;
   border: none;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -112,13 +130,14 @@
   margin-top: 1rem;
 }
 
+/* 문자 인증 모달 css */
 .modal_overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.63);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -128,7 +147,7 @@
 .modal_container {
   background: white;
   padding: 2rem;
-  border-radius: 10px;
+  border-radius: 8px;
   width: 90%;
   max-width: 400px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -137,17 +156,62 @@
 .modal_container h3 {
   margin-bottom: 1rem;
   text-align: center;
+  font-family: "NotoSansRG";
+  font-size: 1.25rem;
+}
+
+.modal_container p {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-family: "NotoSansRG";
 }
 
 .modal_container input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   margin-bottom: 1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
 
-.modal_container button {
+.timer {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #ff0c0c;
+}
+.auth_input {
+  width: 80%;
+  padding: 8px;
+  font-size: 1rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.modal_buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modal_button {
+  width: 25%;
+  padding: 0.6rem 0;
+  font-weight: bold;
+  border: none;
+  background-color: #222222;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 0.65rem;
+}
+
+.modal_button.cancel {
+  background-color: rgb(73, 27, 180);
+}
+
+.modal_ok {
+  margin-top: 1.35rem;
   width: 100%;
   padding: 0.75rem;
   background: #333;
@@ -159,8 +223,19 @@
 }
 
 .error {
-  font-size: 0.85rem;
   color: red;
-  margin-top: -0.75rem;
-  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  margin: -1.1rem auto 0;
+  min-height: 1.35rem;
+  font-family: "NotoSansRG";
+  font-weight: 400;
+}
+
+/* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
+@media (max-width: 479px) {
+  .findinfo_container {
+    margin-top: 10rem;
+    max-width: 21rem;
+    padding: 2rem 1rem;
+  }
 }

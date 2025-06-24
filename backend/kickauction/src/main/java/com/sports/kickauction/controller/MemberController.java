@@ -40,6 +40,15 @@ public class MemberController {
             boolean exists = memberService.existsByUserId(email);
             return ResponseEntity.ok(Map.of("exists", exists));
         }
+
+    // 매핑:이메일-전화번호 동시 체크
+    @GetMapping("/emaillink_check")
+    public ResponseEntity<?> checkEmailPhoneMatch(@RequestParam String email, @RequestParam String phone) {
+    Member member = memberService.findByUserIdAndPhone(email, phone);
+    boolean match = (member != null);
+    return ResponseEntity.ok(Map.of("match", match));
+    }
+    
     // 매핑:닉네임 체크
     @GetMapping("/nickname_check")
         public ResponseEntity<?> checkNickname(@RequestParam String nickname) {

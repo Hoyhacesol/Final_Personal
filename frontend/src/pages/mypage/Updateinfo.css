@@ -148,11 +148,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.63);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .modal_container {
@@ -180,7 +180,7 @@
 .timer {
   margin-top: 0.5rem;
   font-size: 0.9rem;
-  color: #555;
+  color: #fd0000;
 }
 
 .modal_buttons {

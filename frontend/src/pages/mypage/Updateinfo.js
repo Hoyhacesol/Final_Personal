@@ -219,6 +219,7 @@ function Updateinfo() {
     setIsModalOpen(false);
   };
 
+  // 핸드폰번호 입력 변화
   const handlePhoneChange = (e) => {
     const raw = e.target.value;
     const formatted = formatPhoneNumber(raw);
