@@ -67,10 +67,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Member member = memberRepository.findByUserId(finalEmail)
             .orElseGet(() -> {
                 // 주석: 미가입시 회원가입
+                    
                 Member newMember = Member.builder()
                     .userId(finalEmail)
                     .userPw("10101t4udsvxchcv4%#$")
                     .userName(finalNickname)
+                    .phone(socialPhone())
                     .social(0) // 주석:0 =소셜
                     .role("USER")
                     .profileimg("baseprofile.png")
@@ -92,5 +94,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             attributes,
             userNameAttributeName
         );
-    }   
+    } 
+        // 소셜 default phone값 생성
+            private String socialPhone() {
+                String phone;
+                do {
+                    phone = "t" + (int)(Math.random() * 1_000_000_000 + 100_000_000); 
+                } while (memberRepository.existsByPhone(phone));
+                return phone;
+            }  
 }

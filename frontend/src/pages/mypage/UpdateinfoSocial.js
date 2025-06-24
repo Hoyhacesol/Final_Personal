@@ -21,6 +21,7 @@ function UpdateinfoSocial() {
   const [timer, setTimer] = useState(180);
   const [isVerified, setIsVerified] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(null);
+  const [removeRequested, setRemoveRequested] = useState(false); //프로필사진 삭제 요청
   const timerRef = useRef(null);
 
   // ////////////////////////////////////////////////테스트용 인증무시 추후삭제필요///////////////////////////////////////////////////////////////////
@@ -60,6 +61,7 @@ function UpdateinfoSocial() {
   const handleDeletePhoto = () => {
     setFile(null);
     setPreview("/images/baseprofile.png");
+    setRemoveRequested(true);
   };
 
   // 주석: 닉네임 중복확인
@@ -203,8 +205,7 @@ function UpdateinfoSocial() {
 
     if (file) {
       formData.append("profileimg", file);
-    } else if (user.profileimg && user.profileimg !== "baseprofile.png") {
-      // 기존 사진 삭제
+    } else if (removeRequested) {
       formData.append("remove", "true");
     }
 

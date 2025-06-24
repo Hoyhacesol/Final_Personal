@@ -316,7 +316,8 @@ body {
   .update_button {
     padding: 0.3rem 0.5rem;
     font-family: "NotoSansSB";
-    font-size: 0.95rem;
+    font-size: 1rem;
+    white-space: nowrap;
   }
 
   .request_info {
@@ -338,7 +339,7 @@ body {
   }
 
   .comp_info_button2 {
-    padding: 1rem 1rem;
+    padding: 0.3rem 0.4rem;
     font-size: 0.75rem;
   }
 

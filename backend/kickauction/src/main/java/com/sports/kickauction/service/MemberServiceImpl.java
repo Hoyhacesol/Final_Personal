@@ -21,19 +21,6 @@ public class MemberServiceImpl implements MemberService {
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
     
-    // 주석: 신규 회원 등록 register()
-    @Override
-    public Member register(Member member) {
-        
-        // 주석:: 회원 비밀번호 암호화
-        String encodedPw = passwordEncoder.encode(member.getUserPw());
-        member.setUserPw(encodedPw);
-
-        // 주석:: 신규 일반 회원가입 유저 SOCIAL값 1로 설정( 소셜 = 0 일반 = 1)
-        member.setSocial(1);
-        return memberRepository.save(member);
-    }
-
     @Override
     public boolean existsByUserId(String userId) {
         return memberRepository.existsByUserId(userId);
@@ -49,19 +36,20 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsByPhone(phone);
     }
 
-    // 주석: 프로필 이미지 업로드
+    // 주석: 신규 일반 회원 등록 register()
     @Override
-    public boolean updateProfileImg(Long mno, String newFileName) {
-        Optional<Member> opt = memberRepository.findById(mno);
-        if (opt.isPresent()) {
-            Member member = opt.get();
-            member.setProfileimg(newFileName);
-            memberRepository.save(member);
-            return true;
-        }
-        return false;
+    public Member register(Member member) {
+        
+        // 주석:: 회원 비밀번호 암호화
+        String encodedPw = passwordEncoder.encode(member.getUserPw());
+        member.setUserPw(encodedPw);
+
+        // 주석:: 신규 일반 회원가입 유저 SOCIAL값 1로 설정( 소셜 = 0 일반 = 1)
+        member.setSocial(1);
+        return memberRepository.save(member);
     }
 
+    // 주석: 신규 판매자 등록
     @Override
     @Transactional
     public void registerSeller(Member member, String sname, String slocation) {
@@ -84,10 +72,24 @@ public class MemberServiceImpl implements MemberService {
 
         sellerRepository.save(seller);
     }
-    
+
     @Override
     public Member findById(Long mno) {
         return memberRepository.findById(mno).orElse(null);
+    }
+
+
+    // 주석: 프로필 이미지 업로드
+    @Override
+    public boolean updateProfileImg(Long mno, String newFileName) {
+        Optional<Member> opt = memberRepository.findById(mno);
+        if (opt.isPresent()) {
+            Member member = opt.get();
+            member.setProfileimg(newFileName);
+            memberRepository.save(member);
+            return true;
+        }
+        return false;
     }
 
     // 주석: 회원정보 업데이트

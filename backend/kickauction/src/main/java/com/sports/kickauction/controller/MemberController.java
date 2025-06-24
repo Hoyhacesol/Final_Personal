@@ -175,7 +175,7 @@ public class MemberController {
                 }
 
                 // 2) 새 프로필 이미지 업로드 처리
-                if (profileimg != null && !profileimg.isEmpty()) {
+                else if (profileimg != null && !profileimg.isEmpty()) {
                     // 기존 이미지 삭제
                     if (currentImg != null && !currentImg.equals("baseprofile.png")) {
                         File oldFile = new File(uploadDir + currentImg);
