@@ -299,6 +299,41 @@ body {
   opacity: 0.9;
 }
 
+/* 모달: social유저 블락 모달 */
+.slide_modal {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #111;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  animation: slideDownUp 3s ease-in-out;
+  z-index: 9999;
+}
+
+@keyframes slideDownUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50px);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50px);
+  }
+}
+
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
 @media (max-width: 479px) {
   .mypage_container {

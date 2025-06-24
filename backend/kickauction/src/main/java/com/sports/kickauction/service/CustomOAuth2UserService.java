@@ -87,12 +87,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         .getUserNameAttributeName();
 
         Map<String, Object> customAttributes = new HashMap<>(attributes);
-        customAttributes.put("user_name", member.getUserName()); 
+        customAttributes.put("user_id", member.getUserId()); 
 
         return new DefaultOAuth2User(
             Collections.singleton(new SimpleGrantedAuthority(member.getRole())),
-            attributes,
-            userNameAttributeName
+            customAttributes,
+            "user_id"
         );
     } 
         // 소셜 default phone값 생성

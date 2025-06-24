@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { getSellerRegisterInfo, getSellerRegistered } from "../../api/SellerApi";
@@ -7,6 +8,8 @@ import "../../css/Sharesheet.css";
 import "../mypage/MyPage.css";
 
 const MyPage = () => {
+  console.log("MyPage loaded");
+
   const { user } = useAuth();
   const [company, setCompany] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -15,6 +18,7 @@ const MyPage = () => {
   const [newSlocation, setNewSlocation] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     console.log("[MyPage] 현재 로그인된 사용자:", user);

@@ -36,7 +36,7 @@ function UpdateinfoSocial() {
     if (user) {
       setEmail(user.user_id || "");
       setNickname(user.nickname || "");
-      setPhone(user.phone || "");
+      setPhone(user.phone?.startsWith("t") ? "" : user.phone || "");
     }
   }, [user]);
 

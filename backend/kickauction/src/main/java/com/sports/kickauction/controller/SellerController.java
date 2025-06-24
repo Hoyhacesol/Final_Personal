@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.core.Authentication;
 
 import com.sports.kickauction.dto.SellerPageRequestDTO;
@@ -77,7 +78,16 @@ public class SellerController {
         return ResponseEntity.status(401).build();
     }
 
-    String userId = auth.getName(); // 로그인한 사용자의 userId (username)
+    String userId = null;
+
+    // 주석: OAuth2User 처리
+    if (auth.getPrincipal() instanceof OAuth2User) {
+        OAuth2User oauthUser = (OAuth2User) auth.getPrincipal();
+        userId = (String) oauthUser.getAttributes().get("user_id"); 
+    } else {
+        userId = auth.getName(); 
+    }
+
     Member member = memberRepository.findByUserId(userId)
         .orElseThrow(() -> new RuntimeException("회원 정보 없음"));
 
