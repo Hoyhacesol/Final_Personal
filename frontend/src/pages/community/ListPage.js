@@ -1,5 +1,4 @@
 // src/pages/community/ListPage.js
-
 import { useEffect, useState } from "react";
 import { getList } from "../../api/communityApi";
 import PageComponent from "./PageComponent";
@@ -53,17 +52,31 @@ const ListPage = () => {
 
   // 데이터 로드 및 URL 동기화
   useEffect(() => {
-    // URL 쿼리 업데이트
     setSearchParams({ page, size });
 
-    // API 호출
     getList({ page, size, type: searchType, keyword })
       .then((data) => {
-        setServerData(data);
+        setServerData({
+          dtoList: data.dtoList || [],
+          pageNumList: data.pageNumList || [],
+          pageRequestDTO: data.pageRequestDTO,
+          prev: data.prev,
+          next: data.next,
+          prevPage: data.prevPage,
+          nextPage: data.nextPage,
+          current: data.current,
+          totalPage: data.totalPage,
+        });
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error("리스트 로드 실패:", err);
+        setServerData((prev) => ({
+          ...prev,
+          dtoList: [],
+          pageNumList: [],
+        }));
+      });
 
-    // 최상단 스크롤
     window.scrollTo(0, 0);
   }, [page, size, searchType, keyword, setSearchParams]);
 
@@ -73,13 +86,12 @@ const ListPage = () => {
     } else if (
       window.confirm("글 작성을 위해 로그인해야 합니다. 로그인 페이지로 이동할까요?")
     ) {
-      navigate("/login");
+       navigate("/login", { state: { from: "/community/write" } });
     }
   };
 
   const handleSearch = () => {
     setPage(1);
-    // 검색조건 변경으로 useEffect가 발동합니다.
   };
 
   return (
@@ -120,12 +132,14 @@ const ListPage = () => {
           <div>조회수</div>
         </div>
 
-        {serverData.dtoList.map((item) => (
+        {(serverData.dtoList || []).map((item) => (
           <div
             key={item.pno}
             className="table_row"
             onClick={() =>
-              navigate(`/community/read/${item.pno}?page=${page}&size=${size}`)
+              navigate(
+                `/community/read/${item.pno}?page=${page}&size=${size}`
+              )
             }
           >
             <div className="post_number">{item.pno}</div>
@@ -139,6 +153,10 @@ const ListPage = () => {
             <div className="post_meta">{item.view}</div>
           </div>
         ))}
+
+        {serverData.dtoList.length === 0 && (
+          <div className="no_data">등록된 게시글이 없습니다.</div>
+        )}
       </div>
 
       <PageComponent

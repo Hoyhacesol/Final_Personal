@@ -2,8 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../contexts/Authcontext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../mypage/Updateinfo.css";
+import styles from "../mypage/Updateinfo.module.css";
 import "../../css/Sharesheet.css";
+import { BsFolderSymlink } from "react-icons/bs";
+import { FaTrash } from "react-icons/fa";
 
 function UpdateinfoSocial() {
   const { user, setUser } = useAuth();
@@ -16,6 +18,7 @@ function UpdateinfoSocial() {
   const [nickname, setNickname] = useState("");
   const [phone, setPhone] = useState("");
   const [nicknameStatus, setNicknameStatus] = useState(null);
+  const [resulterror, setResulterror] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [timer, setTimer] = useState(180);
@@ -159,7 +162,6 @@ function UpdateinfoSocial() {
       );
 
       if (res.status === 200) {
-        alert("인증에 성공했습니다.");
         clearInterval(timerRef.current);
         timerRef.current = null;
         setIsVerified(true);
@@ -195,8 +197,14 @@ function UpdateinfoSocial() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (nickname !== user.nickname && nicknameStatus !== "valid") return alert("닉네임 중복확인을 해주세요.");
-    if (phone !== user.phone && !isVerified) return alert("전화번호 인증을 완료해주세요.");
+    if (nickname !== user.nickname && nicknameStatus !== "valid") {
+      setResulterror("닉네임 중복체크가 완료되지 않았어요.");
+      return;
+    }
+    if (phone !== user.phone && !isVerified) {
+      setResulterror("전화번호 인증을 완료해주세요.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("mno", user.mno);
@@ -226,25 +234,28 @@ function UpdateinfoSocial() {
   };
 
   return (
-    <div className="signup_container">
-      <div className="signup_smallcontainer">
-        <h2 className="signup_title">회원정보 수정</h2>
-        <form className="signup_form" onSubmit={handleSubmit}>
+    <div className={styles.signup_container}>
+      <div className={styles.signup_smallcontainer}>
+        <h2 className={styles.signup_title}>회원정보 수정</h2>
+        <hr className={styles.title_divider} />
+        <form className={styles.signup_form} onSubmit={handleSubmit}>
           {/* 프로필사진 첨부 */}
-          <div className="img_input_container">
+          <div className={styles.img_input_container}>
             <img
               src={preview}
               alt="프로필 미리보기"
-              width="180"
+              width="220"
               onError={(e) => {
                 e.target.src = "/images/baseprofile.png";
               }}
             />
-            <div className="img_buttons">
+            <div className={styles.img_buttons}>
               <button type="button" onClick={() => fileInputRef.current.click()} style={{ marginRight: "0.5rem" }}>
+                <BsFolderSymlink className={styles.foldericon} />
                 사진 변경
               </button>
-              <button type="button" className="delete_button" onClick={handleDeletePhoto}>
+              <button type="button" className={styles.delete_button} onClick={handleDeletePhoto}>
+                <FaTrash className={styles.foldericon} />
                 사진 삭제
               </button>
             </div>
@@ -252,42 +263,43 @@ function UpdateinfoSocial() {
           </div>
 
           {/* 이메일 */}
-          <div className="signup_input_container">
-            <input type="email" className="input" value={email} readOnly />
+          <label>이메일</label>
+          <div className={styles.signup_input_container}>
+            <input type="email" className={styles.input} value={email} readOnly />
           </div>
 
           {/* 닉네임 */}
-          <div className="signup_input_container">
+          <label>닉네임</label>
+          <div className={styles.signup_input_container}>
             <input
               type="text"
-              className="input"
+              className={styles.input}
               placeholder="닉네임"
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
                 setNicknameStatus(null);
               }}
-              required
             />
-            <button type="button" className="nickname_duplicheck" onClick={handleNicknameCheck}>
+            <button type="button" className={styles.nickname_duplicheck} onClick={handleNicknameCheck}>
               중복확인
             </button>
           </div>
 
-          {nicknameStatus === "duplicate" && <p className="error">❌ 이미 입력된 닉네임이 존재합니다.</p>}
-          {nicknameStatus === "valid" && <p className="nickname_ok error">✔ 사용 가능한 닉네임입니다.</p>}
-          {nicknameStatus === "error" && <p className="error">⚠ 중복확인 중 오류가 발생했습니다.</p>}
+          {nicknameStatus === "duplicate" && <p className={styles.error}>❌ 이미 입력된 닉네임이 존재합니다.</p>}
+          {nicknameStatus === "valid" && <p className={`${styles.nickname_ok} ${styles.error}`}>✔ 사용 가능한 닉네임입니다.</p>}
+          {nicknameStatus === "error" && <p className={styles.error}>중복확인 중 오류가 발생했습니다.</p>}
 
           {/* 전화번호 수정 */}
-          <div className="signup_input_container">
+          <label>전화번호</label>
+          <div className={styles.signup_input_container}>
             <input
               type="tel"
-              className="input"
+              className={styles.input}
               placeholder="본인 명의의 전화번호만 가능합니다."
               value={phone}
               onChange={handlePhoneChange}
               maxLength={13}
-              required
               onKeyDown={(e) => {
                 if (e.key === "F7" && e.shiftKey) {
                   e.preventDefault();
@@ -295,31 +307,31 @@ function UpdateinfoSocial() {
                 }
               }}
             />
-            <button type="button" className="check_button" onClick={handleSendSMS}>
+            <button type="button" className={styles.check_button} onClick={handleSendSMS}>
               인증받기
             </button>
           </div>
 
-          {verifyStatus === "success" && <p className="error sms_ok">✔ 인증 완료</p>}
-          {verifyStatus === "fail" && <p className="error">❗ 인증되지 않음</p>}
+          {verifyStatus === "success" && <p className={`${styles.error} ${styles.sms_ok}`}>✔ 인증 완료</p>}
+          {verifyStatus === "fail" && <p className={styles.error}>❗ 인증되지 않음</p>}
 
           {/* 인증 모달 */}
           {isModalOpen && (
-            <div className="modal_overlay">
-              <div className="modal_container">
+            <div className={styles.modal_overlay}>
+              <div className={styles.modal_container}>
                 <h3>인증번호 확인</h3>
                 <p>입력하신 번호로 SMS 인증번호가 전송되었습니다.</p>
-                <p className="timer">
+                <p className={styles.timer}>
                   남은 시간: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
                 </p>
 
-                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className="auth_input" />
+                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className={styles.auth_input} />
 
-                <div className="modal_buttons">
-                  <button type="button" className="modal_button" onClick={handleVerifySMS}>
+                <div className={styles.modal_buttons}>
+                  <button type="button" className={styles.modal_button} onClick={handleVerifySMS}>
                     확인
                   </button>
-                  <button type="button" className="modal_button cancel" onClick={handleCloseModal}>
+                  <button type="button" className={`${styles.modal_button} ${styles.cancel}`} onClick={handleCloseModal}>
                     닫기
                   </button>
                 </div>
@@ -327,7 +339,12 @@ function UpdateinfoSocial() {
             </div>
           )}
 
-          <button type="submit" className="login_button">
+          {/* 결과 오류 및 제출 */}
+          <p key={resulterror} className={`${styles.login_error} ${resulterror ? styles.show : ""}`}>
+            {resulterror || " "}
+          </p>
+
+          <button type="submit" className={styles.login_button}>
             정보 수정하기
           </button>
         </form>

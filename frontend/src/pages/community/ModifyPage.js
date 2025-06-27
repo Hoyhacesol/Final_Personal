@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOne, updateOne } from "../../api/communityApi";
 import useCustomMove from "../../hooks/useCustomMove";
-import "../../css/ModifyPage.css";
+import "../../css/WritePage.css";
 
 const ModifyPage = () => {
   const { pno } = useParams();
@@ -47,73 +47,57 @@ const ModifyPage = () => {
       .catch(err => console.error("수정 실패:", err));
   };
 
+    // 버튼 비활성화 상태
+  const isDisabled = !community.ptitle.trim() || !community.pcontent.trim();
+
   return (
     <div id="modify_Page">
-      <h2>글 수정</h2>
-
-      <div>
-        <label>글 번호</label>
-        <span>{community.pno}</span>
-      </div>
-
-      <div>
-        <label>제목</label>
-        <input
-          type="text"
-          name="ptitle"
-          value={community.ptitle}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>작성자</label>
-        <input
-          type="text"
-          name="mno"
-          value={community.mno}
-          readOnly
-        />
-      </div>
-
-      <div>
-        <label>내용</label>
-        <textarea
-          name="pcontent"
-          value={community.pcontent}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div>
-        <label>이미지 URL</label>
-        <input
-          type="text"
-          name="pimage"
-          value={community.pimage}
-          onChange={handleChange}
-          placeholder="http://…"
-        />
-      </div>
-
-      <div>
-        <label>작성일</label>
-        <span>{community.pregdate}</span>
-      </div>
-
-      <div>
-        <label>조회수</label>
-        <span>{community.view}</span>
-      </div>
-
-      <div style={{ marginTop: "1rem" }}>
-        <button className="btn" type="button" onClick={moveToList}>
-          목록
-        </button>
-        <button className="btn" type="button" onClick={handleClickSave}>
+      <div className="write_header">
+        <h2>내 글 수정</h2>
+        <button
+          onClick={handleClickSave}
+          disabled={isDisabled}
+          style={isDisabled ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+        >
           저장
         </button>
       </div>
+
+      <div className="write_content">
+        <div>
+          <label htmlFor="ptitle">제목</label>
+          <input
+            type="text"
+            id="ptitle"
+            name="ptitle"
+            value={community.ptitle}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="pimageFile">이미지 업로드</label>
+          <input
+            id="pimageFile"
+            type="file"
+            name="pimageFile"
+            accept="image/*"
+            // value={community.pimage}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label htmlFor="pcontent">내용</label>
+          <textarea
+            id="pcontent"
+            name="pcontent"
+            value={community.pcontent}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+
+
     </div>
   );
 };

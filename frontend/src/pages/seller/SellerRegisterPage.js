@@ -1,16 +1,28 @@
 import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/Authcontext"
-import { postSellerRegister,getSellerRegistered,getSellerRegisterInfo} from "../../api/SellerApi";
-import { uploadImage,getImageUrl } from "../../api/UploadImageApi";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/Authcontext";
+import {
+  postSellerRegister,
+  getSellerRegistered,
+  getSellerRegisterInfo
+} from "../../api/SellerApi";
+import {
+  uploadImage,
+  getImageUrl,
+  removeImage,
+  removeImageOnExit
+} from "../../api/UploadImageApi";
 import "../../css/SellerRegisterPage.css";
 
 const SellerRegisterPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const fileInputRef = useRef();
   const introInputRef = useRef();
-  const { user,loading } = useAuth();
-  const [isRegistered, setIsRegistered] = useState(false); 
+  const registeredRef = useRef(false);
+  const deleteQueueRef = useRef([]);
+  const { user, loading } = useAuth();
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const [previewUrls, setPreviewUrls] = useState({ main: null, intros: [] });
   const [slideIndex, setSlideIndex] = useState(0);
@@ -27,176 +39,203 @@ const SellerRegisterPage = () => {
     slocation: "",
   });
 
- useEffect(() => {
-  if (loading) return; //로딩 중이면 아무 것도 하지 않음 
-  const init = async () => {
-    // user가 null이면 로그인 페이지로 이동
-    if (user === null) {
-       navigate("/login", { replace: true });
-      return;
-    }
+  useEffect(() => {
+    if (loading) return;
+    const init = async () => {
+      if (user === null) {
+        navigate("/login", { replace: true });
+        return;
+      }
+      if (user.role !== "SELLER") {
+        navigate("/error");
+        return;
+      }
+      const registered = await getSellerRegistered();
+      if (registered) {
+        navigate("/error");
+        return;
+      }
+      try {
+        const info = await getSellerRegisterInfo();
+        setBasicInfo(info);
+      } catch (e) {
+        console.error("기본 정보 로딩 실패", e);
+      }
+      setIsRegistered(true);
+    };
+    init();
+  }, [user, loading, navigate]);
 
-    // SELLER 권한이 아니면 에러 페이지로 이동
-    if (user.role !== "SELLER") {
-      navigate("/errorpage");
-      return;
-    }
+  useEffect(() => {
+    const cleanUpOnUnload = () => {
+      if (registeredRef.current) return;
+      deleteQueueRef.current.forEach(removeImageOnExit);
+    };
+    window.addEventListener("beforeunload", cleanUpOnUnload);
+    window.addEventListener("pagehide", cleanUpOnUnload);
 
-    // 이미 등록된 업체면 에러 페이지로 이동
-    const registered = await getSellerRegistered();
-    if (registered) {
-      navigate("/errorpage");
-      return;
-    }
+    return () => {
+      window.removeEventListener("beforeunload", cleanUpOnUnload);
+      window.removeEventListener("pagehide", cleanUpOnUnload);
+    };
+  }, []);
 
-    try {
-      const info = await getSellerRegisterInfo();
-      setBasicInfo(info);
-    } catch (e) {
-      console.error("기본 정보 로딩 실패", e);
-    }
+  useEffect(() => {
+    return () => {
+      if (!registeredRef.current) {
+        deleteQueueRef.current.forEach(removeImageOnExit);
+      }
+    };
+  }, [location.pathname]);
 
-    // 모든 조건 통과 시 등록 가능 상태로 설정
-    setIsRegistered(true);
-  };
-
-  init();
-}, [user, loading, navigate]);
 
   if (loading || !user || !isRegistered) return null;
 
   const handleMainChange = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    // MIME 타입으로 이미지인지 확인
-    if (!file.type.startsWith("image/")) {
+    if (!file || !file.type.startsWith("image/")) {
       alert("이미지 파일만 업로드할 수 있습니다.");
       fileInputRef.current.value = null;
       return;
     }
-
     if (file.size > 10 * 1024 * 1024) {
-    alert("이미지 용량이 맞지 않습니다.");
-    fileInputRef.current.value = null; 
-    return;
-  }
-
+      alert("이미지 용량이 맞지 않습니다.");
+      fileInputRef.current.value = null;
+      return;
+    }
     const uploaded = await uploadImage([file]);
     const path = uploaded[0].path;
-    const url = getImageUrl(path);
-
+    const url = uploaded[0].url;
+    deleteQueueRef.current.push(path);
     setFormData((prev) => ({ ...prev, simage: [path, ...prev.simage.slice(1)] }));
     setPreviewUrls((prev) => ({ ...prev, main: url }));
+    fileInputRef.current.value = null;
   };
 
   const handleIntroChange = async (e) => {
     const files = Array.from(e.target.files);
-    // 이미지 아닌 파일 있는지 확인
-    const invalid = files.find(file => !file.type.startsWith("image/"));
-    if (invalid) {
+    if (files.some(f => !f.type.startsWith("image/"))) {
       alert("모든 파일은 이미지여야 합니다.");
       introInputRef.current.value = null;
       return;
     }
-    
-    const oversized = files.find(file => file.size > 10 * 1024 * 1024);
-    if (oversized) {
+    if (files.some(f => f.size > 10 * 1024 * 1024)) {
       alert("이미지 용량이 맞지 않습니다.");
       return;
     }
     const uploaded = await uploadImage(files);
-    const paths = uploaded.map((u) => u.path);
-    const urls = uploaded.map((u) => u.url);
-
+    const paths = uploaded.map(u => u.path);
+    const urls = uploaded.map(u => u.url);
+    deleteQueueRef.current.push(...paths);
     setFormData((prev) => ({
       ...prev,
       simage: [prev.simage[0], ...prev.simage.slice(1), ...paths],
     }));
-
-    setPreviewUrls((prev) => ({
-      ...prev,
-      intros: [...prev.intros, ...urls],
-    }));
-
+    setPreviewUrls((prev) => ({ ...prev, intros: [...prev.intros, ...urls] }));
     introInputRef.current.value = null;
   };
 
   const handleSubmit = async () => {
-  if (submitting) return; // 중복 제출 방지
-
-  let { simage, introContent, info } = formData;
-
-  // 대표 이미지 없으면 기본값 설정
-  if (!simage.length || !simage[0]) {
-    simage = ["default/default.png", ...simage.slice(1)];
-  }
-
-  if (!info || !introContent) {
-    alert("업체 정보와 소개글을 작성해주세요.");
-    return;
-  }
-
-  try {
-    const sizes = await Promise.all(
-      simage.map(async (path) => {
-        const res = await fetch(getImageUrl(path));
-        const blob = await res.blob();
-        return blob.size;
-      })
-    );
-
-    const totalSize = sizes.reduce((a, b) => a + b, 0);
-    if (totalSize > 30 * 1024 * 1024) {
-      alert("전체 이미지 용량이 맞지 않습니다.");
+    if (submitting) return;
+    let { simage, introContent, info } = formData;
+    if (!simage.length || !simage[0]) {
+      simage = ["default/default.png", ...simage.slice(1)];
+    }
+    if (!info || !introContent) {
+      alert("업체 정보와 소개글을 작성해주세요.");
       return;
     }
-  } catch (err) {}
+    try {
+      const sizes = await Promise.all(
+        simage.map(async (path) => {
+          const res = await fetch(getImageUrl(path));
+          const blob = await res.blob();
+          return blob.size;
+        })
+      );
+      const totalSize = sizes.reduce((a, b) => a + b, 0);
+      if (totalSize > 30 * 1024 * 1024) {
+        alert("전체 이미지 용량이 맞지 않습니다.");
+        return;
+      }
+    } catch {}
 
-  const payload = { simage, info, introContent };
-
-  setSubmitting(true); // 등록 시작
-  try {
-    await postSellerRegister(payload);
-    alert("등록 완료");
-    navigate("/sellerlist");
-  } catch (err) {
-    console.error(err);
-    alert("등록 실패");
-  } finally {
-    setSubmitting(false); // 등록 종료
-  }
-};
+    const payload = { simage, info, introContent };
+    setSubmitting(true);
+    try {
+      await postSellerRegister(payload);
+      registeredRef.current = true;
+      deleteQueueRef.current = []; // 등록 완료 시 삭제 큐 비움
+      alert("등록 완료");
+      navigate("/sellerlist");
+    } catch (err) {
+      console.error(err);
+      alert("등록 실패");
+    } finally {
+      setSubmitting(false);
+    }
+  };
   
   const handleMainCancel = () => {
-    setFormData((prev) => ({ ...prev, simage: [] }));
-    setPreviewUrls((prev) => ({ ...prev, main: null }));
-    fileInputRef.current.value = null;
-  };
+  const mainPath = formData.simage[0];
 
-  const handleIntroCancel = () => {
-    setFormData((prev) => ({ ...prev, simage: [prev.simage[0]] }));
-    setPreviewUrls((prev) => ({ ...prev, intros: [] }));
-    introInputRef.current.value = null;
-  };
+  if (mainPath && mainPath !== "default/default.png") {
+    removeImageOnExit(mainPath); // 서버에서 삭제 요청
+    deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== mainPath); // 삭제 큐에서 제거
+  }
 
-  const handleIntroRemove = (index) => {
-    const updatedUrls = [...previewUrls.intros];
-    const updatedPaths = [...formData.simage.slice(1)];
+  setFormData(prev => ({ ...prev, simage: [] }));
+  setPreviewUrls(prev => ({ ...prev, main: null }));
+  fileInputRef.current.value = null;
+};
 
-    updatedUrls.splice(index, 1);
-    updatedPaths.splice(index, 1);
 
-    setPreviewUrls((prev) => ({
-      ...prev,
-      intros: updatedUrls,
-    }));
+  const handleIntroCancel = async () => {
+  const introPaths = formData.simage.slice(1); // 대표 이미지를 제외한 소개 이미지 경로들
 
-    setFormData((prev) => ({
-      ...prev,
-      simage: [prev.simage[0], ...updatedPaths],
-    }));
-  };
+  try {
+    await Promise.all(
+      introPaths
+        .filter(path => path !== "default/default.png") // 기본 이미지 제외
+        .map(path => {
+          removeImageOnExit(path); // 서버에서 삭제 요청
+          return path;
+        })
+    );
+
+    // 삭제 큐에서도 제거
+    deleteQueueRef.current = deleteQueueRef.current.filter(p => !introPaths.includes(p));
+  } catch (err) {
+    console.error("소개 이미지 삭제 실패", err);
+  }
+
+  setFormData(prev => ({ ...prev, simage: [prev.simage[0]] }));
+  setPreviewUrls(prev => ({ ...prev, intros: [] }));
+  introInputRef.current.value = null;
+};
+
+
+  const handleIntroRemove = async (index) => {
+  const updatedUrls = [...previewUrls.intros];
+  const updatedPaths = [...formData.simage.slice(1)];
+  const removedPath = updatedPaths[index];
+
+  if (removedPath && removedPath !== "default/default.png") {
+    try {
+      removeImageOnExit(removedPath); // 서버에서 삭제 요청
+      deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== removedPath); // 삭제 큐에서 제거
+    } catch (err) {
+      console.error("소개 이미지 삭제 실패", err);
+    }
+  }
+
+  updatedUrls.splice(index, 1);
+  updatedPaths.splice(index, 1);
+
+  setPreviewUrls(prev => ({ ...prev, intros: updatedUrls }));
+  setFormData(prev => ({ ...prev, simage: [prev.simage[0], ...updatedPaths] }));
+};
+
 
   return (
     <div className="container">

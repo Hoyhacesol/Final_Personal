@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import "../login/SignupPage.css";
+import styles from "../login/SignupPage.module.css";
+import "../../css/Sharesheet.css";
 import logo from "../../assets/img/logo_v3.png";
 import socialg from "../../assets/img/social_g.png";
 import socialk from "../../assets/img/social_k.png";
@@ -59,25 +60,25 @@ function PreSignupPageSeller() {
     window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
   return (
-    <div className="signup_container">
-      <div className="signup_smallcontainer">
+    <div className={styles.signup_container}>
+      <div className={styles.signup_smallcontainer}>
         {/* 로고 */}
         <Link to="/">
-          <img src={logo} alt="킥옥션 로고" className="signup_logo" />
+          <img src={logo} alt="킥옥션 로고" className={styles.signup_logo} />
         </Link>
-        <h2 className="signup_title">업체 회원가입</h2>
+        <h2 className={styles.signup_title}>업체 회원가입</h2>
 
         {/* 전환 버튼 */}
-        <div className="change_touser">
+        <div className={styles.change_touser}>
           <Link to="/presignup">＃ 일반 유저로 가입하시겠어요?</Link>
         </div>
 
-        <form className="signup_form" onSubmit={preNext}>
+        <form className={styles.signup_form} onSubmit={preNext}>
           {/* 주석: 이메일 */}
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="email"
-              className="email_input_pre input"
+              className={`${styles.email_input_pre} ${styles.input}`}
               placeholder="이메일로 가입.."
               value={email}
               onChange={(e) => {
@@ -89,30 +90,30 @@ function PreSignupPageSeller() {
           </div>
 
           {/* 주석: 에러메시지- 중복데이터 발견 시 로그인버튼 생성ㅇ */}
-          {emailError && <p className="error">{emailError}</p>}
+          {emailError && <p className={styles.error}>{emailError}</p>}
           {isDuplicate && (
-            <div className="goto_login">
+            <div className={styles.goto_login}>
               <Link to="/login">↩ㅤ로그인하러 가기</Link>
             </div>
           )}
 
           {/* 추가데이터 입력 */}
-          <button type="submit" className="pre_signup_button_seller">
+          <button type="submit" className={styles.pre_signup_button_seller}>
             계속
           </button>
 
-          <div className="divider">
+          <div className={styles.divider}>
             <span>또는</span>
           </div>
 
           {/* 소셜 회원가입 */}
-          <button type="button" className="social_signup_g" onClick={handleGoogleSignup}>
-            <img className="socialicon" src={socialg} alt="소셜_회원가입_구글 아이콘"></img>
+          <button type="button" className={styles.social_signup_g} onClick={handleGoogleSignup}>
+            <img className={styles.socialicon} src={socialg} alt="소셜_회원가입_구글 아이콘"></img>
             구글 계정으로 회원가입
           </button>
 
-          <button type="button" className="social_signup_k" onClick={handleKakaoSignup}>
-            <img className="socialicon" src={socialk} alt="소셜_회원가입_카카오 아이콘"></img>
+          <button type="button" className={styles.social_signup_k} onClick={handleKakaoSignup}>
+            <img className={styles.socialicon} src={socialk} alt="소셜_회원가입_카카오 아이콘"></img>
             카카오 계정으로 회원가입
           </button>
         </form>

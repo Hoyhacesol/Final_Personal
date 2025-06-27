@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
 
+
 const communityRouter = () => {
 const Loading = <div>Loading....</div>
 const CommunityList = lazy(() => import("../pages/community/ListPage"))

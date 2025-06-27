@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import axios from "axios";
-import "../login/SignupPage.css";
+import styles from "../login/SignupPage.module.css";
 import "../../css/Sharesheet.css";
 import logo from "../../assets/img/logo_v2.png";
 
@@ -176,7 +176,6 @@ function SignupPage() {
       );
 
       if (res.status === 200) {
-        alert("인증에 성공했습니다.");
         clearInterval(timerRef.current);
         timerRef.current = null;
         setIsVerified(true);
@@ -214,21 +213,21 @@ function SignupPage() {
     setResulterror("");
 
     if (nicknameStatus !== "valid") {
-      alert("닉네임 중복확인을 해주세요.");
+      setResulterror("닉네임 중복체크가 완료되지 않았어요.");
       return;
     }
 
     if (pwStatus !== "valid") {
-      alert("비밀번호 형식이 올바르지 않습니다.");
+      setResulterror("비밀번호 형식이 올바르지 않아요.");
       return;
     }
     if (confirmPw !== password) {
-      alert("비밀번호가 일치하지 않습니다.");
+      setResulterror("비밀번호가 일치하지 않아요.");
       return;
     }
 
     if (!isVerified) {
-      alert("전화번호 인증을 완료해주세요.");
+      setResulterror("전화번호 인증을 완료해주세요.");
       return;
     }
 
@@ -253,25 +252,25 @@ function SignupPage() {
   };
 
   return (
-    <div className="signup_container">
-      <div className="signup_smallcontainer">
+    <div className={styles.signup_container}>
+      <div className={styles.signup_smallcontainer}>
         {/* 로고 */}
         <Link to="/">
-          <img src={logo} alt="킥옥션 로고" className="signup_logo" />
+          <img src={logo} alt="킥옥션 로고" className={styles.signup_logo} />
         </Link>
-        <h2 className="signup_title">일반 유저 회원가입</h2>
+        <h2 className={styles.signup_title}>일반 유저 회원가입</h2>
 
         {/* 전환 버튼 */}
-        <div className="change_toseller">
+        <div className={styles.change_toseller}>
           <Link to="/presignupseller">＃ 장비 대여·판매 업체로 가입하시겠어요?</Link>
         </div>
 
-        <form className="signup_form" onSubmit={handleSubmit}>
+        <form className={styles.signup_form} onSubmit={handleSubmit}>
           {/* 이메일 */}
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="email"
-              className="email_input input"
+              className={`${styles.email_input} ${styles.input}`}
               placeholder="이메일"
               value={email}
               readOnly
@@ -279,65 +278,61 @@ function SignupPage() {
                 setEmail(e.target.value);
                 validateEmail(e.target.value);
               }}
-              required
             />
           </div>
 
-          {emailError && <p className="error">{emailError}</p>}
+          {emailError && <p className={styles.error}>{emailError}</p>}
 
           {/* 닉네임 */}
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="text"
-              className={`nickname_input input ${nicknameStatus}`}
+              className={`${styles.nickname_input} ${styles.input} ${styles[nicknameStatus] || ""}`}
               placeholder="닉네임"
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
                 setNicknameStatus(null);
               }}
-              required
             />
-            <button type="button" className="nickname_duplicheck" onClick={handleNicknameCheck}>
+            <button type="button" className={styles.nickname_duplicheck} onClick={handleNicknameCheck}>
               중복확인
             </button>
           </div>
 
-          {nicknameStatus === "duplicate" && <p className="error">❌ 이미 입력된 닉네임이 존재합니다.</p>}
-          {nicknameStatus === "valid" && <p className="nickname_ok error">✔ 사용 가능한 닉네임입니다.</p>}
-          {nicknameStatus === "error" && <p className="error">⚠ 중복확인 중 오류가 발생했습니다.</p>}
+          {nicknameStatus === "duplicate" && <p className={styles.error}>❌ 이미 입력된 닉네임이 존재합니다.</p>}
+          {nicknameStatus === "valid" && <p className={`${styles.nickname_ok} ${styles.error}`}>✔ 사용 가능한 닉네임입니다.</p>}
+          {nicknameStatus === "error" && <p className={styles.error}> 중복확인 중 오류가 발생했습니다.</p>}
 
           {/* 비밀번호 & 비밀번호 확인     */}
-          <div className="signup_input_container">
-            <input type="password" className={`password_input input ${pwStatus}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
+          <div className={styles.signup_input_container}>
+            <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus] || ""}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} />
           </div>
 
-          {pwStatus === "invalid" && <p className="error">❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
-          {pwStatus === "valid" && <p className="error password_ok">✔ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
+          {pwStatus === "invalid" && <p className={styles.error}>❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
+          {pwStatus === "valid" && <p className={`${styles.error} ${styles.password_ok}`}>✔ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
 
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="password"
-              className={`password_check_input input ${confirmPw && confirmPw === password ? "valid" : confirmPw && confirmPw !== password ? "invalid" : ""}`}
+              className={`${styles.password_check_input} ${styles.input} ${confirmPw ? (confirmPw === password ? styles.valid : styles.invalid) : ""}`}
               placeholder="비밀번호 재입력"
               value={confirmPw}
               onChange={handleConfirmPwChange}
-              required
             />
           </div>
 
-          {pw2Error && <p className={`password_check_message ${confirmPw === password ? "error pw2_ok" : "error"}`}>{pw2Error}</p>}
+          {pw2Error && <p className={`${styles.password_check_message} ${confirmPw === password ? `${styles.error} ${styles.pw2_ok}` : styles.error}`}>{pw2Error}</p>}
 
           {/* 전화번호 입력 및 인증 */}
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="tel"
-              className="tel_input input"
+              className={`${styles.tel_input} ${styles.input}`}
               placeholder="본인 명의의 전화번호만 가능합니다."
               value={phone}
               onChange={handlePhoneChange}
               maxLength={13}
-              required
               onKeyDown={(e) => {
                 if (e.key === "F7" && e.shiftKey) {
                   e.preventDefault();
@@ -345,31 +340,31 @@ function SignupPage() {
                 }
               }}
             />
-            <button type="button" className="check_button" onClick={handleSendSMS}>
+            <button type="button" className={styles.check_button} onClick={handleSendSMS}>
               인증받기
             </button>
           </div>
 
-          {verifyStatus === "success" && <p className="error sms_ok">✔ 인증 완료</p>}
-          {verifyStatus === "fail" && <p className="error">❗ 인증되지 않음</p>}
+          {verifyStatus === "success" && <p className={`${styles.error} ${styles.sms_ok}`}>✔ 인증 완료</p>}
+          {verifyStatus === "fail" && <p className={styles.error}>❗ 인증되지 않음</p>}
 
           {/* 인증 모달 */}
           {isModalOpen && (
-            <div className="modal_overlay">
-              <div className="modal_container">
+            <div className={styles.modal_overlay}>
+              <div className={styles.modal_container}>
                 <h3>인증번호 확인</h3>
                 <p>입력하신 번호로 SMS 인증번호가 전송되었습니다.</p>
-                <p className="timer">
+                <p className={styles.timer}>
                   남은 시간: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
                 </p>
 
-                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className="auth_input" />
+                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className={styles.auth_input} />
 
-                <div className="modal_buttons">
-                  <button type="button" className="modal_button" onClick={handleVerifySMS}>
+                <div className={styles.modal_buttons}>
+                  <button type="button" className={styles.modal_button} onClick={handleVerifySMS}>
                     확인
                   </button>
-                  <button type="button" className="modal_button cancel" onClick={handleCloseModal}>
+                  <button type="button" className={`${styles.modal_button} ${styles.cancel}`} onClick={handleCloseModal}>
                     닫기
                   </button>
                 </div>
@@ -378,9 +373,11 @@ function SignupPage() {
           )}
 
           {/* 결과 오류 및 제출 */}
-          <p className="error login_error">{resulterror || " "}</p>
+          <p key={resulterror} className={`${styles.login_error} ${resulterror ? styles.show : ""}`}>
+            {resulterror || " "}
+          </p>
 
-          <button type="submit" className="login_button">
+          <button type="submit" className={styles.login_button}>
             가입하기
           </button>
         </form>

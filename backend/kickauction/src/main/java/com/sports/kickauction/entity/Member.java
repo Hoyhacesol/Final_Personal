@@ -23,7 +23,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mno;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String userId;
 
     @Column
@@ -32,7 +32,7 @@ public class Member {
     @Column
     private int social;
 
-    @Column(nullable = false)
+    @Column
     @Builder.Default
     private String role = "USER";
 

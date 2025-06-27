@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { checkAuth } from "../../api/authApi";
-import "../login/LoginPage.css";
+import styles from "../login/LoginPage.module.css";
 import "../../css/Sharesheet.css";
 import logo from "../../assets/img/logo_v2.png";
 import emailicon from "../../assets/img/icon_email.svg";
@@ -13,6 +13,7 @@ import socialk from "../../assets/img/social_k.png";
 function LoginPage() {
   const location = useLocation();
   const redirectPath = location.state?.from || "/";
+  const from = location.state?.from || "/";
   const searchParams = new URLSearchParams(location.search);
   const loginError = searchParams.get("error");
   const [userid, setUserid] = useState("");
@@ -74,63 +75,66 @@ function LoginPage() {
 
   // 주석: 구글 로그인
   const handleGoogleSignup = () => {
+    localStorage.setItem("redirectAfterLogin", from);
     window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   // 주석: 카카오 로그인
   const handleKakaoSignup = () => {
+    // 현재 위치 저장
+    localStorage.setItem("redirectAfterLogin", from);
     window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
 
   return (
-    <div className="login_container">
-      <div className="login_smallcontainer">
+    <div className={styles.login_container}>
+      <div className={styles.login_smallcontainer}>
         <Link to="/">
-          <img src={logo} alt="킥옥션 로고" className="login_logo" />
+          <img src={logo} alt="킥옥션 로고" className={styles.login_logo} />
         </Link>
 
-        <form className="form_1" onSubmit={handleLogin}>
+        <form className={styles.form_1} onSubmit={handleLogin}>
           {/* 이메일 입력 */}
-          <div className="section_1">
-            <img src={emailicon} alt="사용자 아이콘" className="email_icon"></img>
-            <input type="text" name="username" className="login_input" placeholder="이메일 주소" required value={userid} onChange={(e) => setUserid(e.target.value)} />
+          <div className={styles.section_1}>
+            <img src={emailicon} alt="사용자 아이콘" className={styles.email_icon}></img>
+            <input type="text" name="username" className={styles.login_input} placeholder="이메일 주소" required value={userid} onChange={(e) => setUserid(e.target.value)} />
           </div>
           {/* 비밀번호 입력 */}
-          <div className="section_1">
-            <img src={pwicon} alt="비밀번호 아이콘" className="password_icon"></img>
-            <input type="password" name="password" className="login_input" placeholder="비밀번호" required value={passwd} onChange={(e) => setPasswd(e.target.value)} autoComplete="off" />
+          <div className={styles.section_1}>
+            <img src={pwicon} alt="비밀번호 아이콘" className={styles.password_icon}></img>
+            <input type="password" name="password" className={styles.login_input} placeholder="비밀번호" required value={passwd} onChange={(e) => setPasswd(e.target.value)} autoComplete="off" />
           </div>
 
           {/* 이메일 기억 */}
-          <div className="login_checkbox">
-            <label className="l_checkbox">
+          <div className={styles.login_checkbox}>
+            <label className={styles.l_checkbox}>
               <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-              <span className="checkmark" />
-              <span className="l_text">이메일 기억하기</span>
+              <span className={styles.checkmark} />
+              <span className={styles.l_text}>이메일 기억하기</span>
             </label>
           </div>
 
           {/* 로그인 시도 오류 */}
-          {error && <p className="login_error">{error}</p>}
+          {error && <p className={styles.login_error}>{error}</p>}
 
           {/* 로그인 */}
-          <button type="submit" className="login_button">
+          <button type="submit" className={styles.login_button}>
             로그인
           </button>
         </form>
 
         {/* 소셜 로그인 아이콘 */}
-        <div className="social_login_icons">
-          <div className="social_icon_wrapper" onClick={handleKakaoSignup}>
+        <div className={styles.social_login_icons}>
+          <div className={styles.social_icon_wrapper} onClick={handleKakaoSignup}>
             <img src={socialk} alt="소셜 아이콘 카카오" />
           </div>
-          <div className="social_icon_wrapper" onClick={handleGoogleSignup}>
+          <div className={styles.social_icon_wrapper} onClick={handleGoogleSignup}>
             <img src={socialg} alt="소셜 아이콘 구글" />
           </div>
         </div>
 
         {/* 회원정보 찾기 / 회원가입 */}
-        <div className="login_help">
+        <div className={styles.login_help}>
           <Link to="/findinfo">아이디/비밀번호 찾기</Link>
           <span>|</span>
           <Link to="/presignup">킥옥션 회원가입</Link>

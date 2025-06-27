@@ -6,6 +6,7 @@ import communityRouter from "../router/communityRouter";
 import sellerRouter from "../router/sellerRouter";
 import requestRouter from "../router/requestRouter";
 import ErrorPage from "../pages/ErrorPage";
+import Socialgowhere from "../components/Socialgowhere";
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Community = lazy(() => import("../pages/community/CommunityPage"));
@@ -131,6 +132,14 @@ const root = createBrowserRouter([
         element: (
           <Suspense fallback={Loading}>
             <Findinfo />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/socialgowhere",
+        element: (
+          <Suspense fallback={Loading}>
+            <Socialgowhere />
           </Suspense>
         ),
       },

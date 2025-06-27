@@ -210,7 +210,7 @@
     resize: vertical;
     font-family: inherit;
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: .75rem;
     transition: border-color 0.3s ease;
 }
 
@@ -254,23 +254,32 @@
 }
 
 .comment_author {
-    font-weight: 600;
     color: #0C3D5A;
+    font-weight: bold;
+    margin-right: .5rem;
 }
 
 .comment_date {
-    color: #666;
-    font-size: 0.9rem;
+    color: #888;
+    font-size: .85rem;
 }
 
 .comment_content {
-    color: #333;
-    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+}
+
+.comment_author,
+.comment_date {
+    margin-right: 0.5rem;
+    /* 왼쪽 요소들 사이 간격 */
 }
 
 .comment_actions {
+    margin-left: auto;
     display: flex;
-    gap: 1rem;
+    gap: .5rem;
+    justify-content: flex-end;
 }
 
 .comment_action {
@@ -289,6 +298,32 @@
     color: #1F9CE7;
 }
 
+.comment_list {
+    list-style: none;
+    padding: 0;
+    margin: .5rem 0;
+}
+
+.comment_item {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.comment_text {
+    margin: .25rem 0 0;
+}
+
+
+.tiny_btn.btn {
+    padding: 7px 14px;
+    font-weight: 400;
+    font-size: .85rem;
+}
+
+.edit_block {
+    padding: .5rem;
+}
+
 .navigation {
     display: flex;
     justify-content: space-between;
@@ -299,7 +334,6 @@
 .nav_btn {
     background: white;
     border: 2px solid #e0e6ed;
-    color: #666;
     padding: 12px 20px;
     border-radius: 12px;
     text-decoration: none;
@@ -314,6 +348,11 @@
     color: #1F9CE7;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(31, 156, 231, 0.1);
+}
+
+.nav_btn.disabled {
+    pointer-events: none;
+    opacity: 0.5
 }
 
 
@@ -356,4 +395,43 @@
     content: "";
     display: table;
     clear: both;
+}
+
+
+
+/* 딤(overlay) 전체 화면 */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* 중앙 모달 박스 */
+.confirm-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.confirm-modal p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.confirm-buttons {
+    display: flex;
+    justify-content: space-around;
 }

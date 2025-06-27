@@ -1,0 +1,369 @@
+
+.request-component{
+    margin-top: 6.5vh;
+    min-height: 100vh;
+    background-color: skyblue;
+}
+/* .request-body{} */
+
+/* @media (prefers-reduced-motion: reduce)  */
+@media (min-width: 750px) {
+  .request-component{
+    margin-top: 0vh;
+  }
+  /* .request-body{} */
+}
+
+/* Pages ------------------------------------------------------------------------------------------------------ */
+.bg-center{
+  background-position: center;
+}
+.bg-cover{
+  background-size: cover;
+}
+.min-h-screen{min-height: 100vh;} 
+.pt-12{padding-top: 3rem;}
+.omypMain{
+  /* max-w-4xl mx-auto mt-10 p-4 */
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2.5rem;
+  padding: 1rem;
+  /* test */
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+}
+/* Titles ------------------------------------------------------------------------------------------------------ */
+
+.bHero-section {
+  background-size: cover;           /* bg-cover */
+  background-position: center;      /* bg-center */
+  text-align: center;               /* text-center */
+  color: white;                     /* text-white */
+  padding-top: 4rem;                /* py-16 */
+  padding-bottom: 4rem;
+}
+
+
+/* 8 Create ------------------------------------------------------------------------------------------------------ */
+
+/* 폼 컨테이너 (등록/수정 공통) */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem; /* gap-6 */
+  padding: 2.5rem 1rem; /* py-10 px-4 */
+}
+
+/* 왼쪽/오른쪽 박스 */
+.form-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 28rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 공통 라벨 */
+.form-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* 등록 버튼 (오른쪽 하단) */
+.full-submit-button {
+  width: 100%;
+  background-color: #000;
+  color: white;
+  padding: 0.5rem 0;
+  margin-top: 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.full-submit-button:hover {
+  background-color: #1f2937; /* hover:bg-gray-800 */
+}
+
+
+
+/* 9 Modify ------------------------------------------------------------------------------------------------------ */
+
+/* 전체 폼 컨테이너 */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem; /* gap-6 */
+  padding: 2.5rem 1rem; /* py-10 px-4 */
+}
+
+/* 개별 폼 카드 */
+.form-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 28rem; /* max-w-md */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 필드 라벨 */
+.form-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.button-group button {
+  width: 50%;
+  padding: 0.5rem 0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.button-group .cancel-button {
+  background-color: #D1D5DB; /* bg-gray-300 */
+  color: black;
+}
+
+.button-group .cancel-button:hover {
+  background-color: #9CA3AF; /* hover:bg-gray-400 */
+}
+
+.button-group .submit-button {
+  background-color: #000000;
+  color: white;
+}
+
+.button-group .submit-button:hover {
+  background-color: #1F2937; /* hover:bg-gray-800 */
+}
+
+
+
+/* 10 list ------------------------------------------------------------------------------------------------------ */
+
+
+.request-body {
+  margin-top: 1.5rem; /* mt-6 */
+}
+
+.request-body h2 {
+  font-weight: 700; /* font-bold */
+  font-size: 1.125rem; /* text-lg */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.request-body .text-gray-500 {
+  color: #6B7280; /* Tailwind gray-500 */
+  font-size: 0.875rem; /* text-sm */
+}
+
+.request-body ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
+}
+
+.request-body li {
+  background-color: #F3F4F6; /* bg-gray-100 */
+  padding: 0.75rem; /* p-3 */
+  border-radius: 0.375rem; /* rounded */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* sm:flex-row, sm:items-center */
+@media (min-width: 640px) {
+  .request-body li {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* .flex-1 */
+.request-body .flex-1 {
+  flex: 1 1 0%;
+}
+
+/* .mb-2 .sm:mb-0 */
+.request-body .mb-2 {
+  margin-bottom: 0.5rem;
+}
+@media (min-width: 640px) {
+  .request-body .mb-2 {
+    margin-bottom: 0;
+  }
+}
+
+.request-body .font-semibold {
+  font-weight: 600;
+}
+
+.request-body .text-lg {
+  font-size: 1.125rem;
+}
+
+.request-body .text-sm {
+  font-size: 0.875rem;
+}
+
+.request-body .text-gray-600 {
+  color: #4B5563;
+}
+
+.request-body .text-red-600 {
+  color: #DC2626;
+}
+
+.request-body .flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.request-body .bg-blue-500 {
+  background-color: #3B82F6;
+}
+
+.request-body .bg-blue-600:hover {
+  background-color: #2563EB;
+}
+
+.request-body .bg-green-500 {
+  background-color: #22C55E;
+}
+
+.request-body .bg-green-600:hover {
+  background-color: #16A34A;
+}
+
+.request-body button {
+  color: white;
+  padding: 0.25rem 0.75rem; /* py-1 px-3 */
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.request-body .bg-gray-50 {
+  background-color: #F9FAFB;
+}
+
+.request-body .text-gray-500 {
+  color: #6B7280;
+}
+
+.request-body .text-center {
+  text-align: center;
+}
+
+
+/* 11 Read ------------------------------------------------------------------------------------------------------ */
+
+
+
+/* 상세 견적 카드 컨테이너 */
+.bcontent-container {
+  background-color: white;
+  padding: 1.5rem; /* p-6 */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+  max-width: 48rem; /* max-w-3xl */
+  margin: 1.5rem auto 0; /* mx-auto mt-6 */
+}
+
+/* 구분선 하단 마진 및 패딩 */
+.bcontent-summary {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #E5E7EB; /* border-b */
+}
+
+.bcontent-summary .mt-1 {
+  margin-top: 0.25rem;
+}
+
+.bcontent-summary .text-gray-500 {
+  color: #6B7280;
+  font-size: 0.875rem;
+}
+
+/* 제안 리스트 그리드 */
+.company-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* grid-cols-2 */
+  gap: 1rem; /* gap-4 */
+  margin-bottom: 1rem;
+}
+
+/* 제안 카드 */
+.company-card {
+  border: 1px solid #D1D5DB; /* border */
+  border-radius: 0.375rem; /* rounded */
+  padding: 0.75rem; /* p-3 */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.company-card.selected {
+  border-color: #3B82F6; /* border-blue-500 */
+  border-width: 2px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* shadow-md */
+}
+
+.company-card .truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 하단 버튼 영역 */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem; /* mt-6 */
+}
+
+.button-group button {
+  border: 1px solid #D1D5DB;
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.button-group button:hover {
+  background-color: #F3F4F6; /* hover:bg-gray-100 */
+}
+
+.button-group .md-button {
+  background-color: #D1D5DB; /* bg-gray-300 */
+  color: black;
+}
+
+.button-group .md-button:hover {
+  background-color: #9CA3AF; /* hover:bg-gray-400 */
+}
+.button-group .confirm-button {
+  background-color: #000;
+  color: #fff;
+}
+
+.button-group .confirm-button:hover {
+  background-color: #1F2937; /* hover:bg-gray-800 */
+}

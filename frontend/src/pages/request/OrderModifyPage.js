@@ -16,14 +16,13 @@ const OrderModifyPage = () => {
   const { ono } = useParams(); // URL에서 ono 값 가져오기
   const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate 훅
   const [formData, setFormData] = useState({ // 폼 데이터를 위한 상태
-    sport: '',
+    playType: '',
     rental: '', // 장비 대여 여부 (radio)
-    rentalItems: '', // 장비 대여 물품
-    detail: '', // 장비 상세 요청
+    rentalEquipment: '', // 장비 대여 물품
     region: '',
     datetime: '',
-    people: '',
-    request: '',
+    person: '',
+    ocontent: '',
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,14 +37,13 @@ const OrderModifyPage = () => {
         // 백엔드에서 받은 데이터를 폼 데이터에 매핑
         // OrderController의 getOrder 메서드가 반환하는 필드명에 맞게 매핑
         setFormData({
-          sport: data.sport || '', // playType -> sport
-          rental: data.rentalItems || data.detail ? '필요해요' : '필요없어요', // 장비 정보가 있으면 '필요해요'로 설정
-          rentalItems: data.rentalItems || '',
-          detail: data.detail || '',
-          region: data.region || '', // olocation -> region
-          datetime: data.datetime || '', // rentalDate, rentalTime -> datetime
-          people: data.people || '', // person -> people
-          request: data.request || '', // ocontent -> request
+          playType: data.playType || '',
+          rental: data.rentalEquipment || data.detail ? '필요해요' : '필요없어요', // 장비 정보가 있으면 '필요해요'로 설정
+          rentalEquipment: data.rentalEquipment || '',
+          region: data.region || '',
+          datetime: data.datetime || '',
+          person: data.person || '',
+          ocontent: data.ocontent || '',
         });
       } catch (err) {
         setError("m : 견적 정보를 불러오는 데 실패했습니다.");
@@ -70,11 +68,10 @@ const OrderModifyPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // '필요없어요'를 선택했을 경우 rentalItems와 detail을 비운다.
+      // '필요없어요'를 선택했을 경우 rentalEquipment와 detail을 비운다.
       const dataToSend = { ...formData };
       if (formData.rental === '필요없어요') {
-        dataToSend.rentalItems = '';
-        dataToSend.detail = '';
+        dataToSend.rentalEquipment = '';
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 
@@ -89,19 +86,16 @@ const OrderModifyPage = () => {
 
   if (loading) return <div className="text-center mt-20">로딩 중...</div>;
   if (error) return <div className="text-center mt-20 text-red-500">{error}</div>;
-  if (!formData.sport) return <div className="text-center mt-20">견적 정보를 찾을 수 없습니다.</div>; // 데이터 로드 확인
+  if (!formData.playType) return <div className="text-center mt-20">견적 정보를 찾을 수 없습니다.</div>; // 데이터 로드 확인
 
   return (
     <>
-      <div className="bg-cover bg-center min-h-screen pt-12">
-        <Hero {...modifyHero} />
-        {/* formData가 로드된 후에만 BContentP09 렌더링 */}
-        <BContentP09
-          formData={formData}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-        />
-      </div>
+      <Hero {...modifyHero} />
+      <BContentP09
+        formData={formData}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
     </>
   );
 };

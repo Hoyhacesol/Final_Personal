@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.repository.MemberRepository;
+import com.sports.kickauction.repository.SellerIntroRepository;
 import com.sports.kickauction.repository.SellerRepository;
 
 import jakarta.transaction.Transactional;
@@ -19,6 +20,7 @@ public class MemberServiceImpl implements MemberService {
     
     private final MemberRepository memberRepository;
     private final SellerRepository sellerRepository;
+    private final SellerIntroRepository sellerIntroRepository;
     private final PasswordEncoder passwordEncoder;
     
     @Override
@@ -95,11 +97,16 @@ public class MemberServiceImpl implements MemberService {
     // 주석: 회원정보 업데이트
     @Override
     public void updateMember(Member member) {
-
-        // 주석:: 비번암호화
-    String encodedPw = passwordEncoder.encode(member.getUserPw());
-    member.setUserPw(encodedPw);
-        // 주석:: 저장
+        if (!member.getUserPw().startsWith("$2a$")) {
+            String encodedPw = passwordEncoder.encode(member.getUserPw());
+            member.setUserPw(encodedPw);
+        }  else {
+            Member origin = memberRepository.findById(member.getMno()).orElse(null);
+            if (origin != null) {
+            member.setUserPw(origin.getUserPw());
+            }
+        }
+    // 주석:: 저장
     memberRepository.save(member); 
     }
 
@@ -161,6 +168,33 @@ public class MemberServiceImpl implements MemberService {
 
     member.setRole("USER");
     memberRepository.save(member);
+    }
+
+    // 주석: 회원탈퇴
+    @Transactional
+    @Override
+    public boolean deleteMember(Long mno) {
+    Optional<Member> optional = memberRepository.findById(mno);
+    if (optional.isEmpty()) return false;
+
+    Member member = optional.get();
+
+    // 1. SELLER,SELLER_INTRO, ORDER, BIZ, REVIEW 테이블 제거
+    sellerIntroRepository.deleteByMno(mno);
+    sellerRepository.deleteByMno(mno);
+    
+    
+     // 2. Member테이블 처리
+    member.setUserId(null);
+    member.setUserPw(null);
+    member.setUserName(null);
+    member.setPhone(null);
+    member.setProfileimg(null);
+    member.setSocial(0);
+    member.setRole("WITHDRAW");
+    memberRepository.save(member);
+    
+    return true;
     }
 
 }   

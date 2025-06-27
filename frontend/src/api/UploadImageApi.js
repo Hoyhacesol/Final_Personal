@@ -29,3 +29,24 @@ export const uploadImage = async (files) => {
     throw err;
   }
 };
+
+export const removeImage = async (filePath) => {
+  try {
+    const res = await axios.post(`${prefix}/api/removeFile`, null, {
+      params: { fileName: filePath }
+    });
+    return res.data;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const removeImageOnExit = (filePath) => {
+  try {
+    // sendBeacon은 POST만 가능. body는 빈 blob
+    const blob = new Blob([], { type: "text/plain" });
+    navigator.sendBeacon(`${prefix}/api/removeFile?fileName=${encodeURIComponent(filePath)}`, blob);
+  } catch (err) {
+    console.error("sendBeacon 삭제 실패", err);
+  }
+};

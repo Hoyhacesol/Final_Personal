@@ -18,4 +18,7 @@ public interface CommunityService {
 
     PageResponseDTO<CommunityDTO> list(PageRequestDTO pageRequestDTO);
 
+     CommunityDTO getPrevious(Long pno);
+     
+     CommunityDTO getNext(Long pno);
 }

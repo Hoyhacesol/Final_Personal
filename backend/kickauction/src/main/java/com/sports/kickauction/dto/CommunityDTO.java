@@ -31,4 +31,9 @@ public class CommunityDTO {
 
     /** 이미지 URL (pimage) */
     private String pimage;
+
+    private Long prevPno;
+    private String prevTitle;
+    private Long nextPno;
+    private String nextTitle;
 }

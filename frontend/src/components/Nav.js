@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/Authcontext";
-import "./Nav.css";
+import styles from "./Nav.module.css";
 import "../css/Sharesheet.css";
 // import logo from "../assets/img/kickauction_logo.png";
 import logo2 from "../assets/img/logo_v2.png";
@@ -43,60 +43,60 @@ const Nav = () => {
 
   return (
     <>
-      <nav className="nav" id="header">
+      <nav className={styles.nav} id="header">
         {/* 로고 영역 */}
-        <Link to="/" className="nav_logo">
+        <Link to="/" className={styles.nav_logo}>
           <img src={logo2} alt="킥옥션 로고" />
         </Link>
 
         {/* 메뉴 탭 영역 */}
-        <ul className="nav_menu">
-          <li className={location.pathname.startsWith("/request") ? "active" : ""}>
+        <ul className={styles.nav_menu}>
+          <li className={location.pathname.startsWith("/request") ? styles.active : ""}>
             <Link to="/request">견적 요청</Link>
           </li>
-          <li className={location.pathname.startsWith("/bid") ? "active" : ""}>
+          <li className={location.pathname.startsWith("/bid") ? styles.active : ""}>
             <Link to="/bid">견적 입찰</Link>
           </li>
-          <li className={location.pathname.startsWith("/sellerlist") ? "active" : ""}>
+          <li className={location.pathname.startsWith("/sellerlist") ? styles.active : ""}>
             <Link to="/sellerlist">등록된 업체 목록</Link>
           </li>
-          <li className={location.pathname.startsWith("/community") ? "active" : ""}>
+          <li className={location.pathname.startsWith("/community") ? styles.active : ""}>
             <Link to="/community">자유게시판</Link>
           </li>
-          <li className={location.pathname.startsWith("/help") ? "active" : ""}>
+          <li className={location.pathname.startsWith("/help") ? styles.active : ""}>
             <Link to="/help">고객센터</Link>
           </li>
         </ul>
 
         {/* 로그인/회원가입 or 사용자 메뉴 */}
-        <div className="nav_auth">
+        <div className={styles.nav_auth}>
           {!user ? (
-            <Link to="/login" state={{ from: location.pathname }} className="loginbtn">
+            <Link to="/login" state={{ from: location.pathname }} className={styles.loginbtn}>
               로그인 / 회원가입
             </Link>
           ) : (
-            <div className="user_dropdown">
-              <button onClick={toggleDropdown} className="user_button">
+            <div className={styles.user_dropdown}>
+              <button onClick={toggleDropdown} className={styles.user_button}>
                 {user.nickname} 님{" "}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="#555">
                   <path d="M7 10l5 5 5-5z" />
                 </svg>
               </button>
-              <div className={`user_dropdown_box ${dropdownOpen ? "open" : ""}`}>
-                <img className="profile_img_dropdown" src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
+              <div className={`${styles.user_dropdown_box} ${dropdownOpen ? styles.open : ""}`}>
+                <img className={styles.profile_img_dropdown} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
                 <p>
                   안녕하세요! <br />
                   <strong>{user.nickname}</strong> 님
                 </p>
-                <p className="recentsuggest">
+                <p className={styles.recentsuggest}>
                   {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
-                  최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
+                  최근 견적 요청에 <span className={styles.recentsuggest_count}>3 </span>개의 제안이 도착했어요.
                 </p>
-                <div className="sidebar_buttons">
-                  <Link to="/mypage" className="dropdown_btn" onClick={() => setDropdownOpen(false)}>
+                <div className={styles.sidebar_buttons}>
+                  <Link to="/mypage" className={styles.dropdown_btn} onClick={() => setDropdownOpen(false)}>
                     마이페이지
                   </Link>
-                  <button onClick={handleLogout} className="dropdown_btn">
+                  <button onClick={handleLogout} className={styles.dropdown_btn}>
                     로그아웃
                   </button>
                 </div>
@@ -107,51 +107,51 @@ const Nav = () => {
       </nav>
 
       {/* 모바일 전용 상단 바 */}
-      <div className="mobile_topbar">
-        <div className="mobile_left" onClick={toggleSidebar}>
+      <div className={styles.mobile_topbar}>
+        <div className={styles.mobile_left} onClick={toggleSidebar}>
           ☰
         </div>
-        <div className="mobile_center">
-          <img src={logo2} alt="로고" className="mobile_logo" />
+        <div className={styles.mobile_center}>
+          <img src={logo2} alt="로고" className={styles.mobile_logo} />
         </div>
-        <div className="mobile_right">⋮</div>
+        <div className={styles.mobile_right}>⋮</div>
       </div>
 
       {/* 오버레이 */}
-      {isSidebarOpen && <div className="sidebar_overlay" onClick={closeSidebar}></div>}
+      {isSidebarOpen && <div className={styles.sidebar_overlay} onClick={closeSidebar}></div>}
 
       {/* 사이드바 */}
-      <div className={`sidebar ${isSidebarOpen ? "show" : ""}`}>
-        <div className="sidebar_userbox">
+      <div className={`${styles.sidebar} ${isSidebarOpen ? styles.show : ""}`}>
+        <div className={styles.sidebar_userbox}>
           {!user ? (
             <>
-              <img className="profile_img" src={`http://localhost:8080/images/baseprofile.png`} alt="비로그인 프로필 사진" />
+              <img className={styles.profile_img} src={`http://localhost:8080/images/baseprofile.png`} alt="비로그인 프로필 사진" />
               <p>비로그인 상태입니다.</p>
-              <div className="sidebar_buttons">
-                <Link to="/login" state={{ from: location.pathname }} onClick={handleLinkClick} className="sidebar_btn">
+              <div className={styles.sidebar_buttons}>
+                <Link to="/login" state={{ from: location.pathname }} onClick={handleLinkClick} className={styles.sidebar_btn}>
                   로그인
                 </Link>
-                <Link to="/presignup" onClick={handleLinkClick} className="sidebar_btn">
+                <Link to="/presignup" onClick={handleLinkClick} className={styles.sidebar_btn}>
                   회원가입
                 </Link>
               </div>
             </>
           ) : (
             <>
-              <img className="profile_img" src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
+              <img className={styles.profile_img} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
               <p>
                 안녕하세요! <br />
                 <strong>{user.nickname}</strong> 님
               </p>
-              <p className="recentsuggest">
+              <p className={styles.recentsuggest}>
                 {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
-                최근 견적 요청에 <span className="recentsuggest_count">3 </span>개의 제안이 도착했어요.
+                최근 견적 요청에 <span className={styles.recentsuggest_count}>3 </span>개의 제안이 도착했어요.
               </p>
-              <div className="sidebar_buttons">
-                <Link to="/mypage" onClick={handleLinkClick} className="sidebar_btn2">
+              <div className={styles.sidebar_buttons}>
+                <Link to="/mypage" onClick={handleLinkClick} className={styles.sidebar_btn2}>
                   마이페이지
                 </Link>
-                <button onClick={handleLogout} className="sidebar_btn2">
+                <button onClick={handleLogout} className={styles.sidebar_btn2}>
                   로그아웃
                 </button>
               </div>
@@ -159,8 +159,8 @@ const Nav = () => {
           )}
         </div>
 
-        <nav className="sidebar_nav">
-          <Link className="backtohome" to="/" onClick={handleLinkClick}>
+        <nav className={styles.sidebar_nav}>
+          <Link className={styles.backtohome} to="/" onClick={handleLinkClick}>
             ↩ 메인화면
           </Link>
           <Link to="/request" onClick={handleLinkClick}>

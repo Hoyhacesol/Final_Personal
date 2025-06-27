@@ -2,8 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../contexts/Authcontext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../mypage/Updateinfo.css";
+import styles from "../mypage/Updateinfo.module.css";
 import "../../css/Sharesheet.css";
+import { BsFolderSymlink } from "react-icons/bs";
+import { FaTrash } from "react-icons/fa";
 
 function Updateinfo() {
   const { user, setUser } = useAuth();
@@ -20,12 +22,13 @@ function Updateinfo() {
   const [nicknameStatus, setNicknameStatus] = useState(null);
   const [pwStatus, setPwStatus] = useState(null);
   const [pw2Error, setPw2Error] = useState("");
+  const [resulterror, setResulterror] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [timer, setTimer] = useState(180);
   const [isVerified, setIsVerified] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(null);
-  const [removeRequested, setRemoveRequested] = useState(false); //프로필사진 삭제 요청
+  const [removeRequested, setRemoveRequested] = useState(false);
   const timerRef = useRef(null);
 
   // ////////////////////////////////////////////////테스트용 인증무시 추후삭제필요///////////////////////////////////////////////////////////////////
@@ -35,7 +38,7 @@ function Updateinfo() {
     setVerifyStatus("success");
   };
 
-  // 현재값 setting
+  // 주석: 현재값 setting
   useEffect(() => {
     if (user) {
       setEmail(user.user_id || "");
@@ -52,7 +55,7 @@ function Updateinfo() {
     }
   }, [user]);
 
-  // 사진 변경
+  // 주석: 사진 변경
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -61,7 +64,7 @@ function Updateinfo() {
     }
   };
 
-  // 기존 사진 삭제
+  // 주석: 기존 사진 삭제
   const handleDeletePhoto = () => {
     setFile(null);
     setPreview("/images/baseprofile.png");
@@ -196,7 +199,6 @@ function Updateinfo() {
       );
 
       if (res.status === 200) {
-        alert("인증에 성공했습니다.");
         clearInterval(timerRef.current);
         timerRef.current = null;
         setIsVerified(true);
@@ -210,7 +212,7 @@ function Updateinfo() {
     }
   };
 
-  //모달 닫기
+  //주석: 모달 닫기
   const handleCloseModal = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -219,7 +221,7 @@ function Updateinfo() {
     setIsModalOpen(false);
   };
 
-  // 핸드폰번호 입력 변화
+  // 주석: 핸드폰번호필드 입력 변화
   const handlePhoneChange = (e) => {
     const raw = e.target.value;
     const formatted = formatPhoneNumber(raw);
@@ -233,16 +235,32 @@ function Updateinfo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (nickname !== user.nickname && nicknameStatus !== "valid") return alert("닉네임 중복확인을 해주세요.");
-    if (phone !== user.phone && !isVerified) return alert("전화번호 인증을 완료해주세요.");
-    if (password && !validatePassword(password)) return alert("비밀번호 형식이 올바르지 않습니다.");
-    if (password && password !== confirmPw) return alert("비밀번호가 일치하지 않습니다.");
+    if (nickname !== user.nickname && nicknameStatus !== "valid") {
+      setResulterror("닉네임 중복체크가 완료되지 않았어요.");
+      return;
+    }
+
+    if (phone !== user.phone && !isVerified) {
+      setResulterror("전화번호 인증을 완료해주세요.");
+      return;
+    }
+
+    if (password && !validatePassword(password)) {
+      setResulterror("비밀번호 형식이 유효하지 않아요.");
+      return;
+    }
+    if (password && password !== confirmPw) {
+      setResulterror("비밀번호가 일치하지 않아요.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("mno", user.mno);
     formData.append("userName", nickname);
-    formData.append("userPw", password);
     formData.append("phone", phone);
+    if (password && password.trim().length > 0) {
+      formData.append("userPw", password);
+    }
 
     if (file) {
       formData.append("profileimg", file);
@@ -267,25 +285,28 @@ function Updateinfo() {
   };
 
   return (
-    <div className="signup_container">
-      <div className="signup_smallcontainer">
-        <h2 className="signup_title">회원정보 수정</h2>
-        <form className="signup_form" onSubmit={handleSubmit}>
+    <div className={styles.signup_container}>
+      <div className={styles.signup_smallcontainer}>
+        <h2 className={styles.signup_title}>회원정보 수정</h2>
+        <hr className={styles.title_divider} />
+        <form className={styles.signup_form} onSubmit={handleSubmit}>
           {/* 프로필사진 첨부 */}
-          <div className="img_input_container">
+          <div className={styles.img_input_container}>
             <img
               src={preview}
               alt="프로필 미리보기"
-              width="180"
+              width="220"
               onError={(e) => {
                 e.target.src = "/images/baseprofile.png";
               }}
             />
-            <div className="img_buttons">
+            <div className={styles.img_buttons}>
               <button type="button" onClick={() => fileInputRef.current.click()} style={{ marginRight: "0.5rem" }}>
+                <BsFolderSymlink className={styles.foldericon} />
                 사진 변경
               </button>
-              <button type="button" className="delete_button" onClick={handleDeletePhoto}>
+              <button type="button" className={styles.delete_button} onClick={handleDeletePhoto}>
+                <FaTrash className={styles.foldericon} />
                 사진 삭제
               </button>
             </div>
@@ -293,42 +314,43 @@ function Updateinfo() {
           </div>
 
           {/* 이메일 */}
-          <div className="signup_input_container">
-            <input type="email" className="input" value={email} readOnly />
+          <label>이메일</label>
+          <div className={styles.signup_input_container}>
+            <input type="email" className={styles.input} value={email} readOnly />
           </div>
 
           {/* 닉네임 */}
-          <div className="signup_input_container">
+          <label>닉네임</label>
+          <div className={styles.signup_input_container}>
             <input
               type="text"
-              className="input"
+              className={styles.input}
               placeholder="닉네임"
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
                 setNicknameStatus(null);
               }}
-              required
             />
-            <button type="button" className="nickname_duplicheck" onClick={handleNicknameCheck}>
+            <button type="button" className={styles.nickname_duplicheck} onClick={handleNicknameCheck}>
               중복확인
             </button>
           </div>
 
-          {nicknameStatus === "duplicate" && <p className="error">❌ 이미 입력된 닉네임이 존재합니다.</p>}
-          {nicknameStatus === "valid" && <p className="nickname_ok error">✔ 사용 가능한 닉네임입니다.</p>}
-          {nicknameStatus === "error" && <p className="error">⚠ 중복확인 중 오류가 발생했습니다.</p>}
+          {nicknameStatus === "duplicate" && <p className={styles.error}>❌ 이미 입력된 닉네임이 존재합니다.</p>}
+          {nicknameStatus === "valid" && <p className={`${styles.nickname_ok} ${styles.error}`}>✔ 사용 가능한 닉네임입니다.</p>}
+          {nicknameStatus === "error" && <p className={styles.error}>중복확인 중 오류가 발생했습니다.</p>}
 
           {/* 전화번호 수정 */}
-          <div className="signup_input_container">
+          <label>전화번호</label>
+          <div className={styles.signup_input_container}>
             <input
               type="tel"
-              className="input"
+              className={styles.input}
               placeholder="본인 명의의 전화번호만 가능합니다."
               value={phone}
               onChange={handlePhoneChange}
               maxLength={13}
-              required
               onKeyDown={(e) => {
                 if (e.key === "F7" && e.shiftKey) {
                   e.preventDefault();
@@ -336,31 +358,31 @@ function Updateinfo() {
                 }
               }}
             />
-            <button type="button" className="check_button" onClick={handleSendSMS}>
+            <button type="button" className={styles.check_button} onClick={handleSendSMS}>
               인증받기
             </button>
           </div>
 
-          {verifyStatus === "success" && <p className="error sms_ok">✔ 인증 완료</p>}
-          {verifyStatus === "fail" && <p className="error">❗ 인증되지 않음</p>}
+          {verifyStatus === "success" && <p className={`${styles.error} ${styles.sms_ok}`}>✔ 인증 완료</p>}
+          {verifyStatus === "fail" && <p className={styles.error}>❗ 인증되지 않음</p>}
 
           {/* 인증 모달 */}
           {isModalOpen && (
-            <div className="modal_overlay">
-              <div className="modal_container">
+            <div className={styles.modal_overlay}>
+              <div className={styles.modal_container}>
                 <h3>인증번호 확인</h3>
                 <p>입력하신 번호로 SMS 인증번호가 전송되었습니다.</p>
-                <p className="timer">
+                <p className={styles.timer}>
                   남은 시간: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
                 </p>
 
-                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className="auth_input" />
+                <input type="text" maxLength={6} placeholder="인증번호 6자리" value={authCode} onChange={(e) => setAuthCode(e.target.value)} className={styles.auth_input} />
 
-                <div className="modal_buttons">
-                  <button type="button" className="modal_button" onClick={handleVerifySMS}>
+                <div className={styles.modal_buttons}>
+                  <button type="button" className={styles.modal_button} onClick={handleVerifySMS}>
                     확인
                   </button>
-                  <button type="button" className="modal_button cancel" onClick={handleCloseModal}>
+                  <button type="button" className={`${styles.modal_button} ${styles.cancel}`} onClick={handleCloseModal}>
                     닫기
                   </button>
                 </div>
@@ -369,27 +391,32 @@ function Updateinfo() {
           )}
 
           {/* 비밀번호 & 비밀번호 확인     */}
-          <div className="signup_input_container">
-            <input type="password" className={`password_input input ${pwStatus}`} placeholder="비밀번호" value={password} onChange={handlePasswordChange} required />
+          <label>비밀번호 재설정</label>
+          <div className={styles.signup_input_container}>
+            <input type="password" className={`${styles.password_input} ${styles.input} ${styles[pwStatus]}`} placeholder="새 비밀번호" value={password} onChange={handlePasswordChange} />
           </div>
 
-          {pwStatus === "invalid" && <p className="error">❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
-          {pwStatus === "valid" && <p className="error password_ok">✔ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
+          {pwStatus === "invalid" && <p className={styles.error}>❗ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
+          {pwStatus === "valid" && <p className={`${styles.error} ${styles.password_ok}`}>✔ 비밀번호는 4~15자이며, 영문과 숫자를 모두 포함해야 합니다.</p>}
 
-          <div className="signup_input_container">
+          <div className={styles.signup_input_container}>
             <input
               type="password"
-              className={`password_check_input input ${confirmPw && confirmPw === password ? "valid" : confirmPw && confirmPw !== password ? "invalid" : ""}`}
-              placeholder="비밀번호 재입력"
+              className={`${styles.password_check_input} ${styles.input} ${confirmPw ? (confirmPw === password ? styles.valid : styles.invalid) : ""}`}
+              placeholder="비밀번호 확인.."
               value={confirmPw}
               onChange={handleConfirmPwChange}
-              required
             />
           </div>
 
-          {pw2Error && <p className={`password_check_message ${confirmPw === password ? "error pw2_ok" : "error"}`}>{pw2Error}</p>}
+          {pw2Error && <p className={`${styles.password_check_message} ${confirmPw === password ? `${styles.error} ${styles.pw2_ok}` : styles.error}`}>{pw2Error}</p>}
 
-          <button type="submit" className="login_button">
+          {/* 결과 오류 및 제출 */}
+          <p key={resulterror} className={`${styles.login_error} ${resulterror ? styles.show : ""}`}>
+            {resulterror || " "}
+          </p>
+
+          <button type="submit" className={styles.login_button}>
             정보 수정하기
           </button>
         </form>

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.Integer;
 
@@ -16,14 +17,16 @@ import java.lang.Integer;
 public class RequestDTO {
     private int ono;
     private int mno;
-    private String playType; // React: sport
-    private String olocation; // React: region
-    private LocalDateTime rentalDate; // React: datetime (날짜 부분)
-    private String rentalTime; // React: datetime (시간 부분)
-    private Integer person; // React: people
-    private String rentalEquipment; // React: rentalItems, detail 합친 값
-    private String ocontent; // React: request
-    private LocalDateTime regdate;
+
+    @JsonProperty("region")
+    private String olocation;
+    private String playType;
+    private LocalDateTime rentalDate;
+    private String rentalTime;
+    private Integer person;
+    private String rentalEquipment;
+    private String ocontent;
+    private LocalDateTime oregdate;
     private int finished;
 
     @Builder.Default

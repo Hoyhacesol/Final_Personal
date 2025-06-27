@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,9 @@ import com.sports.kickauction.dto.RequestDTO;
 import com.sports.kickauction.entity.Request;
 import com.sports.kickauction.repository.RequestRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 @Transactional
 public class RequestServiceImpl implements RequestService {
@@ -42,7 +44,7 @@ public class RequestServiceImpl implements RequestService {
                 .person(order.getPerson())
                 .rentalEquipment(order.getRentalEquipment())
                 .ocontent(order.getOcontent())
-                .regdate(order.getRegdate())
+                .oregdate(order.getOregdate())
                 .finished(order.getFinished())
                 .build();
             return dto;
@@ -76,31 +78,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void parseDateTimeAndSetOrderDTO(String datetimeString, RequestDTO requestDTO) {
-        if (datetimeString == null || datetimeString.isEmpty()) {
-            return;
-        }
-
-        String[] parts = datetimeString.split("\\|");
-        if (parts.length > 0) {
-            try {
-                String datePart = parts[0].trim();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-                java.util.Date parsedUtilDate = dateFormat.parse(datePart);
-                requestDTO.setRentalDate(LocalDateTime.ofInstant(parsedUtilDate.toInstant(), ZoneId.systemDefault()));
-            } catch (ParseException e) {
-                System.err.println("날짜 파싱 오류: " + e.getMessage());
-                requestDTO.setRentalDate(null);
-            }
-        }
-        if (parts.length > 1) {
-            requestDTO.setRentalTime(parts[1].trim());
-        } else {
-            requestDTO.setRentalTime("");
-        }
-    }
-
-    @Override
     public boolean createOrder(RequestDTO requestDTO) {
         Request newOrder = Request.builder()  
             .mno(requestDTO.getMno())
@@ -111,10 +88,17 @@ public class RequestServiceImpl implements RequestService {
             .person(requestDTO.getPerson())
             .rentalEquipment(requestDTO.getRentalEquipment())
             .ocontent(requestDTO.getOcontent())
-            .regdate(LocalDateTime.now())
+            .oregdate(LocalDateTime.now())
             .finished(0)
             .build();
 
+            try {
+                requestRepository.save(newOrder);
+                System.out.println("wtf : "+newOrder);
+            } catch (Exception e) {
+                log.error("견적 생성 중 데이터베이스 저장 오류 발생: " + e.getMessage(), e);
+                System.out.println("wtf : "+newOrder);
+            }
         Request savedOrder = requestRepository.save(newOrder);  
         requestDTO.setOno(savedOrder.getOno());
 
@@ -166,17 +150,13 @@ public class RequestServiceImpl implements RequestService {
             .person(request.getPerson())
             .rentalEquipment(request.getRentalEquipment())
             .ocontent(request.getOcontent())
-            .regdate(request.getRegdate())
+            .oregdate(request.getOregdate())
             .finished(request.getFinished())
             .build();
     }
 
-    /**
-     * 견적 요청을 삭제(취소)합니다.
-     * 비즈니스 규칙에 따라 물리적 삭제(DELETE) 대신 논리적 삭제(finished 상태 변경)를 권장합니다.
-     *
-     * @param requestDTO 삭제할 견적의 ono를 포함하는 DTO
-     * @return 삭제(취소) 성공 시 true, 실패 시 false
+    /*
+     * 견적 요청을 삭제(취소) / 논리적 삭제(finished 상태 변경)
      */
     @Override
     public boolean deleteOrder(RequestDTO requestDTO) {
@@ -186,11 +166,42 @@ public class RequestServiceImpl implements RequestService {
             Request existingOrder = existingOrderOptional.get(); 
 
             // 논리적 삭제 (Soft Delete): finished 필드를 '취소' 상태(2)로 변경
-            existingOrder.setFinished(2); // 2: 취소된 견적
+            existingOrder.setFinished(2);
             requestRepository.save(existingOrder); // 변경된 상태 저장
 
             return true; // 논리적 삭제 성공
         }
         return false; // 해당 ono의 견적을 찾을 수 없음
+    }
+
+    // finished 상태 변경
+    @Override
+    public boolean updateFinished (RequestDTO requestDTO) {
+        Optional<Request> existingOrderOptional = requestRepository.findById(requestDTO.getOno());  
+
+        if (existingOrderOptional.isPresent()) {
+            Request existingOrder = existingOrderOptional.get();  
+            
+            final int active = 0;
+            final int end = 1;
+            final int cancel = 2;
+
+            if (requestDTO.getFinished()==active) {
+                existingOrder.setFinished(end);
+                requestRepository.save(existingOrder);  
+                return true;
+            }
+            else if (requestDTO.getFinished()==end) {
+                existingOrder.setFinished(active);
+                requestRepository.save(existingOrder);  
+                return true;
+            }
+            // else if (requestDTO.getFinished()==cancel) {
+            //     existingOrder.setFinished(active);
+            //     requestRepository.save(existingOrder);  
+            //     return true;
+            // }
+        }
+        return false;
     }
 }

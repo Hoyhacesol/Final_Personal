@@ -30,6 +30,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @Log4j2
@@ -181,4 +183,35 @@ public class CommunityServiceImpl implements CommunityService {
                 .totalCount(totalCount)
                 .build();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CommunityDTO getPrevious(Long pno) {
+        Optional<Community> prev = communityRepository
+                .findTopByPnoLessThanOrderByPnoDesc(pno);
+        return prev.map(this::entityToDto).orElse(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CommunityDTO getNext(Long pno) {
+        Optional<Community> next = communityRepository
+                .findTopByPnoGreaterThanOrderByPnoAsc(pno);
+        return next.map(this::entityToDto).orElse(null);
+    }
+
+     private CommunityDTO entityToDto(Community e) {
+        return CommunityDTO.builder()
+            .pno(e.getPno())
+            .mno(e.getMno())
+            .writerName(e.getMember().getUserName())
+            .ptitle(e.getPtitle())
+            .pcontent(e.getPcontent())
+            .pregdate(e.getPregdate())
+            .view(e.getView())
+            .pimage(e.getPimage())
+            // prev/next 필드는 컨트롤러에서 채워줍니다.
+            .build();
+    }
+
 }

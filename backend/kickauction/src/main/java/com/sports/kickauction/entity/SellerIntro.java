@@ -3,14 +3,14 @@ package com.sports.kickauction.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
 @Entity
 @Table(name = "seller_intro")
-@Getter
+@Data
 @ToString
 @Builder
 @AllArgsConstructor

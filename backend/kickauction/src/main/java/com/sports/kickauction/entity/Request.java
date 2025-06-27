@@ -55,7 +55,7 @@ public class Request {
     private String ocontent;
 
     @Column(name = "oregdate", columnDefinition = "DATETIME", nullable = false, updatable = false)
-    private LocalDateTime regdate;
+    private LocalDateTime oregdate;
 
     @Column(name = "finished", nullable = false)
     private int finished;

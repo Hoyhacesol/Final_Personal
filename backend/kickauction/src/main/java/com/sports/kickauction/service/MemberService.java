@@ -37,5 +37,8 @@ public interface MemberService {
     //주석: 기존 SELLER데이터 소유 회원 SELLER변경
     void updateSeller(Long mno);
 
+    // 주석: 회원탈퇴
+    boolean deleteMember(Long mno);
+
 
 }

@@ -1,5 +1,7 @@
 package com.sports.kickauction.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +18,10 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     // 제목 OR 내용 검색
     Page<Community> findByPtitleContainingIgnoreCaseOrPcontentContainingIgnoreCase(
             String titleKeyword, String contentKeyword, Pageable pageable);
+
+     // pno 기준 바로 이전 글 (pno보다 작은 값 중에서 가장 큰 pno)
+    Optional<Community> findTopByPnoLessThanOrderByPnoDesc(Long pno);
+
+    // pno 기준 바로 다음 글 (pno보다 큰 값 중에서 가장 작은 pno)
+    Optional<Community> findTopByPnoGreaterThanOrderByPnoAsc(Long pno);            
 }

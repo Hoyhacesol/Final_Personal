@@ -2,6 +2,8 @@ package com.sports.kickauction.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,6 +89,22 @@ public class UploadController {
     headers.add("Content-Type", Files.probeContentType(filePath));
     return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/removeFile", method = {RequestMethod.POST, RequestMethod.GET})
+    public ResponseEntity<Boolean> removeFile(@RequestParam("fileName") String fileName) {
+    try {
+        String srcFileName = URLDecoder.decode(fileName, "UTF-8");
+        File file = new File(uploadPath + File.separator + srcFileName);
+
+        boolean result = file.delete();
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+        return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
 
 
 }

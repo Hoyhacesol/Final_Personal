@@ -9,8 +9,12 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.MemberService;
 import com.sports.kickauction.service.SellerService;
 
@@ -167,7 +172,9 @@ public class MemberController {
             existing.setUserName(userName);
             existing.setPhone(phone);
             if (userPw != null && !userPw.isBlank()) {
-            existing.setUserPw(userPw);
+                existing.setUserPw(userPw); 
+            } else {
+                // 비밀번호변경의도x
             }
 
             // 파일 업로드 경로
@@ -282,6 +289,24 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
     public ResponseEntity<?> checkSellerExists(@RequestParam Long mno) {
         boolean exists = sellerService.existsSeller(mno);
         return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
+    // 매핑: 회원탈퇴
+    @DeleteMapping("/{mno}")
+    public ResponseEntity<?> deleteMember(@PathVariable Long mno) {
+        try {
+
+        boolean result = memberService.deleteMember(mno);
+        if (result) {
+            return ResponseEntity.ok("회원 탈퇴 완료");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 회원 없음");
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("서버 오류: " + e.getMessage());
+        }
     }
 
 

@@ -60,7 +60,7 @@ public class RequestRepositoryTests {
                         .person(random.nextInt(30) + 1) // 1~30
                         .rentalEquipment(rentalEquipment)
                         .ocontent(randomContent())
-                        .regdate(LocalDateTime.now())
+                        .oregdate(LocalDateTime.now())
                         .finished(finished)
                         .build();
 
