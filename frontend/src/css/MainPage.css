@@ -1,0 +1,473 @@
+/* src/css/MainPage.css */
+
+#mainPage {
+  max-width: 100%;
+  max-width: 1200px;
+  overflow-x: hidden;
+  margin: 0 auto;
+  padding: 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  box-sizing: border-box;
+}
+
+/* 배너 섹션 */
+.banner_section {
+  width: 100%;
+  aspect-ratio: 16 / 6;
+  overflow: hidden;
+}
+
+.banner_item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item {
+  cursor: pointer;
+}
+
+/* 최근 견적 요청 섹션 */
+.orderlist_section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.orderlist_section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.order_item {
+  background: #F6F7F9;
+  border-radius: 1rem;
+  padding: 1rem;
+  min-height: 10.5rem;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid #F6F7F9;
+}
+
+.order_item:hover {
+  border: 1px solid #909090;
+}
+
+/* MainPage.css 맨 아래에 추가 */
+.orderlist_section .slick-track {
+  display: flex !important;
+  /* flexbox 강제 적용 */
+  gap: 16px;
+  /* 아이템 사이 16px 간격 */
+}
+
+/* slick-slide 기본 margin 없애기 */
+.orderlist_section .slick-slide {
+  margin: 0 !important;
+}
+
+/* slick 내부 컨테이너들이 아이템 높이에 따라 자동으로 늘어나도록 */
+.orderlist_section .slick-slider,
+.orderlist_section .slick-list,
+.orderlist_section .slick-track,
+.orderlist_section .slick-slide {
+  height: auto !important;
+}
+
+/* order_item 상/하단에 마진 추가 */
+.order_item {
+  margin: 8px 0;
+  /* 위/아래 8px 띄워서 잘림 방지 및 간격 확보 */
+}
+
+.order_item h3 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.order_item p {
+  font-size: 1rem;
+  color: #555;
+  flex-grow: 1;
+}
+
+.order_item span {
+  font-size: 0.875rem;
+  color: #999;
+  text-align: right;
+}
+
+/* 커뮤니티 최신글 섹션 */
+.community_section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.community_section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.community_list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+
+.community_item {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 7.5rem;
+  justify-content: space-between;
+}
+
+.community_item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.community_item span {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.community_item .community_title {
+  font-weight: bold;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.community_item .community_info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 추천 업체 섹션 */
+.sellerlist_section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sellerlist_section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.sellerlist_section .seller_item {
+  padding: 1rem;
+  text-align: center;
+  min-height: 10.5rem;
+}
+
+.sellerlist_section .seller_thumb {
+  width: 100%;
+  height: 8rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sellerlist_section .seller_name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ────────────────────────────────────────────────
+   배너 슬라이더: 잘림 없이 전체 노출 + dots 보이기
+──────────────────────────────────────────────── */
+.banner_section {
+  position: relative;
+  width: 100%;
+  height: 66vh;
+  /* 화면 높이의 66% */
+  overflow: hidden;
+  /* 잘린 부분 숨김 */
+}
+
+.banner_section .banner_item img {
+  width: 100%;
+  height: 100%;
+  /* 부모 높이(66vh) 꽉 채움 */
+  object-fit: cover;
+  /* 영역에 맞춰 잘림 없이 커버 */
+  object-position: center;
+}
+
+/* dots 위치 재조정 (필요시) */
+.banner_section .slick-dots {
+  bottom: 1rem;
+}
+
+.slick-slider {
+  overflow: visible !important;
+  /* slick 기본 숨김 해제 */
+}
+
+/* Slick 내부 컨테이너 높이를 부모(.banner_section) 높이에 맞추기 */
+.banner_section .slick-slider,
+.banner_section .slick-list,
+.banner_section .slick-track,
+.banner_section .slick-slide {
+  height: 100% !important;
+  /* 부모 높이(66vh)에 맞춤 */
+}
+
+/* 실제 배너 아이템도 100% 높이로 꽉 채우기 */
+.banner_section .banner_item {
+  height: 100%;
+}
+
+/* 이미지 중앙 크롭 채우기(이미지 넘칠 때 중앙 기준) */
+.banner_section .banner_item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+
+.banner_section .slick-dots {
+  position: absolute;
+  bottom: 1rem;
+  /* 배너 맨 아래에서 1rem 위 */
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  z-index: 10;
+}
+
+.banner_section .slick-dots li button:before {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.banner_section .slick-dots li.slick-active button:before {
+  color: white;
+}
+
+.empty-message {
+  text-align: center;
+  color: #777;
+  padding: 2rem 0;
+  font-size: 1.25rem;
+}
+
+.slick-prev,
+.slick-next {
+  width: 40px;
+  height: 40px;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: #000;
+  font-size: 2rem;
+}
+
+.slick-prev {
+  left: -35px;
+}
+
+.slick-next {
+  right: -35px;
+}
+
+/* 모달 css */
+
+.modal_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+  z-index: 1000;
+}
+
+.modal_content {
+  position: relative;
+  top: 20vh;
+  background: white;
+  width: 600px;
+  /* 기존 400px → 600px */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal_header {
+  background-color: #15689A;
+  color: white;
+  padding: 16px 20px;
+  /* 패딩 증가 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  /* 폰트 키움 */
+  font-weight: bold;
+}
+
+.modal_body {
+  padding: 28px;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.seller_top {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.seller_image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.seller_image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.image_slider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.image_slider button {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 18px;
+  background-color: #15689A;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.image_slider button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.slider_button {
+  background: #15689A;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.img_box {
+  width: 100px;
+  height: 100px;
+  background: #ddd;
+  border-radius: 8px;
+}
+
+.img_box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
+/* 반응형 조정 */
+@media (max-width: 992px) {
+  .slick-prev {
+    left: -35px;
+  }
+
+  .slick-next {
+    right: -35px;
+  }
+
+  .community_list .community_item:nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner_section {
+    height: 50vh;
+  }
+
+  .order_item,
+  .community_item,
+  .seller_item {
+    padding: 0.75rem;
+  }
+
+  .orderlist_section h2,
+  .community_section h2,
+  .sellerlist_section h2 {
+    font-size: 1.75rem;
+  }
+
+  .community_list {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .community_list .community_item:nth-child(4),
+  .community_list .community_item:nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  #mainPage {
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  .community_list {
+    grid-template-columns: 1fr;
+  }
+
+  .banner_section {
+    height: 40vh;
+  }
+
+  .community_list .community_item:nth-child(3),
+  .community_list .community_item:nth-child(4),
+  .community_list .community_item:nth-child(5) {
+    display: none;
+  }
+}

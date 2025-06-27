@@ -3,6 +3,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import "./requestDebugStyle.css";
 
+const handleReviewWriteClick = () => {
+  alert("review 작성 모달");
+  // navigate(`/`);
+};
+
 const List = ({ title, quotes, type }) => ( 
   <div className='request-body omypMain'>
     <section className="mt-6">
@@ -17,6 +22,7 @@ const List = ({ title, quotes, type }) => (
         {quotes && quotes.length > 0 ? (quotes.map((quote, idx) => {
           const displayDate = 
             quote.rentalDate ? new Date(quote.rentalDate).toLocaleDateString('ko-KR') : '날짜 null';
+          const displayOtitle = quote.otitle ? quote.otitle : '제목 null';
           const displayTime = quote.rentalTime ? quote.rentalTime : '시간 null';
           const displayPerson = quote.person ? `${quote.person}명` : '인원 null';
           const displayRegion = quote.region ? `${quote.region}` : '지역 null';
@@ -32,7 +38,7 @@ const List = ({ title, quotes, type }) => (
                   className="flex-1 mb-2 sm:mb-0 clickMyComponent"
                   style={{ textDecoration: 'none', color: 'inherit' }} // Link의 기본 스타일 제거
                 >
-                  <span className="font-semibold text-lg">{quote.ocontent} 견적 (글번호: {quote.ono})</span>
+                  <span className="font-semibold text-lg">{displayOtitle} (글번호: {quote.ono})</span>
                   <div className="text-sm text-gray-600"> {displayRegion} | {displayDate} {displayTime} | {displayPerson} </div>
                   {type === 'active' && (
                     <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr}+{urgentStr}</div>
@@ -41,7 +47,7 @@ const List = ({ title, quotes, type }) => (
                 </Link>
               ) : ( // 일반 div 렌더링
                 <div className="flex-1 mb-2 sm:mb-0 clickMyComponent">
-                  <span className="font-semibold text-lg">{quote.ocontent} 견적 (글번호: {quote.ono})</span>
+                  <span className="font-semibold text-lg">{displayOtitle} (글번호: {quote.ono})</span>
                   <div className="text-sm text-gray-600"> {displayRegion} | {displayDate} {displayTime} | {displayPerson} </div>
                   {type === 'active' && (
                     <div className="text-red-600 text-sm mt-1">디버깅-남은시간 : {quote.timeLeftStr}+{urgentStr}</div>
@@ -52,7 +58,8 @@ const List = ({ title, quotes, type }) => (
 
               <div className="flex-shrink-0">
                 {type === 'closed' && (
-                <button className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm"> 리뷰 작성 </button>
+                <button onClick={handleReviewWriteClick}
+                  className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded text-sm"> 리뷰 작성 </button>
                 )}
               </div>
             </li>

@@ -1,9 +1,16 @@
 package com.sports.kickauction.service;
 
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.dto.RequestPageRequestDTO;
+import com.sports.kickauction.dto.RequestPageResponseDTO;
+import com.sports.kickauction.dto.RequestReadDTO;
+
 import java.util.Map;
 
 public interface RequestService {
+
+    //견적 리스트
+    RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO requestPageRequestDTO);
 
     // ono를 사용하여 견적 상세 정보를 가져옵니다.
     RequestDTO getOrderDetails(int ono);

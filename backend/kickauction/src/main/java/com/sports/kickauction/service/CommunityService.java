@@ -12,7 +12,7 @@ public interface CommunityService {
 
     CommunityDTO get(Long pno);
 
-    void modify(CommunityDTO communityDto);
+    void modify(CommunityDTO communityDto,MultipartFile pimageFile);
 
     void remove(Long pno);
 

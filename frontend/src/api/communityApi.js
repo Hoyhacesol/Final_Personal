@@ -39,8 +39,12 @@ export const deleteOne = async (pno) => {
   return res.data
 }
 
-export const updateOne = async (pno, communityDTO) => {
-  const res = await axios.put(`${prefix}/${pno}`, communityDTO)
+export const updateOne = async (pno, formData) => {
+ const res = await axios.put(
+    `${prefix}/${pno}`,
+     formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  )
   return res.data
 };
 

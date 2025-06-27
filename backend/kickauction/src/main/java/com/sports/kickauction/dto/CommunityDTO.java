@@ -17,6 +17,9 @@ public class CommunityDTO {
     /** 회원 닉네임 (user_name) */
     private String writerName;
 
+    /** 회원 프로필 이미지 (profileimg) */
+    private String mprofileimg;
+
     /** 제목 (ptitle) */
     private String ptitle;
 

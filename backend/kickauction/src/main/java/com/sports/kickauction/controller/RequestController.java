@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,14 +20,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import lombok.extern.log4j.Log4j2;
-
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.dto.RequestPageRequestDTO;
+import com.sports.kickauction.dto.RequestPageResponseDTO;
+import com.sports.kickauction.dto.RequestReadDTO;
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.repository.RequestRepository;
 import com.sports.kickauction.service.RequestService;
+
+import lombok.extern.log4j.Log4j2;
+
 
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @Log4j2
@@ -46,7 +49,12 @@ public class RequestController {
         this.memberRepository = memberRepository;
         this.requestRepository = requestRepository;
     }
-    
+    //견적 리스트
+    @GetMapping("/list")
+    public ResponseEntity<RequestPageResponseDTO<RequestReadDTO>> getOrderList(RequestPageRequestDTO requestPageRequestDTO) {
+        RequestPageResponseDTO<RequestReadDTO> result = requestService.getOrderList(requestPageRequestDTO);
+        return ResponseEntity.ok(result);
+    }
 
     // 견적 상세 조회 (GET /api/orders/{ono})
     @GetMapping("/{ono}") // PathVariable 이름 소문자 'ono'로 수정
@@ -57,6 +65,7 @@ public class RequestController {
             Map<String, Object> responseMap = new HashMap<>();
             responseMap.put("ono", order.getOno());
             responseMap.put("mno", order.getMno());
+            responseMap.put("otitle", order.getOtitle());
             responseMap.put("playType", order.getPlayType());
             responseMap.put("region", order.getOlocation()); // "olocation"을 "region"으로 매핑
 
@@ -106,19 +115,38 @@ public class RequestController {
     // 견적 생성 (POST /api/orders) - 프론트엔드 OrderCreatePage.js에서 호출될 API
     @PostMapping
     public ResponseEntity<Map<String, Object>> createOrder (@RequestBody RequestDTO requestDTO) {
+        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId;
 
-        String username;
+        if (principal instanceof org.springframework.security.core.userdetails.User) {
+            // 일반 로그인
+            loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } 
+        else if (principal instanceof DefaultOAuth2User) {
+            DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
+            // System.out.println("OAuth2 attributes: " + oauthUser.getAttributes()); //data check
+            Map<String, Object> attributes = oauthUser.getAttributes();
 
-        // 2. principal에서 username 추출
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString(); // 일반 문자열일 경우
+            String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId(); // "google", "kakao" 등
+
+            if ("google".equals(registrationId)) {
+                loginUserId = (String) attributes.get("user_id"); // 커스텀 OAuth2UserService가 추가한 값
+            } else if ("kakao".equals(registrationId)) {
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+                loginUserId = (String) kakaoAccount.get("email");
+            } else {
+                throw new RuntimeException("지원하지 않는 소셜 로그인 방식입니다: " + registrationId);
+            }
+        } 
+        else {
+            loginUserId = null;
+            throw new RuntimeException("알 수 없는 사용자 인증 방식입니다: " + principal.getClass());
         }
-
+        
         // 3. MemberRepository를 통해 Member 조회
-        Member member = memberRepository.findByUserId(username)
+        Member member = memberRepository.findByUserId(loginUserId)
                         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         // 4. 요청 객체에 회원 번호 설정
@@ -143,14 +171,46 @@ public class RequestController {
     public ResponseEntity<Map<String, Object>> getMyOrders() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
-        User user = (User) authentication.getPrincipal();
-        String loginUserId = user.getUsername();
+        // 일반 로그인에는 문제가 없지만 소셜 로그인 시 USER타입 객체로 변환이 불가능하기 때문에 오류가 발생
+        // User user = (User) authentication.getPrincipal();
+        // String loginUserId = user.getUsername();
+
+        Object principal = authentication.getPrincipal();
+        String loginUserId;
         
+        if (principal instanceof org.springframework.security.core.userdetails.User) {
+            // 일반 로그인
+            loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } 
+        else if (principal instanceof DefaultOAuth2User) {
+            DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
+            // System.out.println("OAuth2 attributes: " + oauthUser.getAttributes()); //data check
+
+            
+            
+            Map<String, Object> attributes = oauthUser.getAttributes();
+
+            String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId(); // "google", "kakao" 등
+
+            if ("google".equals(registrationId)) {
+                loginUserId = (String) attributes.get("user_id"); // 커스텀 OAuth2UserService가 추가한 값
+            } else if ("kakao".equals(registrationId)) {
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+                loginUserId = (String) kakaoAccount.get("email");
+            } else {
+                throw new RuntimeException("지원하지 않는 소셜 로그인 방식입니다: " + registrationId);
+            }
+        } 
+        else {
+            loginUserId = null;
+            throw new RuntimeException("알 수 없는 사용자 인증 방식입니다: " + principal.getClass());
+        }
+            
+   
         Member member = memberRepository.findByUserId(loginUserId)
         .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginUserId));
 
         int memberNo = member.getMno().intValue();
-        System.out.println(memberNo);
 
         Map<String, Object> myOrdersData = requestService.getMyOrdersByMemberNo(memberNo);
 

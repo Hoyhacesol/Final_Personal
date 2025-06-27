@@ -5,7 +5,7 @@ body {
 .findinfo_container {
   width: 100%;
   max-width: 500px;
-  margin: 9rem auto;
+  margin: 7rem auto;
   background: white;
   padding: 2rem 4rem;
   border-radius: 12px;
@@ -287,7 +287,7 @@ body {
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
 @media (max-width: 479px) {
   .findinfo_container {
-    margin-top: 10rem;
+    margin-top: 6rem;
     max-width: 21rem;
     padding: 2rem 1rem;
   }

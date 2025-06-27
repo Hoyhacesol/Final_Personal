@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,57 +23,45 @@ import lombok.RequiredArgsConstructor;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepo;
-    private final MemberRepository memberRepo; // MemberRepository 추가
+    private final MemberRepository memberRepo;
 
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getComments(Long pno) {
         return commentRepo.findByPnoOrderByCregdateDesc(pno)
-                .stream()
-                .map(c -> CommentDTO.builder()
-                        .cno(c.getCno())
-                        .pno(c.getPno())
-                        .mno(c.getMno())
-                        .writerName(c.getMember().getUserName())
-                        .content(c.getContent())
-                        .cregdate(c.getCregdate())
-                        .build())
-                .collect(Collectors.toList());
+            .stream()
+            .map(c -> CommentDTO.builder()
+                    .cno(c.getCno())
+                    .pno(c.getPno())
+                    .mno(c.getMno())
+                    .writerName(c.getMember().getUserName())
+                    .mprofileimg(c.getMember().getProfileimg())
+                    .content(c.getContent())
+                    .cregdate(c.getCregdate())
+                    .build())
+            .collect(Collectors.toList());
     }
 
     @Override
     public CommentDTO writeComment(Long pno, CommentDTO dto, Authentication auth) {
-        // 1) principal 타입에 따라 Member 엔티티를 얻는 로직 분기
-        Member user;
-        Object principal = auth.getPrincipal();
+        Member user = resolveUser(auth);
 
-        if (principal instanceof Member) {
-            user = (Member) principal;
-        } else if (principal instanceof DefaultOAuth2User) {
-            DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
-            // OAuth2User 에서 식별키(예: "login", "email", "sub" 등)를 꺼내야 합니다.
-            // 여기는 예시로 "email" 을 사용합니다.
-            String email = oauthUser.getAttribute("email");
-            user = memberRepo.findByUserId(email) // 또는 findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("OAuth2 User not linked to Member: " + email));
-        } else {
-            throw new IllegalArgumentException("Unsupported principal type: " + principal.getClass());
-        }
-
-        // 2) Comment 객체 생성·저장
+        // ↓ 여기서 mno를 꼭 채워 주세요!
         Comment c = Comment.builder()
                 .pno(pno)
-                .mno(user.getMno())
+                .mno(user.getMno())            // ← 추가
+                .member(user)                  // 연관관계도 설정
                 .content(dto.getContent())
                 .build();
+
         Comment saved = commentRepo.save(c);
 
-        // 3) DTO 리턴
         return CommentDTO.builder()
                 .cno(saved.getCno())
                 .pno(saved.getPno())
                 .mno(saved.getMno())
                 .writerName(user.getUserName())
+                .mprofileimg(user.getProfileimg())
                 .content(saved.getContent())
                 .cregdate(saved.getCregdate())
                 .build();
@@ -82,17 +71,19 @@ public class CommentServiceImpl implements CommentService {
     public CommentDTO updateComment(Long pno, Long cno, String content, Authentication auth) {
         Member user = resolveUser(auth);
         Comment c = commentRepo.findByCnoAndPno(cno, pno)
-                .orElseThrow(() -> new RuntimeException("댓글이 없습니다: " + cno));
+            .orElseThrow(() -> new RuntimeException("댓글이 없습니다: " + cno));
         if (!c.getMno().equals(user.getMno())) {
             throw new RuntimeException("권한이 없습니다");
         }
         c.setContent(content);
         Comment updated = commentRepo.save(c);
+
         return CommentDTO.builder()
                 .cno(updated.getCno())
                 .pno(updated.getPno())
                 .mno(updated.getMno())
                 .writerName(user.getUserName())
+                .mprofileimg(user.getProfileimg())
                 .content(updated.getContent())
                 .cregdate(updated.getCregdate())
                 .build();
@@ -102,26 +93,31 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Long pno, Long cno, Authentication auth) {
         Member user = resolveUser(auth);
         Comment c = commentRepo.findByCnoAndPno(cno, pno)
-                .orElseThrow(() -> new RuntimeException("댓글이 없습니다: " + cno));
+            .orElseThrow(() -> new RuntimeException("댓글이 없습니다: " + cno));
         if (!c.getMno().equals(user.getMno())) {
             throw new RuntimeException("권한이 없습니다");
         }
         commentRepo.delete(c);
     }
 
-     private Member resolveUser(Authentication auth) {
+    private Member resolveUser(Authentication auth) {
         Object principal = auth.getPrincipal();
 
-        // 일반 로그인한 경우
-        if (principal instanceof Member) {
-            return (Member) principal;
+        // 자체 로그인한 회원
+        if (principal instanceof Member m) {
+            return m;
         }
-        // OAuth2 로그인한 경우
-        if (principal instanceof DefaultOAuth2User) {
-            DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
-            String email = oauthUser.getAttribute("email");
+        // OAuth2 로그인한 회원
+        if (principal instanceof DefaultOAuth2User oauth) {
+            String email = oauth.getAttribute("email");
             return memberRepo.findByUserId(email)
-                    .orElseThrow(() -> new RuntimeException("OAuth2 User not linked to Member: " + email));
+                    .orElseThrow(() -> new RuntimeException("OAuth2 User not linked: " + email));
+        }
+        // 스프링 시큐리티 기본 UserDetails
+        if (principal instanceof User ud) {
+            String userId = ud.getUsername();
+            return memberRepo.findByUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + userId));
         }
 
         throw new IllegalArgumentException("Unsupported principal type: " + principal.getClass());

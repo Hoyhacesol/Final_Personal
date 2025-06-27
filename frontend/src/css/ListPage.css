@@ -7,6 +7,12 @@
      gap: 1rem;
  }
 
+ .list_title {
+     font-size: 1.5rem;
+     font-weight: bold;
+     padding-left: 10px;
+ }
+
  .search_box {
      display: flex;
      gap: 0.5rem;

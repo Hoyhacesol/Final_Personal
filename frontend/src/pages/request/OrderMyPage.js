@@ -113,12 +113,12 @@ const OrderMyPage = () => {
         
         // 마감 처리 로직: timeLeft가 0 이하이고 아직 처리 요청을 보내지 않은 경우
         if (timeLeft <= 0 && !finishingOrdersRef.current.has(quote.ono)) {
-          console.log(`견적 ${quote.ono} 마감! 서버에 PATCH 요청 보냄.`);
+          // console.log(`견적 ${quote.ono} 마감! 서버에 PATCH 요청 보냄.`);
           finishingOrdersRef.current.add(quote.ono); // 요청 중인 ono 추가
 
           axios.patch(`/api/orders/finish/${quote.ono}`, {}, { withCredentials: true })
             .then(response => {
-              console.log(`견적 ${quote.ono} 마감 처리 성공:`, response.data);
+              // console.log(`견적 ${quote.ono} 마감 처리 성공:`, response.data);
               // 성공적으로 마감 처리되면 클라이언트 상태 즉시 업데이트
               setClosedOrders(prevClosed => [...prevClosed, { ...quote, timeLeftStr: "마감됨", isUrgent: false }]); // 마감된 견적을 닫힌 목록에 추가
             })
@@ -180,11 +180,7 @@ const OrderMyPage = () => {
   return (
     <>
         <Hero {...myPageHero} />
-        {activeLists && activeLists.length > 0 ? (
-            <List title="진행 견적" quotes={activeLists} type="active"/>
-        ) : (
-            <div className="mt-6 text-gray-500">현재 진행 중인 견적이 없습니다.</div>
-        )}
+        <List title="진행 견적" quotes={activeLists} type="active"/>
         <List title="마감 견적" quotes={closedOrders} type="closed" />
         <List title="취소 견적" quotes={cancelledOrders} type="cancelled" />
     </>

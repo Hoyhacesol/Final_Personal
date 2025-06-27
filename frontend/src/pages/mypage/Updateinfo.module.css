@@ -258,7 +258,7 @@ label {
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
 @media (max-width: 479px) {
   .signup_smallcontainer {
-    margin-top: 5rem;
+    margin-top: 2rem;
     max-width: 21rem;
     padding: 1rem 1rem;
   }

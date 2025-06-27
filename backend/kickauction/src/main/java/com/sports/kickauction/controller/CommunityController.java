@@ -87,14 +87,22 @@ public class CommunityController {
                 .body(Map.of("PNO", saved.getPno()));
     }
 
-    @PutMapping("/{pno}")
-    public Map<String, String> modify(
-            @PathVariable(name = "pno") Long pno,
-            @RequestBody CommunityDTO communityDTO) {
+ @PutMapping(
+      value = "/{pno}",
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<Map<String, String>> modify(
+            @PathVariable Long pno,
+            @ModelAttribute CommunityDTO communityDTO,
+            @RequestParam(value = "pimageFile", required = false) MultipartFile pimageFile
+    ) {
         communityDTO.setPno(pno);
-        log.info("Modify: " + communityDTO);
-        service.modify(communityDTO);
-        return Map.of("RESULT", "SUCCESS");
+        log.info("Modify (multipart): {}", communityDTO);
+
+        // service.modify 메서드도 MultipartFile 파라미터를 받도록 오버로딩하거나 수정해야 합니다.
+        service.modify(communityDTO, pimageFile);
+
+        return ResponseEntity.ok(Map.of("RESULT", "SUCCESS"));
     }
 
     @DeleteMapping("/{pno}")

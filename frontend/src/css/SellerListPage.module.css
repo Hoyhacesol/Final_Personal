@@ -1,4 +1,4 @@
-#wrap-container {
+.wrap_container {
   max-width: 1200px;
   margin: 0 auto;
   margin-top: 10px;
@@ -16,7 +16,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.title-wrap {
+.title_wrap {
   display: flex;
   flex-direction: column;
 }
@@ -34,21 +34,21 @@
 }
 
 
-.page-title {
+.page_title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 36px;
   margin: 0;
   letter-spacing: 1px;
 }
 
-.page-subtitle {
+.page_subtitle {
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
   color: #e0e0e0;
   margin-top: 6px;
 }
 
-.register-btn {
+.register_btn {
   background-color: #ffffff;
   color: #1565c0;
   font-weight: bold;
@@ -59,11 +59,11 @@
   transition: background-color 0.2s ease;
 }
 
-.register-btn:hover {
+.register_btn:hover {
   background-color: #f1f1f1;
 }
 
-.card-container {
+.card_container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -94,7 +94,7 @@
 }
 
 
-.card-header{
+.card_header{
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -108,21 +108,21 @@
   right: 0;
 }
 
-.seller-image {
+.seller_image {
   border-radius: 12px;
   overflow: hidden;
 }
 
-.seller-image.clickable {
+.seller_image.clickable {
   cursor: pointer;
   transition: transform 0.2s;
 }
 
-.seller-image.clickable:hover {
+.seller_image.clickable:hover {
   transform: scale(1.02);
 }
 
-.seller-image.non-clickable {
+.seller_image.non-clickable {
   cursor: default;
   opacity: 0.8; 
 }
@@ -156,7 +156,7 @@
   color: #999;
 }
 
-.detail-btn {
+.detail_btn {
   margin-top: auto;
   align-self: flex-end;
   background-color: #15689A;
@@ -173,7 +173,7 @@
   margin-top: 30px;
 }
 
-.fixed-pagination {
+.fixed_pagination {
   position: relative;
   bottom: 0;
   left: 0;
@@ -187,7 +187,7 @@
 
 /* 모달 css */
 
-.modal-overlay {
+.modal_overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -201,7 +201,7 @@
   z-index: 999;
 }
 
-.modal-content {
+.modal_content {
   background: white;
   width: 600px; /* 기존 400px → 600px */
   border-radius: 12px;
@@ -210,7 +210,7 @@
   animation: fadeIn 0.2s ease-in-out;
 }
 
-.modal-header {
+.modal_header {
   background-color: #15689A;
   color: white;
   padding: 16px 20px; /* 패딩 증가 */
@@ -221,20 +221,20 @@
   font-weight: bold;
 }
 
-.modal-body {
+.modal_body {
   padding: 28px;
   font-size: 16px;
   color: #333;
   line-height: 1.5;
 }
 
-.seller-top {
+.seller_top {
   display: flex;
   gap: 16px;
   margin-bottom: 20px;
 }
 
-.seller-image {
+.seller_image {
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -242,14 +242,14 @@
   flex-shrink: 0;
 }
 
-.seller-image img {
+.seller_image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
 }
 
-.image-slider {
+.image_slider {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -257,7 +257,7 @@
   margin: 16px 0;
 }
 
-.image-slider button {
+.image_slider button {
   height: 30px;
   padding: 0 12px;
   font-size: 18px;
@@ -268,12 +268,12 @@
   cursor: pointer;
 }
 
-.image-slider button:disabled {
+.image_slider button:disabled {
   opacity: 0.5;
   cursor: default;
 }
 
-.slider-button {
+.slider_button {
   background: #15689A;
   color: white;
   border: none;
@@ -283,17 +283,16 @@
   cursor: pointer;
 }
 
-.img-box {
+.img_box {
   width: 100px;
   height: 100px;
   background: #ddd;
   border-radius: 8px;
 }
 
-.img-box img {
+.img_box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
 }
-

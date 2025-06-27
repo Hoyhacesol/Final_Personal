@@ -30,8 +30,7 @@ const Nav = () => {
 
       //주석:: 로그아웃 후 이동위치
       setUser(null);
-      navigate(location.pathname);
-      // window.location.href = "/";
+      window.location.href = "/";
     } catch (err) {
       console.error("로그아웃 실패", err);
     }

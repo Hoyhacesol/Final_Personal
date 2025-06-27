@@ -90,6 +90,8 @@
 
 .read_content {
     padding: 2.5rem;
+    white-space: pre-wrap;
+    word-break: break-all;
 }
 
 .read_content img {
@@ -251,6 +253,14 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.8rem;
+}
+
+.comment_profile img {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
 }
 
 .comment_author {

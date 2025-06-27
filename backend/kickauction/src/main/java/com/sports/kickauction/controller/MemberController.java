@@ -29,6 +29,7 @@ import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.MemberService;
 import com.sports.kickauction.service.SellerService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -293,11 +294,14 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     // 매핑: 회원탈퇴
     @DeleteMapping("/{mno}")
-    public ResponseEntity<?> deleteMember(@PathVariable Long mno) {
+    public ResponseEntity<?> deleteMember(
+    @PathVariable Long mno,
+    HttpServletRequest request
+) {
         try {
-
         boolean result = memberService.deleteMember(mno);
         if (result) {
+            request.getSession().invalidate();
             return ResponseEntity.ok("회원 탈퇴 완료");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 회원 없음");

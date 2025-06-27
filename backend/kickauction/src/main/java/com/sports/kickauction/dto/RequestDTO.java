@@ -17,7 +17,7 @@ import java.lang.Integer;
 public class RequestDTO {
     private int ono;
     private int mno;
-
+    private String otitle;
     @JsonProperty("region")
     private String olocation;
     private String playType;

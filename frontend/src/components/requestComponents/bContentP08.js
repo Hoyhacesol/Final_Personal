@@ -10,6 +10,12 @@ import "./requestDebugStyle.css";
 const formFields = {
   left: [
     {
+      type: "text",
+      label: "제목",
+      name: "otitle",
+      placeholder: "제목을 입력해주세요"
+    },
+    {
       type: "select",
       label: "종목",
       options: ["축구", "풋살"],
@@ -60,7 +66,6 @@ const formFields = {
     }
   ]
 };
-
 
 const renderField = (field ,value, handleChange, isReadOnly = false) => { 
   const currentPlaceholder = isReadOnly ? "" : field.placeholder;
@@ -146,18 +151,69 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
   }
 };
 
-const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
+const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
+  const [sidoList, setSidoList] = useState([]);
+  const [selectedSido, setSelectedSido] = useState("");
+  const [sigunguList, setSigunguList] = useState([]);
 
+
+  // 장비대여여부 전환 훅
   useEffect(() => {
-    if (formData.rental === '필요없어요') {
+    if (formData.rental === "필요없어요") {
       setIsRentalEquipmentReadOnly(true);
     } 
-    else {
+    else { // formData.rental === "필요해요"
       setIsRentalEquipmentReadOnly(false);
     }
-  }, [formData.rental]); // formData.rental 값이 변경될 때마다 이 훅 실행
+  }, [formData.rental]);
 
+
+
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< region <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  useEffect(() => {
+    fetch("/api/vworld/sido")
+      .then(res => res.json())
+      .then(json => {
+        const list = json.response.result.featureCollection.features.map(f => ({
+          code: f.properties.ctprvn_cd,
+          name: f.properties.ctp_kor_nm
+        }));
+        setSidoList(list);
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedSido) return;
+    fetch(`/api/vworld/sigungu?sidoName=${encodeURIComponent(selectedSido)}`)
+      .then(res => res.json())
+      .then(json => {
+        if (
+          json?.response?.status === "OK" &&
+          json?.response?.result?.featureCollection?.features
+        ) {
+          const list = json.response.result.featureCollection.features.map(f => ({
+            code: f.properties.sig_cd,
+            name: f.properties.sig_kor_nm
+          }));
+          setSigunguList(list);
+        } else {
+          if(!selectedSido==="세종특별자치시"){
+            console.warn("시군구 데이터 없음 또는 응답 실패", json);
+          }
+          setSigunguList([]);
+        }
+      })
+      .catch(err => {
+        console.error("시군구 API 요청 실패:", err);
+        setSigunguList([]);
+      });
+
+  }, [selectedSido]);
+
+
+  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  return   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   return (
     <div className='request-body bg-cover bg-center'>
       <form onSubmit={handleSubmit} className="form-wrapper">
@@ -165,12 +221,15 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
         <div className="form-card">
           {formFields.left.map((field, idx) => (
             <div key={idx} className="mt-4">
-              <label className="">{field.label}</label>
+              <label>{field.label}</label>
               {
                 field.name === 'rentalEquipment' ?
                   renderField(field, formData[field.name], handleChange, isRentalEquipmentReadOnly) :
                   renderField(field, formData[field.name], handleChange)
               }
+              {formSubmitted && errors[field.name] && (
+                <p className="error-message">{errors[field.name]}</p>
+              )}
             </div>
           ))}
         </div>
@@ -178,14 +237,62 @@ const BContentP08 = ({ formData, handleChange, handleSubmit }) => {
         <div className="form-card">
           {formFields.right.map((field, idx) => (
             <div key={idx} className="mt-4">
-              <label className="">{field.label}</label>
-              {renderField(field, formData[field.name], handleChange)}
+              <label>{field.label}</label>
+              {
+                field.name === 'region' ?
+                // 여기에 지역을 입력받을 새로운 필드 랜더링
+                (
+                  <div className="">
+                    <select value={selectedSido} onChange={e => {
+                      const value = e.target.value;
+                      setSelectedSido(value);
+
+                      // 세종시인 경우 바로 지역 지정
+                      if (value === "세종특별자치시") {
+                        handleChange({ target: { name: "region", value: "세종특별자치시" } });
+                        setSigunguList([]); // 시군구 비움
+                      } else {
+                        handleChange({ target: { name: "region", value: value } }); 
+                      }
+                    }}>
+                      <option value="">시/도</option>
+                      {sidoList.map(s => (
+                        <option key={s.code} value={s.name}>{s.name}</option>
+                      ))}
+                    </select>
+                    {selectedSido !== "세종특별자치시" && (
+                      <>
+                        <select
+                          value={formData.region?.split(" ")[1] || ""}
+                          onChange={e => {
+                            const region = `${selectedSido} ${e.target.value}`;
+                            handleChange({ target: { name: "region", value: region } });
+                          }}
+                          disabled={!sigunguList.length}
+                        >
+                          {/* 시/군/구 플레이스홀더 조건부 렌더링 */}
+                          {(!formData.region || formData.region.split(" ")[0] !== selectedSido || formData.region.split(" ")[1] === "") &&
+                            <option value="">시/군/구</option>}
+                          {sigunguList.map(s => (
+                            <option key={s.code} value={s.name}>{s.name}</option>
+                          ))}
+                        </select>
+                      </>
+                    )}
+                  </div>
+                )
+                // 일반 입력 필드 생성
+                : (renderField(field, formData[field.name], handleChange))
+              }
+              {formSubmitted && errors[field.name] && (
+                <p className="error-message">{errors[field.name]}</p>
+              )}
             </div>
           ))}
           <button
             type="submit"
             className="full-submit-button">
-            등록하기
+            등록
           </button>
         </div>
       </form>

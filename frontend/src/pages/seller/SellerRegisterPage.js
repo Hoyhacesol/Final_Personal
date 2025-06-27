@@ -9,10 +9,10 @@ import {
 import {
   uploadImage,
   getImageUrl,
-  removeImage,
-  removeImageOnExit
+  removeImageOnExit,
+  removeImage
 } from "../../api/UploadImageApi";
-import "../../css/SellerRegisterPage.css";
+import styles from "../../css/SellerRegisterPage.module.css";
 
 const SellerRegisterPage = () => {
   const navigate = useNavigate();
@@ -39,6 +39,8 @@ const SellerRegisterPage = () => {
     slocation: "",
   });
 
+  
+  
   useEffect(() => {
     if (loading) return;
     const init = async () => {
@@ -48,6 +50,12 @@ const SellerRegisterPage = () => {
       }
       if (user.role !== "SELLER") {
         navigate("/error");
+        return;
+      }
+      // phone 미등록 회원->마이페이지로
+      if (user?.phone?.startsWith("t") && location.pathname.startsWith("/sellerlist/register")) {
+        alert("미인증 회원에게 제한된 컨텐츠입니다.\n전화번호 인증을 먼저 해야 합니다.");
+        navigate("/updateinfosocial");
         return;
       }
       const registered = await getSellerRegistered();
@@ -64,7 +72,7 @@ const SellerRegisterPage = () => {
       setIsRegistered(true);
     };
     init();
-  }, [user, loading, navigate]);
+  }, [user, loading,location, navigate]);
 
   useEffect(() => {
     const cleanUpOnUnload = () => {
@@ -180,7 +188,7 @@ const SellerRegisterPage = () => {
   const mainPath = formData.simage[0];
 
   if (mainPath && mainPath !== "default/default.png") {
-    removeImageOnExit(mainPath); // 서버에서 삭제 요청
+    removeImage(mainPath); // 서버에서 삭제 요청
     deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== mainPath); // 삭제 큐에서 제거
   }
 
@@ -198,7 +206,7 @@ const SellerRegisterPage = () => {
       introPaths
         .filter(path => path !== "default/default.png") // 기본 이미지 제외
         .map(path => {
-          removeImageOnExit(path); // 서버에서 삭제 요청
+          removeImage(path); // 서버에서 삭제 요청
           return path;
         })
     );
@@ -222,7 +230,7 @@ const SellerRegisterPage = () => {
 
   if (removedPath && removedPath !== "default/default.png") {
     try {
-      removeImageOnExit(removedPath); // 서버에서 삭제 요청
+      removeImage(removedPath); // 서버에서 삭제 요청
       deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== removedPath); // 삭제 큐에서 제거
     } catch (err) {
       console.error("소개 이미지 삭제 실패", err);
@@ -238,8 +246,8 @@ const SellerRegisterPage = () => {
 
 
   return (
-    <div className="container">
-      <div className="main-simage" onClick={() => {
+    <div className={styles["container"]}>
+      <div className={styles["main_simage"]} onClick={() => {
   // 기본 이미지일 때는 파일 선택만 실행
   if (!previewUrls.main) {
     fileInputRef.current.click();
@@ -262,41 +270,46 @@ const SellerRegisterPage = () => {
 
       <input type="file" hidden ref={fileInputRef} onChange={handleMainChange} accept="image/*" />
 
-      <div className="button-group">
+      <div className={styles["button_group"]}>
         {!previewUrls.main && (
-          <button className="button-blue" onClick={() => fileInputRef.current.click()}>
+          <button className={styles["button_blue"]} onClick={() => fileInputRef.current.click()}>
             대표 이미지 설정
           </button>
         )}
         {previewUrls.main && (
-          <button className="button-red" onClick={handleMainCancel}>
+          <button className={styles["button_red"]} onClick={handleMainCancel}>
             취소
           </button>
         )}
       </div>
 
-        <div className="basic-info-text">
+        <div className={styles["basic_info_text"]}>
           <p><strong>업체이름:</strong> {basicInfo.sname}</p>
           <p><strong>연락처:</strong> {basicInfo.phone}</p>
           <p><strong>업체주소:</strong> {basicInfo.slocation}</p>
         </div>
 
       {previewUrls.intros.length > 0 && (
-        <div className="slider-wrapper">
+        <div className={styles["slider_wrapper"]}>
           {previewUrls.intros.length > 3 && (
-            <button onClick={() => setSlideIndex((prev) => Math.max(prev - 3, 0))} className={`slider-button left ${slideIndex === 0 ? "disabled" : ""}`} disabled={slideIndex === 0}>
-              &lt;
-            </button>
+            <button
+            onClick={() => setSlideIndex((prev) => Math.max(prev - 3, 0))}
+            className={`${styles.slider_button} ${styles.left} ${slideIndex === 0 ? styles.disabled : ""}`}
+            disabled={slideIndex === 0}
+          >
+            &lt;
+          </button>
+
           )}
 
-          <div className="slider">
+          <div className={styles["slider"]}>
             {previewUrls.intros.slice(slideIndex, slideIndex + 3).map((src, idx) => {
               const globalIndex = slideIndex + idx;
               return (
-                <div className="slider-img-wrapper" key={`${src}-${globalIndex}`}>
+                <div className={styles["slider_img_wrapper"]} key={`${src}-${globalIndex}`}>
                   <img src={src} alt={`소개 ${globalIndex}`} onClick={() => setEnlargedImage(src)} />
                   <button
-                    className="delete-button"
+                    className={styles["delete_button"]}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleIntroRemove(globalIndex);
@@ -312,7 +325,7 @@ const SellerRegisterPage = () => {
           {previewUrls.intros.length > 3 && (
             <button
               onClick={() => setSlideIndex((prev) => prev + 3)}
-              className={`slider-button right ${slideIndex + 3 >= previewUrls.intros.length ? "disabled" : ""}`}
+              className={`${styles.slider_button} ${styles.right} ${slideIndex + 3 >= previewUrls.intros.length ? styles.disabled : ""}`}
               disabled={slideIndex + 3 >= previewUrls.intros.length}
             >
               &gt;
@@ -321,34 +334,34 @@ const SellerRegisterPage = () => {
         </div>
       )}
 
-      <div className="button-group">
-        <button className="button-blue" onClick={() => introInputRef.current.click()}>
+      <div className={styles["button_group"]}>
+        <button className={styles["button_blue"]} onClick={() => introInputRef.current.click()}>
           {previewUrls.intros.length === 0 ? "소개 이미지 설정" : "소개 이미지 추가"}
         </button>
         {previewUrls.intros.length > 0 && (
-          <button className="button-red" onClick={handleIntroCancel}>
+          <button className={styles["button_red"]} onClick={handleIntroCancel}>
             취소
           </button>
         )}
       </div>
       <input type="file" hidden ref={introInputRef} onChange={handleIntroChange} multiple accept="image/*" />
-      <h2 className="info-title">업체 정보</h2>
-      <input name="info" className="input-field" placeholder="업체 정보를 작성해주세요!" value={formData.info} onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))} />
-      <h2 className="content-title">업체 소개</h2>
+      <h2 className={styles["info_title"]}>업체 정보</h2>
+      <input name="info" className={styles["input_field"]} placeholder="업체 정보를 작성해주세요!" value={formData.info} onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))} />
+      <h2 className={styles["content_title"]}>업체 소개</h2>
       <textarea
         name="introContent"
-        className="textarea"
+        className={styles["textarea"]}
         placeholder="업체소개 글을 작성해주세요!"
         value={formData.introContent}
         onChange={(e) => setFormData((prev) => ({ ...prev, introContent: e.target.value }))}
       />
 
-      <button className="register-button" onClick={handleSubmit} disabled={submitting}>
+      <button className={styles["register_button"]} onClick={handleSubmit} disabled={submitting}>
         {submitting ? "등록 중..." : "등록"}
         </button>
 
       {enlargedImage && (
-        <div className="image-modal" onClick={() => setEnlargedImage(null)}>
+        <div className={styles["image_modal"]} onClick={() => setEnlargedImage(null)}>
           <img src={enlargedImage} alt="확대 이미지" />
         </div>
       )}

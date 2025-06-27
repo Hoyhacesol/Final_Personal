@@ -115,12 +115,12 @@ const OrderReadPage = () => {
       // 마감 처리 로직: 시간이 0 이하이고 아직 서버에 마감 요청을 보내지 않은 경우
       if (timeLeft <= 0 && !isFinishingRef.current) {
         isFinishingRef.current = true; // 요청 시작 플래그 설정
-        console.log(`견적 ${ono} 마감! 서버에 PATCH 요청 보냄.`);
+        // console.log(`견적 ${ono} 마감! 서버에 PATCH 요청 보냄.`);
         
         try {
           // PATCH 요청은 withCredentials를 포함해야 CORS에러 안남.
           await axios.patch(`/api/orders/finish/${ono}`, {}, { withCredentials: true });
-          console.log(`견적 ${ono} 마감 처리 성공.`);
+          // console.log(`견적 ${ono} 마감 처리 성공.`);
           
           // 성공 시, 클라이언트 상태의 finished 속성 업데이트
           setQuoteDetail(prev => ({

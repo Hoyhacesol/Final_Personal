@@ -414,6 +414,9 @@ body {
   color: #ff0000;
 }
 
+.help_separator {
+  color: #69696948;
+}
 .modal_container .withdraw_title {
   font-size: 2rem;
   font-family: "PaperlogyMD";
@@ -440,7 +443,7 @@ body {
 /* /////////////////////////////////주석: 모바일 반응성///////////////////////////////////////////////////////////////// */
 @media (max-width: 479px) {
   .mypage_container {
-    margin-top: 5rem;
+    margin-top: 2rem;
     max-width: 21rem;
     padding: 1rem 1rem;
   }

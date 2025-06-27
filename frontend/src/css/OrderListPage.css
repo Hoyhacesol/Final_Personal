@@ -39,7 +39,6 @@
   padding: 2rem;
   text-align: center;
   color: #111;
-  transform: translateY(-200px); 
 }
 
 
@@ -95,11 +94,23 @@
 
 .order-list {
   border-top: 1px solid #e5e7eb;
+  list-style: none; 
+  padding: 0;
+  margin: 0;
+}
+
+.order-list-item.empty {
+  text-align: center;
+  padding: 30px;
+  color: #888;
+  font-size: 18px;
 }
 
 .order-list-item {
   padding: 1rem 0;
   border-bottom: 1px solid #e5e7eb;
+  margin: 0;
+  padding: 0;
 }
 
 .order-item-content {
@@ -121,7 +132,95 @@
   text-align: right;
   font-size: 0.875rem;
   color: #6b7280;
+  transform: translateY(20px);
 }
+
+.playtype-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+  transform: translateX(200px);
+}
+
+.playtype-dropdown-button {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.playtype-dropdown-list {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 100;
+  width: 160px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.playtype-dropdown-list li {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.playtype-dropdown-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-arrow {
+  margin-left: 8px;
+}
+
+
+
+.order-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.order-card-left {
+  text-align: left;
+}
+
+.order-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.order-playtype,
+.order-location,
+.order-date {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.15rem;
+}
+
+.order-card-right {
+  text-align: right;
+  min-width: 80px;
+}
+
+.order-regdate-label {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.order-regdate {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 
 .order-pagination {
   display: flex;

@@ -4,7 +4,7 @@ import { FaSearchLocation } from "react-icons/fa";
 import { useAuth } from "../../contexts/Authcontext";
 import { putSellerUpdate, getSellerModifyInfo, getSellerRegistered } from "../../api/SellerApi";
 import { uploadImage, getImageUrl, removeImage, removeImageOnExit } from "../../api/UploadImageApi";
-import "../../css/SellerModifyPage.css";
+import styles from "../../css/SellerModifyPage.module.css";
 
 const SellerModifyPage = () => {
   const navigate = useNavigate();
@@ -35,6 +35,8 @@ const SellerModifyPage = () => {
     slocation: ""
   });
 
+  
+  
   useEffect(() => {
     if (loading) return;
     const init = async () => {
@@ -44,6 +46,12 @@ const SellerModifyPage = () => {
       }
       if (user.role !== "SELLER") {
         navigate("/error");
+        return;
+      }
+      // phone 미등록 회원->마이페이지로
+      if (user?.phone?.startsWith("t") && location.pathname.startsWith("/sellerlist/modify")) {
+        alert("미인증 회원에게 제한된 컨텐츠입니다.\n전화번호 인증을 먼저 해야 합니다.");
+        navigate("/updateinfosocial");
         return;
       }
       const registered = await getSellerRegistered();
@@ -71,7 +79,7 @@ const SellerModifyPage = () => {
       setPreviewUrls({ main: urls[0] || null, intros: urls.slice(1) });
     };
     init();
-  }, [user, loading, navigate]);
+  }, [user, loading, location, navigate]);
 
   useEffect(() => {
     const cleanUpOnUnload = () => {
@@ -208,8 +216,8 @@ const SellerModifyPage = () => {
   };
 
   return (
-    <div className="container">
-      <div className="main-simage" onClick={() => !previewUrls.main && fileInputRef.current.click()}>
+    <div className={styles["container"]}>
+      <div className={styles["main_simage"]} onClick={() => !previewUrls.main && fileInputRef.current.click()}>
         <img
           src={previewUrls.main || getImageUrl("default/default.png")}
           alt="대표 이미지"
@@ -229,15 +237,15 @@ const SellerModifyPage = () => {
 
       <input type="file" hidden ref={fileInputRef} onChange={handleMainChange} accept="image/*" />
 
-      <div className="button-group">
+      <div className={styles["button_group"]}>
         {!previewUrls.main || previewUrls.main.includes("default/default.png") ? (
-          <button className="button-blue" onClick={() => fileInputRef.current.click()}>대표 이미지 설정</button>
+          <button className={styles["button_blue"]} onClick={() => fileInputRef.current.click()}>대표 이미지 설정</button>
         ) : (
-          <button className="button-red" onClick={handleMainCancel}>취소</button>
+          <button className={styles["button_red"]} onClick={handleMainCancel}>취소</button>
         )}
       </div>
 
-      <div className="basic-info-form">
+      <div className={styles["basic_info_form"]}>
   <div>
     <label htmlFor="sname">업체 이름</label>
     <input
@@ -259,9 +267,9 @@ const SellerModifyPage = () => {
     />
   </div>
 
-  <div className="address-input-wrapper">
+  <div className={styles["address_input_wrapper"]}>
   <label htmlFor="slocation">업체 주소</label>
-  <div className="address-input">
+  <div className={styles["address_input"]}>
     <input
       id="slocation"
       type="text"
@@ -270,16 +278,16 @@ const SellerModifyPage = () => {
     />
     <button
       type="button"
-      className="address-search-button"
+      className={styles["address_search_button"]}
       onClick={handleAddressSearch}
       aria-label="주소 검색"
     >
       <FaSearchLocation />
     </button>
   {hasTempAddress && (
-  <div className="address-cancel-button-group">
-    <button className="button-red" onClick={handleCancelAddress}>취소</button>
-  </div>
+  
+    <button className={styles["button_red"]} onClick={handleCancelAddress}>취소</button>
+  
 )}
   </div>
 
@@ -288,24 +296,24 @@ const SellerModifyPage = () => {
 </div>
 
       {previewUrls.intros.length > 0 && (
-        <div className="slider-wrapper">
+        <div className={styles["slider_wrapper"]}>
           {previewUrls.intros.length > 3 && (
             <button
               onClick={() => setSlideIndex(prev => Math.max(prev - 3, 0))}
-              className={`slider-button left ${slideIndex === 0 ? "disabled" : ""}`}
+              className={`${styles.slider_button} ${styles.left} ${slideIndex === 0 ? styles.disabled : ""}`}
               disabled={slideIndex === 0}
             >
               &lt;
             </button>
           )}
-          <div className="slider">
+          <div className={styles["slider"]}>
             {previewUrls.intros.slice(slideIndex, slideIndex + 3).map((src, idx) => {
               const globalIndex = slideIndex + idx;
               return (
-                <div className="slider-img-wrapper" key={`${src}-${globalIndex}`}>
+                <div className={styles["slider_img_wrapper"]} key={`${src}-${globalIndex}`}>
                   <img src={src} alt={`소개 ${globalIndex}`} onClick={() => setEnlargedImage(src)} />
                   <button
-                    className="delete-button"
+                    className={styles["delete_button"]}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleIntroRemove(globalIndex);
@@ -320,7 +328,7 @@ const SellerModifyPage = () => {
           {previewUrls.intros.length > 3 && (
             <button
               onClick={() => setSlideIndex(prev => prev + 3)}
-              className={`slider-button right ${slideIndex + 3 >= previewUrls.intros.length ? "disabled" : ""}`}
+              className={`${styles.slider_button} ${styles.right} ${slideIndex + 3 >= previewUrls.intros.length ? styles.disabled : ""}`}
               disabled={slideIndex + 3 >= previewUrls.intros.length}
             >
               &gt;
@@ -329,39 +337,39 @@ const SellerModifyPage = () => {
         </div>
       )}
 
-      <div className="button-group">
-        <button className="button-blue" onClick={() => introInputRef.current.click()}>
+      <div className={styles["button_group"]}>
+        <button className={styles["button_blue"]} onClick={() => introInputRef.current.click()}>
           {previewUrls.intros.length === 0 ? '소개 이미지 설정' : '소개 이미지 추가'}
         </button>
         {previewUrls.intros.length > 0 && (
-          <button className="button-red" onClick={handleIntroCancel}>취소</button>
+          <button className={styles["button_red"]} onClick={handleIntroCancel}>취소</button>
         )}
       </div>
 
       <input type="file" hidden ref={introInputRef} onChange={handleIntroChange} multiple accept="image/*" />
 
-      <h2 className="info-title">업체 정보</h2>
+      <h2 className={styles["info_title"]}>업체 정보</h2>
       <input
         name="info"
-        className="input-field"
+        className={styles["input_field"]}
         placeholder="업체 정보를 작성해주세요!"
         value={formData.info}
         onChange={e => setFormData(prev => ({ ...prev, info: e.target.value }))}
       />
-      <h2 className="content-title">업체 소개</h2>
+      <h2 className={styles["content_title"]}>업체 소개</h2>
       <textarea
         name="introContent"
-        className="textarea"
+        className={styles["textarea"]}
         placeholder="업체소개 글을 작성해주세요!"
         value={formData.introContent}
         onChange={e => setFormData(prev => ({ ...prev, introContent: e.target.value }))}
       />
-      <button className="register-button" onClick={handleSubmit} disabled={submitting}>
+      <button className={styles["register_button"]} onClick={handleSubmit} disabled={submitting}>
         {submitting ? "수정 중..." : "수정 완료"}
       </button>
 
       {enlargedImage && (
-        <div className="image-modal" onClick={() => setEnlargedImage(null)}>
+        <div className={styles["image_modal"]} onClick={() => setEnlargedImage(null)}>
           <img src={enlargedImage} alt="확대 이미지" />
         </div>
       )}

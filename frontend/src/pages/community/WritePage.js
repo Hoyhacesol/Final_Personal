@@ -66,6 +66,7 @@ const WritePage = () => {
       <div className="write_header">
         <h2>새 글 작성</h2>
         <button
+          type="button"
           onClick={handleClickWrite}
           disabled={isDisabled}
           style={isDisabled ? { opacity: 0.5, cursor: "not-allowed" } : {}}

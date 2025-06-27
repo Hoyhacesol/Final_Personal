@@ -8,22 +8,22 @@ import {
 } from "../../api/SellerApi";
 import { getImageUrl } from "../../api/UploadImageApi";
 import Pagination from "../../components/paging/Pagination";
-import "../../css/SellerListPage.css";
+import styles from "../../css/SellerListPage.module.css";
 
 const SellerListPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedSeller, setSelectedSeller] = useState(null);
-  const [slideIndex, setSlideIndex] = useState(0);
-  const [enlargedImage, setEnlargedImage] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const pageFromUrl = parseInt(searchParams.get("page") || "1", 10);
-  const [page, setPage] = useState(pageFromUrl);
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [modal_open, setModalOpen] = useState(false);
+  const [selected_seller, setSelectedSeller] = useState(null);
+  const [slide_index, setSlideIndex] = useState(0);
+  const [enlarged_image, setEnlargedImage] = useState(null);
+  const [search_params, setSearchParams] = useSearchParams();
+  const page_from_url = parseInt(search_params.get("page") || "1", 10);
+  const [page, setPage] = useState(page_from_url);
+  const [is_registered, setIsRegistered] = useState(false);
   const [checked, setChecked] = useState(false);
 
-  const [sellerData, setSellerData] = useState({
+  const [seller_data, setSellerData] = useState({
     dtoList: [],
     pageList: [],
     currentPage: 1,
@@ -34,24 +34,21 @@ const SellerListPage = () => {
     nextPage: 0,
   });
 
-  // 이미지 경로 안전 처리 함수
-  const getSafeImage = (simage) => {
-  if (!Array.isArray(simage)) return "default/default.png";
-  const first = simage[0]?.trim();
-  if (!first || first === "undefined") return "default/default.png";
-  return first;
- };
+  const get_safe_image = (simage) => {
+    if (!Array.isArray(simage)) return "default/default.png";
+    const first = simage[0]?.trim();
+    if (!first || first === "undefined") return "default/default.png";
+    return first;
+  };
 
   useEffect(() => {
     if (user?.role !== "SELLER") return;
-
-    const fetchRegistration = async () => {
+    const fetch_registration = async () => {
       const registered = await getSellerRegistered();
       setIsRegistered(registered);
       setChecked(true);
     };
-
-    fetchRegistration();
+    fetch_registration();
   }, [user]);
 
   useEffect(() => {
@@ -63,7 +60,7 @@ const SellerListPage = () => {
     setSearchParams({ page });
   }, [page]);
 
-  const openModal = async (mno) => {
+  const open_modal = async (mno) => {
     try {
       const detail = await getSellerDetail(mno);
       setSelectedSeller(detail);
@@ -74,150 +71,127 @@ const SellerListPage = () => {
     }
   };
 
-  const closeModal = () => setModalOpen(false);
-  const goToRegister = () => navigate("/sellerlist/register");
+  const close_modal = () => setModalOpen(false);
+  const go_to_register = () => navigate("/sellerlist/register");
 
   return (
-    <div id="wrap-container">
-      <div className="header">
-        <h2 className="page-title">업체 정보 한눈에 보기</h2>
-        <p className="page-subtitle">
+    <div className={styles["wrap_container"]}>
+      <div className={styles["header"]}>
+        <h2 className={styles["page_title"]}>업체 정보 한눈에 보기</h2>
+        <p className={styles["page_subtitle"]}>
           고객 요청에 맞춰 입찰한 업체들을 빠르게 비교해보세요.
         </p>
-        {user?.role === "SELLER" && checked && !isRegistered && (
-          <button className="register-btn" onClick={goToRegister}>
+        {user?.role === "SELLER" && checked && !is_registered && (
+          <button className={styles["register_btn"]} onClick={go_to_register}>
             업체소개 등록
           </button>
         )}
       </div>
 
-      <div className="card-container">
-        {sellerData.dtoList.map((seller, idx) => (
-          <div className="card" key={idx} onClick={() => openModal(seller.mno)}>
-            <div className="card-header">
-              <div className="image">
-                <img src={getImageUrl(getSafeImage(seller.simage))} alt="대표" />
+      <div className={styles["card_container"]}>
+        {seller_data.dtoList.map((seller, idx) => (
+          <div
+            className={styles["card"]}
+            key={idx}
+            onClick={() => open_modal(seller.mno)}
+          >
+            <div className={styles["card_header"]}>
+              <div className={styles["image"]}>
+                <img src={getImageUrl(get_safe_image(seller.simage))} alt="대표" />
               </div>
-              <div className="count">선정 횟수: {seller.hiredCount || 0}</div>
+              <div className={styles["count"]}>선정 횟수: {seller.hiredCount || 0}</div>
             </div>
-            <div className="info">
-              <div className="name">{seller.sname || "업체명 없음"}</div>
-              <div className="address">{seller.slocation || "주소 없음"}</div>
+            <div className={styles["info"]}>
+              <div className={styles["name"]}>{seller.sname || "업체명 없음"}</div>
+              <div className={styles["address"]}>{seller.slocation || "주소 없음"}</div>
             </div>
-            <button className="detail-btn">상세정보</button>
+            <button className={styles["detail_btn"]}>상세정보</button>
           </div>
         ))}
       </div>
 
+      {user?.role === "SELLER" && (
+        <div style={{ textAlign: "center", margin: "2rem 0" }}>
+          <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/modify")}>
+            🛠 테스트용 업체정보 수정하기
+          </button>
+        </div>
+      )}
 
-{user?.role === "SELLER" && (
-  <div style={{ textAlign: "center", margin: "2rem 0" }}>
-    <button
-      className="button-blue"
-      onClick={() => navigate("/sellerlist/modify")}
-    >
-      🛠 테스트용 업체정보 수정하기
-    </button>
-  </div>
-)}
-    <button
-      className="button-blue"
-      onClick={() => navigate("/sellerlist/orderlist")}
-    >
-      🛠 테스트용 견적목록 
-    </button>
+      <button className={styles["button_blue"]} onClick={() => navigate("/sellerlist/orderlist")}>🛠 테스트용 견적목록</button>
+
       <Pagination
-        className="fixed-pagination"
-        current={sellerData.currentPage}
-        pageList={sellerData.pageList}
-        prev={sellerData.prev}
-        next={sellerData.next}
-        prevPage={sellerData.prevPage}
-        nextPage={sellerData.nextPage}
+        className={styles["fixed_pagination"]}
+        current={seller_data.currentPage}
+        pageList={seller_data.pageList}
+        prev={seller_data.prev}
+        next={seller_data.next}
+        prevPage={seller_data.prevPage}
+        nextPage={seller_data.nextPage}
         onPageChange={(pageNum) => setPage(pageNum)}
       />
 
-      {/* 상세 모달 */}
-      {modalOpen && selectedSeller && (() => {
-        const simage = selectedSeller.simage;
-        const mainImg = getSafeImage(simage);
+      {modal_open && selected_seller && (() => {
+        const simage = selected_seller.simage;
+        const main_img = get_safe_image(simage);
 
         return (
-          <div className="modal-overlay" onClick={closeModal}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
+          <div className={styles["modal_overlay"]} onClick={close_modal}>
+            <div className={styles["modal_content"]} onClick={(e) => e.stopPropagation()}>
+              <div className={styles["modal_header"]}>
                 <h3>상세정보</h3>
-                <button onClick={closeModal}>✕</button>
+                <button onClick={close_modal}>✕</button>
               </div>
 
-              <div className="modal-body">
-                <div className="seller-top">
-                  <div className={`seller-image ${mainImg === "default/default.png" ? "non-clickable" : "clickable"}`}
-                       onClick={() => {
-                        if (mainImg !== "default/default.png") {
-                          setEnlargedImage(getImageUrl(mainImg));
-                        }
-                      }}
-                    >
-                      <img src={getImageUrl(mainImg)} alt="대표" />
-                    </div>
-                  <div className="seller-info">
-                    <strong>{selectedSeller.sname || "업체명 없음"}</strong>
+              <div className={styles["modal_body"]}>
+                <div className={styles["seller_top"]}>
+                  <div
+                    className={`${styles["seller_image"]} ${main_img === "default/default.png" ? styles["non_clickable"] : styles["clickable"]}`}
+                    onClick={() => {
+                      if (main_img !== "default/default.png") {
+                        setEnlargedImage(getImageUrl(main_img));
+                      }
+                    }}
+                  >
+                    <img src={getImageUrl(main_img)} alt="대표" />
+                  </div>
+                  <div className={styles["seller_info"]}>
+                    <strong>{selected_seller.sname || "업체명 없음"}</strong>
                     <br />
-                    연락처: {selectedSeller.phone || "정보 없음"}
+                    연락처: {selected_seller.phone || "정보 없음"}
                     <br />
-                    주소: {selectedSeller.slocation || "정보 없음"}
-                    <br />
+                    주소: {selected_seller.slocation || "정보 없음"}
                   </div>
                 </div>
 
                 {Array.isArray(simage) && simage.length > 1 && simage.slice(1).some(img => img?.trim()) && (
-                  <div className="image-slider">
-                    {simage.length > 4 && slideIndex > 0 && (
-                      <button
-                        onClick={() => setSlideIndex((prev) => Math.max(prev - 3, 0))}
-                        className="slider-button"
-                      >
-                        {"<"}
-                      </button>
+                  <div className={styles["image_slider"]}>
+                    {simage.length > 4 && slide_index > 0 && (
+                      <button onClick={() => setSlideIndex((prev) => Math.max(prev - 3, 0))} className={styles["slider_button"]}>{"<"}</button>
                     )}
 
-                    {simage
-                      .slice(1)
-                      .slice(slideIndex, slideIndex + 3)
-                      .filter(img => img?.trim())
-                      .map((img, i) => (
-                        <div
-                          className="img-box"
-                          key={i}
-                          onClick={() => setEnlargedImage(getImageUrl(img))}
-                        >
-                          <img src={getImageUrl(img)} alt={`소개 ${i}`} />
-                        </div>
-                      ))}
+                    {simage.slice(1).slice(slide_index, slide_index + 3).filter(img => img?.trim()).map((img, i) => (
+                      <div className={styles["img_box"]} key={i} onClick={() => setEnlargedImage(getImageUrl(img))}>
+                        <img src={getImageUrl(img)} alt={`소개 ${i}`} />
+                      </div>
+                    ))}
 
-                    {simage.length > 4 &&
-                      slideIndex + 3 < simage.length - 1 && (
-                        <button
-                          onClick={() => setSlideIndex((prev) => prev + 3)}
-                          className="slider-button"
-                        >
-                          {">"}
-                        </button>
-                      )}
+                    {simage.length > 4 && slide_index + 3 < simage.length - 1 && (
+                      <button onClick={() => setSlideIndex((prev) => prev + 3)} className={styles["slider_button"]}>{">"}</button>
+                    )}
                   </div>
                 )}
 
-                <div className="seller-detail">
+                <div className={styles["seller_detail"]}>
                   <p>
                     <strong>업체정보</strong>
                     <br />
-                    {selectedSeller.info || "정보 없음"}
+                    {selected_seller.info || "정보 없음"}
                   </p>
                   <p>
                     <strong>업체소개</strong>
                     <br />
-                    {selectedSeller.introContent || "소개 없음"}
+                    {selected_seller.introContent || "소개 없음"}
                   </p>
                 </div>
               </div>
@@ -226,17 +200,16 @@ const SellerListPage = () => {
         );
       })()}
 
-      {/* 확대 이미지 모달 */}
-      {enlargedImage && (
-        <div className="modal-overlay" onClick={() => setEnlargedImage(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+      {enlarged_image && (
+        <div className={styles["modal_overlay"]} onClick={() => setEnlargedImage(null)}>
+          <div className={styles["modal_content"]} onClick={(e) => e.stopPropagation()}>
+            <div className={styles["modal_header"]}>
               <h3>이미지 보기</h3>
               <button onClick={() => setEnlargedImage(null)}>✕</button>
             </div>
-            <div className="modal-body" style={{ textAlign: "center" }}>
+            <div className={styles["modal_body"]} style={{ textAlign: "center" }}>
               <img
-                src={enlargedImage}
+                src={enlarged_image}
                 alt="확대 이미지"
                 style={{
                   width: "100%",

@@ -15,6 +15,7 @@ const ResultModal = ({ title, content, callbackFn }) => {
                 </div>
                 <div>
                     <button
+                        type="button"
                         onClick={() => {
                             if (callbackFn) {
                                 callbackFn()

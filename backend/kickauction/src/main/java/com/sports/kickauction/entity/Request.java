@@ -4,9 +4,11 @@ import java.time.LocalDateTime; // JPA annotations
 
 import jakarta.persistence.Column; // Lombok annotations
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,8 +32,12 @@ public class Request {
     @Column(name = "ono")
     private int ono;
 
+    // @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "mno", nullable = false)
     private int mno;
+
+    @Column(name = "otitle", length = 200)
+    private String otitle;
 
     @Column(name = "play_type", length = 50, nullable = false)
     private String playType;
@@ -54,7 +60,7 @@ public class Request {
     @Column(name = "ocontent", columnDefinition = "TEXT")
     private String ocontent;
 
-    @Column(name = "oregdate", columnDefinition = "DATETIME", nullable = false, updatable = false)
+    @Column(name = "oregdate", columnDefinition = "DATETIME", nullable = false)
     private LocalDateTime oregdate;
 
     @Column(name = "finished", nullable = false)

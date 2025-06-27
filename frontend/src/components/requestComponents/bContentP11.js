@@ -13,6 +13,7 @@ const BContentP11 = ({ quote, companies }) => {
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
 
 // null 대비 매핑
+  const displayOtitle = quote.otitle ? quote.otitle : '제목 null';
   const displayDate = 
     quote.rentalDate ? new Date(quote.rentalDate).toLocaleDateString('ko-KR') : '날짜 null';
   const displayTime = quote.rentalTime ? quote.rentalTime : '시간 null';
@@ -64,8 +65,9 @@ const BContentP11 = ({ quote, companies }) => {
               <span style={{ color: quote.isUrgent ? 'orange' : 'inherit' }}>진행중 : {quote.timeLeftStr}</span>
             )}
           </p>
-          <div className="font-bold text-lg mt-1">신청 종목 : {quote.playType}</div>
+          <div className="font-bold text-lg mt-1">{displayOtitle}</div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
+            <div>종목 : {quote.playType}</div>
             <div>지역📍 : {displayRegion}</div>
             <div>인원 : {displayPerson}</div>
             <div>대여 장비 목록 : {displayRentalEquipment}</div>
@@ -99,24 +101,24 @@ const BContentP11 = ({ quote, companies }) => {
         </div>
 
         {/* 하단 버튼 */}
-        <div className="flex justify-between mt-6   button-group">
+        <div className="flex justify-between mt-6   rq-button-group">
           <button
             onClick={handleModifyClick}
             className="md-button"
           >
-            견적 요청 수정
+            수정
           </button>
           <button
             onClick={handleDeleteClick}
             className="md-button"
           >
-            견적 요청 삭제
+            삭제
           </button>
           <button
             onClick={handleConfirmClick}
             className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800   confirm-button"
           >
-            선택된 업체 확정
+            선택 업체 확정
           </button>
         </div>
       </div>

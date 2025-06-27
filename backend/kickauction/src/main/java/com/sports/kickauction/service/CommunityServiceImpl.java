@@ -101,22 +101,56 @@ public class CommunityServiceImpl implements CommunityService {
 
     // 게시글 수정
     @Override
-    public void modify(CommunityDTO communityDTO) {
+    public void modify(CommunityDTO communityDTO, MultipartFile pimageFile) {
         log.info("수정 요청 DTO: {}", communityDTO);
         Long pno = communityDTO.getPno();
 
+        // 1) 기존 엔티티 조회
         Community community = communityRepository.findById(pno)
                 .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
 
-        // 변경 가능한 필드만
+        // 2) 새 파일 업로드 전에, 이전 파일이 있으면 삭제
+        String oldImage = community.getPimage(); // 예: "/images/uuid_oldname.jpg"
+        if (pimageFile != null && !pimageFile.isEmpty()) {
+            if (oldImage != null && !oldImage.isBlank()) {
+                try {
+                    // 웹에 노출되는 경로(/images/...)에서 파일명만 추출
+                    String oldFilename = Paths.get(oldImage).getFileName().toString();
+                    Path oldFilePath = Paths.get(uploadDir, oldFilename);
+                    Files.deleteIfExists(oldFilePath);
+                    log.info("이전 이미지 삭제: {}", oldFilePath);
+                } catch (IOException e) {
+                    log.warn("이전 이미지 삭제 실패: {}", e.getMessage());
+                }
+            }
+
+            // 3) 새 이미지 저장
+            try {
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+
+                String filename = UUID.randomUUID() + "_" + pimageFile.getOriginalFilename();
+                Path filePath = uploadPath.resolve(filename);
+                pimageFile.transferTo(filePath.toFile());
+
+                // 엔티티에 새 경로 반영
+                community.changePimage("/images/" + filename);
+            } catch (IOException e) {
+                log.error("새 이미지 저장 실패", e);
+                throw new RuntimeException("이미지 저장 실패: " + e.getMessage(), e);
+            }
+        }
+
+        // 4) 나머지 필드 변경
         community.changePtitle(communityDTO.getPtitle());
         community.changePcontent(communityDTO.getPcontent());
-        community.changePimage(communityDTO.getPimage());
-
         if (communityDTO.getView() != null) {
             community.setView(communityDTO.getView());
         }
 
+        // 5) 저장
         communityRepository.save(community);
     }
 
@@ -124,6 +158,27 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public void remove(Long pno) {
         log.info("삭제 요청 ID: {}", pno);
+
+        // 1) 먼저 엔티티를 조회해서 이미지 경로를 꺼냅니다.
+        Community community = communityRepository.findById(pno)
+                .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
+
+        String imagePath = community.getPimage(); // e.g. "/images/uuid_filename.jpg"
+        if (imagePath != null && !imagePath.isBlank()) {
+            try {
+                // web 경로(/images/xxx)에서 파일명만 추출
+                String filename = Paths.get(imagePath).getFileName().toString();
+                Path fileOnDisk = Paths.get(uploadDir, filename);
+
+                // 파일이 존재하면 삭제
+                Files.deleteIfExists(fileOnDisk);
+                log.info("첨부 이미지 삭제: {}", fileOnDisk);
+            } catch (IOException e) {
+                log.warn("첨부 이미지 삭제 실패: {}", e.getMessage());
+            }
+        }
+
+        // 2) 그다음 DB 레코드를 삭제합니다.
         communityRepository.deleteById(pno);
     }
 
@@ -200,18 +255,19 @@ public class CommunityServiceImpl implements CommunityService {
         return next.map(this::entityToDto).orElse(null);
     }
 
-     private CommunityDTO entityToDto(Community e) {
+    private CommunityDTO entityToDto(Community e) {
         return CommunityDTO.builder()
-            .pno(e.getPno())
-            .mno(e.getMno())
-            .writerName(e.getMember().getUserName())
-            .ptitle(e.getPtitle())
-            .pcontent(e.getPcontent())
-            .pregdate(e.getPregdate())
-            .view(e.getView())
-            .pimage(e.getPimage())
-            // prev/next 필드는 컨트롤러에서 채워줍니다.
-            .build();
+                .pno(e.getPno())
+                .mno(e.getMno())
+                .writerName(e.getMember().getUserName())
+                .mprofileimg(e.getMember().getProfileimg())
+                .ptitle(e.getPtitle())
+                .pcontent(e.getPcontent())
+                .pregdate(e.getPregdate())
+                .view(e.getView())
+                .pimage(e.getPimage())
+                // prev/next 필드는 컨트롤러에서 채워줍니다.
+                .build();
     }
 
 }

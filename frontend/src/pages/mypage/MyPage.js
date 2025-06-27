@@ -9,7 +9,7 @@ import "../../css/Sharesheet.css";
 import styles from "../mypage/MyPage.module.css";
 
 const MyPage = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [company, setCompany] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [showinputModal, setShowinputModal] = useState(false);
@@ -127,6 +127,8 @@ const MyPage = () => {
       const res = await axios.delete(`/api/members/${user.mno}`);
       if (res.status === 200) {
         alert("회원탈퇴가 완료되었습니다.");
+        setUser(null);
+        localStorage.removeItem("token");
         navigate("/");
       }
     } catch (err) {
@@ -253,7 +255,7 @@ const MyPage = () => {
       {/* 회원정보 찾기 / 회원가입 */}
       <div className={styles.mypage_help}>
         <Link to="/help">고객센터</Link>
-        <span>|</span>
+        <span className={styles.help_separator}>|</span>
         <button type="button" className={styles.withdraw_link} onClick={() => setShowWithdrawModal(true)}>
           회원탈퇴
         </button>
