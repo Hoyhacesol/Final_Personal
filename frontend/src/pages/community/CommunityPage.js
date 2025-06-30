@@ -1,11 +1,13 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 import "../../css/CommunityPage.css";
 
 const CommunityPage = () => {
-    return (
-        <div id="community_page">
-            <Outlet />
-        </div>
-    );
-}
+  const parentContext = useOutletContext();
+
+  return (
+    <div id="community_page">
+      <Outlet context={parentContext} />
+    </div>
+  );
+};
 export default CommunityPage;

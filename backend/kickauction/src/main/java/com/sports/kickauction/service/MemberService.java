@@ -5,7 +5,8 @@ import com.sports.kickauction.entity.Member;
 public interface MemberService {
 
     Member findById(Long mno);
-
+    Member findByUserId(String userId);
+    
     // 주석: 중복검사용 
     boolean existsByUserId(String userId);
     boolean existsByUserName(String userName);
