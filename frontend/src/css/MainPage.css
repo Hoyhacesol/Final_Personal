@@ -52,8 +52,18 @@
   border: 1px solid #F6F7F9;
 }
 
+.order_item .order_title {
+  max-height: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .order_item:hover {
   border: 1px solid #909090;
+}
+
+#mainPage > section.banner_section .slick-list {
+  border-radius: 15px;
 }
 
 /* MainPage.css 맨 아래에 추가 */
@@ -189,44 +199,36 @@
   font-weight: 600;
 }
 
+.sellerlist_section .seller_item>* {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 /* ────────────────────────────────────────────────
    배너 슬라이더: 잘림 없이 전체 노출 + dots 보이기
 ──────────────────────────────────────────────── */
 .banner_section {
   position: relative;
   width: 100%;
-  height: 66vh;
-  /* 화면 높이의 66% */
+  height: 60vh;
   overflow: hidden;
-  /* 잘린 부분 숨김 */
 }
 
 .banner_section .banner_item img {
   width: 100%;
   height: 100%;
-  /* 부모 높이(66vh) 꽉 채움 */
   object-fit: cover;
-  /* 영역에 맞춰 잘림 없이 커버 */
   object-position: center;
 }
 
-/* dots 위치 재조정 (필요시) */
 .banner_section .slick-dots {
   bottom: 1rem;
 }
 
 .slick-slider {
-  overflow: visible !important;
   /* slick 기본 숨김 해제 */
-}
-
-/* Slick 내부 컨테이너 높이를 부모(.banner_section) 높이에 맞추기 */
-.banner_section .slick-slider,
-.banner_section .slick-list,
-.banner_section .slick-track,
-.banner_section .slick-slide {
-  height: 100% !important;
-  /* 부모 높이(66vh)에 맞춤 */
+  overflow: visible !important;
 }
 
 /* 실제 배너 아이템도 100% 높이로 꽉 채우기 */

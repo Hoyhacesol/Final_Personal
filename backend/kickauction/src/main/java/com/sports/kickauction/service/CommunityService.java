@@ -12,6 +12,8 @@ public interface CommunityService {
 
     CommunityDTO get(Long pno);
 
+    void incrementViewCount(Long pno);
+
     void modify(CommunityDTO communityDto,MultipartFile pimageFile);
 
     void remove(Long pno);

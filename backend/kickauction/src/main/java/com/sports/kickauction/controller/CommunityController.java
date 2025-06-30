@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -66,13 +65,6 @@ public class CommunityController {
     public ResponseEntity<PageResponseDTO<CommunityDTO>> list(PageRequestDTO pageRequestDTO) {
         return new ResponseEntity<>(service.list(pageRequestDTO), HttpStatus.OK);
     }
-
-    // @PostMapping("/")
-    // public Map<String, Long> register(@RequestBody CommunityDTO communityDTO) {
-    // log.info("CommunityDTO: " + communityDTO);
-    // Long pno = service.register(communityDTO);
-    // return Map.of("PNO", pno);
-    // }
 
     @PostMapping(value = "", // or "/" 동일하게 동작함
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

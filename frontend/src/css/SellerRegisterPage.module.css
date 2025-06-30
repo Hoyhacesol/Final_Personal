@@ -122,6 +122,10 @@
 
 .basic_info_text p {
   margin: 0.5rem 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-width: 100%;
 }
 
 /* 소개 이미지 */
@@ -211,9 +215,12 @@ textarea {
   transition: background-color 0.2s ease-in-out;
 }
 
-.register_button:hover {
-  background-color: #1587c8;
+.disabled_button {
+  background-color: #ccc;
+  color: #888;
+  cursor: not-allowed;
 }
+
 
 /* 이미지 모달 */
 .image_modal {
@@ -230,7 +237,53 @@ textarea {
 }
 
 .image_modal img {
-  max-width: 80%;
-  max-height: 80%;
+  max-width: 95%;
+  max-height: 70vh;
   border-radius: 12px;
+}
+
+
+
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 1.5rem 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .main_simage {
+    width: 180px;
+    height: 180px;
+  }
+
+  .slider_img_wrapper img,
+  .slider img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .info_title,
+  .content_title {
+    font-size: 1.2rem;
+  }
+
+  .input_field,
+  .textarea {
+    font-size: 0.95rem;
+  }
+
+  .register_button {
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+
+  .slider_wrapper {
+    gap: 0.5rem;
+  }
+
+  .button_blue,
+  .button_red {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
 }

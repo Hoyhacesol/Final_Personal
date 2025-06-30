@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -15,12 +16,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import com.sports.kickauction.dto.BizRegisterDTO;
 import com.sports.kickauction.dto.RequestDTO;
 import com.sports.kickauction.dto.RequestPageRequestDTO;
 import com.sports.kickauction.dto.RequestPageResponseDTO;
 import com.sports.kickauction.dto.RequestReadDTO;
+import com.sports.kickauction.dto.SellerReadDTO;
+import com.sports.kickauction.dto.RequestProposalResDTO;
+import com.sports.kickauction.entity.Biz;
+import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Request;
+import com.sports.kickauction.entity.Seller;
+import com.sports.kickauction.entity.SellerIntro;
+import com.sports.kickauction.repository.BizRepository;
 import com.sports.kickauction.repository.RequestRepository;
+import com.sports.kickauction.repository.SellerIntroRepository;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -30,7 +40,14 @@ import lombok.extern.log4j.Log4j2;
 public class RequestServiceImpl implements RequestService {
 
     @Autowired
-    private RequestRepository requestRepository;  
+    private RequestRepository requestRepository;
+    @Autowired
+    private BizRepository bizRepository;
+    @Autowired
+    private SellerIntroRepository sellerIntroRepository;
+
+
+
 
     @Override
     public RequestDTO getOrderDetails(int ono) {
@@ -52,6 +69,43 @@ public class RequestServiceImpl implements RequestService {
                 .oregdate(order.getOregdate())
                 .finished(order.getFinished())
                 .build();
+
+                List<Biz> bizList = bizRepository.findByRequest_Ono(ono);
+                log.info("bizList: " + bizList);
+                List<RequestProposalResDTO> companies = bizList.stream().map(biz -> {
+                    Seller bizSeller = biz.getSeller();
+                    Member member = bizSeller.getMember();
+                BizRegisterDTO bizDTO = BizRegisterDTO.builder()
+                    .ono(biz.getRequest().getOno())
+                    .price(biz.getPrice())
+                    .bcontent(biz.getBcontent())
+                    .banswer(biz.getBanswer())
+                    .build();
+
+                Long mno = biz.getSeller().getMno();
+                SellerIntro intro = sellerIntroRepository.findById(mno)
+                    .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
+                Seller seller = intro.getSeller();
+                SellerReadDTO sellerDTO = SellerReadDTO.builder()
+                    .mno(seller.getMno())
+                    .sname(seller.getSname())
+                    .slocation(seller.getSlocation())
+                    // .introContent(intro.getIntroContent())
+                    // .simage(simageList.toArray(new String[0]))
+                    .hiredCount(intro.getHiredCount())
+                    // .info(intro.getInfo())
+                    // .phone(Optional.ofNullable(seller.getMember())
+                    // .map(Member::getPhone)
+                    // .orElse("정보 없음"))
+                    .build();
+
+                return RequestProposalResDTO.builder()
+                    .biz(bizDTO)
+                    .seller(sellerDTO)
+                    .build();
+            }).collect(Collectors.toList());
+            dto.getAttributes().put("companies", companies);
+            
             return dto;
         }
         return null;
@@ -124,7 +178,7 @@ public class RequestServiceImpl implements RequestService {
             .collect(Collectors.toList());
 
         if (!expiredCancelledOrders.isEmpty()) {
-            requestRepository.deleteAll(expiredCancelledOrders); // 영구 삭제
+            requestRepository.deleteAll(expiredCancelledOrders); // deleteAll을 사용해야 Cascade가 정상 동작합니다.
             allOrdersForMember.removeAll(expiredCancelledOrders); // 로컬 리스트에서도 제거
         }
 
@@ -229,7 +283,7 @@ public class RequestServiceImpl implements RequestService {
 
     //견적 리스트
     @Override
-public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO dto) {
+    public RequestPageResponseDTO<RequestReadDTO> getOrderList(RequestPageRequestDTO dto) {
     Pageable pageable = dto.getPageable(Sort.by("oregdate").descending());
 
     String city = dto.getCity();

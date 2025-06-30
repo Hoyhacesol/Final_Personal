@@ -2,15 +2,14 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
 }
 
 .order-title-bg {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0; 
   background-size: cover;
   background-position: center;
   z-index: 0;
@@ -23,7 +22,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.7); /* ← 흰색 + 투명도 */
+  background-color: rgba(255, 255, 255, 0.7);
   z-index: 1;
   pointer-events: none;
 }
@@ -46,13 +45,6 @@
   font-size: 3rem;
   font-weight: 900;
   color: #3b82f6;
-  transform: translateX(-200px);
-}
-
-.order-title-overlay-sub {
-  font-size: 4rem;
-  font-weight: bold;
-  margin-top: 0.5rem;
 }
 
 .order-title-overlay-desc {
@@ -99,6 +91,16 @@
   margin: 0;
 }
 
+.order-list-item a,
+.order-list a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+}
+
+
+
 .order-list-item.empty {
   text-align: center;
   padding: 30px;
@@ -135,11 +137,15 @@
   transform: translateY(20px);
 }
 
+
 .playtype-dropdown-wrapper {
   position: relative;
   display: inline-block;
-  margin-right: 10px;
-  transform: translateX(200px);
+  flex: 1;
+}
+
+.area-dropdown-wrapper {
+  flex: 1;
 }
 
 .playtype-dropdown-button {
@@ -154,12 +160,12 @@
 
 .playtype-dropdown-list {
   position: absolute;
-  top: 110%;
-  left: 0;
+  top: 100%;
+  left: 0; 
   background: white;
   border: 1px solid #ccc;
   z-index: 100;
-  width: 160px;
+  width: 100%; 
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   list-style: none;
   padding: 0;
@@ -236,3 +242,90 @@
   background: #f9fafb;
   cursor: pointer;
 }
+
+/* 모바일 반응형 대응 */
+@media screen and (max-width: 480px) {
+  .order-title-overlay {
+    padding: 1rem;
+  }
+
+  .order-title-overlay-main {
+    font-size: 2rem;
+    transform: none;
+    text-align: center;
+  }
+
+  .order-title-overlay-desc {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .order-box {
+    padding: 1rem;
+  }
+
+  .order-box-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .order-filter-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .playtype-dropdown-wrapper {
+    position: relative;
+    flex: 1;
+  }
+
+  .playtype-dropdown-button {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .playtype-dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .area-dropdown-wrapper {
+    flex: 1;
+  }
+
+  .area-dropdown-wrapper > * {
+    width: 100%;
+  }
+
+ 
+
+  .order-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .order-card-left,
+  .order-card-right {
+    text-align: left;
+  }
+
+  .order-card-right {
+    margin-top: 0.5rem;
+  }
+
+  .order-pagination {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+

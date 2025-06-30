@@ -4,7 +4,7 @@ const Pagination = ({ current, pageList, prev, next, prevPage, nextPage, onPageC
   return (
     <div className={`pagination ${className || ""}`}>
       {prev && (
-        <button onClick={() => onPageChange(prevPage)}>&lt; 이전</button>
+        <button onClick={() => onPageChange(prevPage)}> 이전</button>
       )}
       {pageList.map((num) => (
         <button
@@ -16,7 +16,7 @@ const Pagination = ({ current, pageList, prev, next, prevPage, nextPage, onPageC
         </button>
       ))}
       {next && (
-        <button onClick={() => onPageChange(nextPage)}>다음 &gt;</button>
+        <button onClick={() => onPageChange(nextPage)}>다음 </button>
       )}
     </div>
   );

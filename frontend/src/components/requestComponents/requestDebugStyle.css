@@ -94,6 +94,45 @@
   margin-top: 0.25rem;
 }
 
+.input-setting-p08{
+  /* w-full border px-3 py-2 rounded */
+  width: 100%;
+  border-width: 1px;
+  padding-left: 0.75rem; padding-right: 0.75rem;
+  padding-top: 0.5rem; padding-bottom: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.check-box-space-y-2{
+  margin-top: 0.5rem;
+}
+.check-box-custiom{
+  /* flex items-center gap-2 */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.check-box-mr-2{
+  margin-right: 0.5rem;
+}
+.check-box-setting-ori{
+  /* w-full border px-2 py-1 rounded text-sm */
+  width: 50%;
+  border: 1px solid #ccc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+.check-box-setting-grow{
+  /* w-full border px-2 py-1 rounded text-sm flex-grow*/
+  width: 60%;
+  border: 1px solid #ccc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  flex-grow: 1;
+}
+
 
 
 /* 9 Modify ------------------------------------------------------------------------------------------------------ */

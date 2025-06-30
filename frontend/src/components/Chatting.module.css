@@ -1,0 +1,121 @@
+.chatting_con {
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #27b6f7;
+  border: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.chatting_con:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.chatting_con svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* 주석: 채팅방 css */
+.chat_panel {
+  position: fixed;
+  right: 112px;
+  bottom: 32px;
+  width: 350px;
+  height: 540px;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.19);
+  display: flex;
+  flex-direction: row;
+  z-index: 1500;
+  animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.close_btn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.chat_list {
+  width: 100px;
+  padding: 20px 0 20px 10px;
+  border-right: 1.5px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #f7fafe;
+  border-radius: 28px 0 0 28px;
+}
+
+.chat_item {
+  padding: 12px 6px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.16s;
+  color: #222;
+}
+.chat_item:hover {
+  background: #e6f3fb;
+}
+.selected {
+  background: #27b6f7;
+  color: #fff;
+}
+
+.chat_room {
+  flex: 1;
+  padding: 24px 18px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.chat_bubble_me {
+  align-self: flex-end;
+  background: #e6f3fb;
+  color: #222;
+  border-radius: 16px 16px 4px 16px;
+  padding: 10px 15px;
+  max-width: 65%;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+.chat_bubble_you {
+  align-self: flex-start;
+  background: #f6f6f6;
+  color: #333;
+  border-radius: 16px 16px 16px 4px;
+  padding: 10px 15px;
+  max-width: 65%;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}

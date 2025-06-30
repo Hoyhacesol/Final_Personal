@@ -7,6 +7,7 @@ import sellerRouter from "../router/sellerRouter";
 import requestRouter from "../router/requestRouter";
 import ErrorPage from "../pages/ErrorPage";
 import Socialgowhere from "../components/Socialgowhere";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Community = lazy(() => import("../pages/community/CommunityPage"));
@@ -21,8 +22,11 @@ const Updateinfo = lazy(() => import("../pages/mypage/Updateinfo"));
 const UpdateinfoSocial = lazy(() => import("../pages/mypage/UpdateinfoSocial"));
 const Findinfo = lazy(() => import("../pages/login/Findinfo"));
 const Help = lazy(() => import("../pages/help/HelpPage"));
+const OrderList = lazy ( () => import("../pages/request/OrderListPage"))
+const SellerModifyPage = lazy(() => import("../pages/seller/SellerModifyPage"));
 
-const Loading = <div>Loading...</div>;
+
+const Loading = <LoadingSpinner />;
 const root = createBrowserRouter([
   //주석:: 로그인,회원가입은 네비게이션 바 미적용
   {
@@ -103,6 +107,22 @@ const root = createBrowserRouter([
       {
         path: "sellerlist",
         children: sellerRouter(),
+      },
+      {
+        path: "sellermodify",
+        element: (
+          <Suspense fallback={Loading}>
+            <SellerModifyPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "orderlist",
+        element: (
+          <Suspense fallback={Loading}>
+            <OrderList />
+          </Suspense>
+        ),
       },
       {
         path: "mypage",

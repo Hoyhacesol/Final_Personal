@@ -1,6 +1,8 @@
 // 상세보기
 import React, { useEffect, useState, useRef } from 'react'; // useRef 추가
 import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
+import { useAuth } from "../../contexts/Authcontext";
+import { useMemo } from 'react';
 import axios from 'axios';
 
 import BContentP11 from "../../components/requestComponents/bContentP11";
@@ -18,7 +20,29 @@ const OrderReadPage = () => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useAuth();
   const navigate = useNavigate(); // useNavigate 훅 사용
+
+  const isOwner = useMemo(() => {
+    let checkVal;
+    if (!quoteDetail || !user) return false;
+    if(user.role === "UESR" || user.role === "USER"){ //Auth에 USER가 아니라 UESR로 들어가 있음. 오타? ********
+      checkVal = true;
+    }
+    else if(user.role === "SELLER"){
+      checkVal = true;
+    }
+    else{
+      checkVal = false;
+    }
+    return checkVal && Number(user.mno) === Number(quoteDetail.mno);
+  }, [user, quoteDetail]);
+
+  const isSeller = useMemo(() => {
+    return user?.role === "SELLER";
+  }, [user]);
+
+
 
   // 마감 처리 요청 중복 방지용 ref
   const isFinishingRef = useRef(false); 
@@ -70,8 +94,8 @@ const OrderReadPage = () => {
         finished: currentFinishedStatus, // 업데이트된 마감 상태
       });
 
-      setCompanies(data.companies || []); 
 
+      setCompanies(data.companies || []); 
     } catch (err) {
       setError("견적 정보를 불러오는 데 실패했습니다.");
       console.error("Error fetching order details:", err);
@@ -115,12 +139,10 @@ const OrderReadPage = () => {
       // 마감 처리 로직: 시간이 0 이하이고 아직 서버에 마감 요청을 보내지 않은 경우
       if (timeLeft <= 0 && !isFinishingRef.current) {
         isFinishingRef.current = true; // 요청 시작 플래그 설정
-        // console.log(`견적 ${ono} 마감! 서버에 PATCH 요청 보냄.`);
         
         try {
           // PATCH 요청은 withCredentials를 포함해야 CORS에러 안남.
           await axios.patch(`/api/orders/finish/${ono}`, {}, { withCredentials: true });
-          // console.log(`견적 ${ono} 마감 처리 성공.`);
           
           // 성공 시, 클라이언트 상태의 finished 속성 업데이트
           setQuoteDetail(prev => ({
@@ -185,7 +207,7 @@ const OrderReadPage = () => {
   return (
     <>
       <Hero {...heroContent} />
-      <BContentP11 quote={quoteDetail} companies={companies} />
+      <BContentP11 quote={quoteDetail} companies={companies} isOwner={isOwner} isSeller={isSeller}/>
     </>
   );
 };

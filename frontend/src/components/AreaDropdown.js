@@ -30,11 +30,10 @@ const AreaDropdown = ({ onChange, city="", district=""}) => {
 };
 
   useEffect(() => {
-    if (city) {
-      setSelectedRegion({ city: city || "지역", district: district || "" });
-      setSelectedCity(city);
-    }
-  }, [city, district]);
+  setSelectedRegion({ city: city || "지역", district: district || "" });
+  setSelectedCity(city || "");
+}, [city, district]);
+
 
 
   const renderButtonText = () => {

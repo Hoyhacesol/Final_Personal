@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -19,4 +18,7 @@ public class SellerReadDTO {
     private String info;
     private int hiredCount;
     private String phone;
+
+    private Double avgRating;
+    private Long reviewCount;
 }

@@ -87,16 +87,28 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public CommunityDTO get(Long pno) {
-        log.info("ID로 조회 (조회수 증가): {}", pno);
-        // 1) 엔티티 조회
         Community entity = communityRepository.findById(pno)
-                .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
-        // 2) 조회수 1 증가
-        Integer current = entity.getView() != null ? entity.getView() : 0;
-        entity.setView(current + 1);
-        Community updated = communityRepository.saveAndFlush(entity);
-        // 3) DTO 변환
-        return modelMapper.map(updated, CommunityDTO.class);
+                .orElseThrow(() -> new IllegalArgumentException(pno + "번 글이 없습니다."));
+        return modelMapper.map(entity, CommunityDTO.class);
+        // log.info("ID로 조회 (조회수 증가): {}", pno);
+        // // 1) 엔티티 조회
+        // Community entity = communityRepository.findById(pno)
+        // .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
+        // // 2) 조회수 1 증가
+        // Integer current = entity.getView() != null ? entity.getView() : 0;
+        // entity.setView(current + 1);
+        // Community updated = communityRepository.saveAndFlush(entity);
+        // // 3) DTO 변환
+        // return modelMapper.map(updated, CommunityDTO.class);
+    }
+
+    
+    @Override
+    public void incrementViewCount(Long pno) {
+        communityRepository.findById(pno).ifPresent(entity -> {
+            entity.setView((entity.getView() == null ? 0 : entity.getView()) + 1);
+            communityRepository.saveAndFlush(entity);
+        });
     }
 
     // 게시글 수정

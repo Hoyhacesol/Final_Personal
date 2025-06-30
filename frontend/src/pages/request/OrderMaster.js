@@ -11,13 +11,13 @@ const OrderMaster = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    useEffect(() => {
-        console.log("[req 디버그] 현재 로그인된 사용자:", user);
-        if(user===null){
-            alert("로그아웃이 감지되었습니다. 다시 로그인해주세요.");
-            navigate(`/`);
-        }
-    }, [user]);
+    // useEffect(() => {
+    //     console.log("[req 디버그] 현재 로그인된 사용자:", user);
+    //     if(user===null){
+    //         alert("로그아웃이 감지되었습니다. 다시 로그인해주세요.");
+    //         navigate(`/`);
+    //     }
+    // }, [user]);
 
     return (
         <div className="request-component">

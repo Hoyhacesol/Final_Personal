@@ -13,6 +13,9 @@ import {
   removeImage
 } from "../../api/UploadImageApi";
 import styles from "../../css/SellerRegisterPage.module.css";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const SellerRegisterPage = () => {
   const navigate = useNavigate();
@@ -39,6 +42,7 @@ const SellerRegisterPage = () => {
     slocation: "",
   });
 
+const isFormValid = formData.info.trim() && formData.introContent.trim();
   
   
   useEffect(() => {
@@ -240,6 +244,9 @@ const SellerRegisterPage = () => {
   updatedUrls.splice(index, 1);
   updatedPaths.splice(index, 1);
 
+  const newSlideIndex = Math.min(slideIndex, Math.max(0, updatedUrls.length - 3));
+  setSlideIndex(newSlideIndex);
+
   setPreviewUrls(prev => ({ ...prev, intros: updatedUrls }));
   setFormData(prev => ({ ...prev, simage: [prev.simage[0], ...updatedPaths] }));
 };
@@ -346,7 +353,7 @@ const SellerRegisterPage = () => {
       </div>
       <input type="file" hidden ref={introInputRef} onChange={handleIntroChange} multiple accept="image/*" />
       <h2 className={styles["info_title"]}>업체 정보</h2>
-      <input name="info" className={styles["input_field"]} placeholder="업체 정보를 작성해주세요!" value={formData.info} onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))} />
+      <input name="info" className={styles["input_field"]} placeholder="업체 정보를 작성해주세요!" autoComplete="off" value={formData.info} onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))} />
       <h2 className={styles["content_title"]}>업체 소개</h2>
       <textarea
         name="introContent"
@@ -356,9 +363,14 @@ const SellerRegisterPage = () => {
         onChange={(e) => setFormData((prev) => ({ ...prev, introContent: e.target.value }))}
       />
 
-      <button className={styles["register_button"]} onClick={handleSubmit} disabled={submitting}>
-        {submitting ? "등록 중..." : "등록"}
+      <button
+          className={`${styles["register_button"]} ${!isFormValid ? styles["disabled_button"] : ""}`}
+          onClick={handleSubmit}
+          disabled={!isFormValid || submitting}
+        >
+          {submitting ? "등록 중..." : "등록"}
         </button>
+
 
       {enlargedImage && (
         <div className={styles["image_modal"]} onClick={() => setEnlargedImage(null)}>

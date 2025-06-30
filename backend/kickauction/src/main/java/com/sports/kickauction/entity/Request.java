@@ -1,14 +1,17 @@
-package com.sports.kickauction.entity; // Recommended package for entities
+package com.sports.kickauction.entity;
 
-import java.time.LocalDateTime; // JPA annotations
+import java.time.LocalDateTime;
+import java.util.List;
 
-import jakarta.persistence.Column; // Lombok annotations
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,14 +20,14 @@ import lombok.Setter;
 import lombok.Getter;
 import lombok.ToString;
 
-@Entity // Specifies that this class is an entity
+@Entity
 @Table(name = "`ORDER`")
 @Setter
 @ToString
 @Getter
-@NoArgsConstructor // Lombok: Generates a no-argument constructor
-@AllArgsConstructor // Lombok: Generates an all-argument constructor
-@Builder // Lombok: Provides a builder pattern for object creation
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Request {
 
     @Id
@@ -65,5 +68,8 @@ public class Request {
 
     @Column(name = "finished", nullable = false)
     private int finished;
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Biz> bizList;
 
 }

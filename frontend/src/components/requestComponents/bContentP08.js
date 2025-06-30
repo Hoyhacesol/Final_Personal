@@ -28,10 +28,11 @@ const formFields = {
       options: ["필요해요", "필요없어요"]
     },
     {
-      type: "text",
+      type: "checkbox-number",
       label: "대여할 장비 목록",
       name: "rentalEquipment",
-      placeholder: "예: 축구화, 장갑, 조끼 등"
+      options: ["축구화", "팀조끼", "축구공", "기타"], 
+      placeholder: "기타 장비를 입력하세요" 
     }
   ],
   right: [
@@ -74,7 +75,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
     case "select":
       return (
         <select name={field.name} value={value} onChange={handleChange} 
-        className="w-full border px-3 py-2 rounded">
+        className="input-setting-p08">
           {field.options.map((option, idx) => (<option key={idx}>{option}</option>))}
         </select>
       );
@@ -101,7 +102,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           name={field.name}
           value={value?value:""}
           onChange={handleChange}
-          className={`w-full border px-3 py-2 rounded ${field.error ? "border-red-500" : ""}`}
+          className={`input-setting-p08 ${field.error ? "border-red-500" : ""}`}
           placeholder={currentPlaceholder}
           readOnly={isReadOnly}
         />
@@ -112,7 +113,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           name={field.name}
           value={value}
           onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
+          className="input-setting-p08"
           rows="3"
           placeholder={currentPlaceholder}
           readOnly={isReadOnly}
@@ -125,7 +126,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
               name={field.name}
               value={value}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
+              className="input-setting-p08"
               readOnly={isReadOnly}
               min="1"
               max="50"
@@ -141,10 +142,60 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           onChange={(date) => handleChange({ target: { name: field.name, value: date } })}
           minDate={today}
           maxDate={dayLater}
-          className="w-full border px-3 py-2 rounded"
+          className="input-setting-p08"
           dateFormat="yyyy/MM/dd"
           placeholderText="날짜를 선택하세요"
         />
+      );
+    case "checkbox-number":
+      return (
+          <div className="check-box-space-y-2">
+              {field.options.map((option, idx) => (
+                  <div key={idx} className="check-box-custiom">
+                      <input
+                          type="checkbox"
+                          name={`${field.name}-${option}`}
+                          checked={!!value[option] || (option === '기타' && value[option] !== undefined && value[option].trim() !== '')}
+                          onChange={handleChange}
+                          disabled={isReadOnly}
+                          className="form-checkbox"
+                      />
+                      <label className="check-box-mr-2">{option}</label>
+
+                      {/* '기타'는 항상 보이고, 나머지 필드는 체크되었을 때만 보이도록 조건부 렌더링 */}
+                      {(option === '기타' || !!value[option]) && (
+                          option === '기타' ? (
+                              <input
+                                  type="text"
+                                  name={`${field.name}-${option}`}
+                                  value={value[option] || ''}
+                                  onChange={(e) => {
+                                    const regex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9\s]*$/;
+                                    if (regex.test(e.target.value)) {
+                                      handleChange(e);
+                                    }
+                                  }}
+                                  placeholder={currentPlaceholder}
+                                  readOnly={isReadOnly} // '기타'는 체크 여부와 상관없이 항상 입력 가능해야 하므로 readOnly 조건을 단순화
+                                  className="check-box-setting-grow"
+                              />
+                          ) : (
+                              <input
+                                  type="number"
+                                  name={`${field.name}-${option}`}
+                                  value={value[option] || 0}
+                                  onChange={handleChange}
+                                  readOnly={isReadOnly} // readOnly 조건을 단순화
+                                  className="check-box-setting-ori"
+                                  min="1"
+                                  max="99"
+                                  step="1"
+                              />
+                          )
+                      )}
+                  </div>
+              ))}
+          </div>
       );
     default:
       return null;

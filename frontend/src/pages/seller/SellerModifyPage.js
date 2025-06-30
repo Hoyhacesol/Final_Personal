@@ -34,7 +34,8 @@ const SellerModifyPage = () => {
     phone: "",
     slocation: ""
   });
-
+  
+  const isFormValid = basicInfo.sname.trim() && formData.info.trim() && formData.introContent.trim();
   
   
   useEffect(() => {
@@ -160,6 +161,11 @@ const SellerModifyPage = () => {
     paths.splice(index, 1);
     const urls = [...previewUrls.intros];
     urls.splice(index, 1);
+
+    const SLIDES_PER_VIEW = 3;
+    const maxSlide = Math.max(0, urls.length - SLIDES_PER_VIEW);
+    setSlideIndex(prev => Math.min(prev, maxSlide));
+      
     setFormData(prev => ({ ...prev, simage: [prev.simage[0], ...paths] }));
     setPreviewUrls(prev => ({ ...prev, intros: urls }));
   };
@@ -251,6 +257,7 @@ const SellerModifyPage = () => {
     <input
       id="sname"
       type="text"
+      autoComplete="off"
       value={basicInfo.sname}
       onChange={(e) => setBasicInfo(prev => ({ ...prev, sname: e.target.value }))}
     />
@@ -352,6 +359,7 @@ const SellerModifyPage = () => {
       <input
         name="info"
         className={styles["input_field"]}
+        autoComplete="off"
         placeholder="업체 정보를 작성해주세요!"
         value={formData.info}
         onChange={e => setFormData(prev => ({ ...prev, info: e.target.value }))}
@@ -364,7 +372,11 @@ const SellerModifyPage = () => {
         value={formData.introContent}
         onChange={e => setFormData(prev => ({ ...prev, introContent: e.target.value }))}
       />
-      <button className={styles["register_button"]} onClick={handleSubmit} disabled={submitting}>
+      <button
+        className={`${styles["register_button"]} ${!isFormValid ? styles["disabled_button"] : ""}`}
+        onClick={handleSubmit}
+        disabled={!isFormValid || submitting}
+      >
         {submitting ? "수정 중..." : "수정 완료"}
       </button>
 

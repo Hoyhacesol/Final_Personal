@@ -19,7 +19,7 @@ const OrderModifyPage = () => {
     otitle: '',
     playType: '',
     rental: '', // 장비 대여 여부 (radio)
-    rentalEquipment: '', // 장비 대여 물품
+    rentalEquipment: {}, // 장비 대여 물품
     region: '',
     rentalDate: null,
     rentalTime: '',
@@ -27,10 +27,42 @@ const OrderModifyPage = () => {
     ocontent: '',
   });
 
-  const [savedRentalEquipment, setSavedRentalEquipment] = useState('');
+  const [savedRentalEquipmentState, setSavedRentalEquipmentState] = useState({});
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // 헬퍼 함수: "축구화&1,팀조끼&2,기타&~" 문자열을 객체로 파싱
+  const parseRentalEquipmentString = (equipmentString) => {
+    const parsed = {};
+    if (equipmentString) {
+      equipmentString.split(',').forEach(item => {
+        if (item.startsWith('기타&')) {
+          const value = item.substring(3); // '기타&' 다음부터 끝까지 가져옴
+          parsed['기타'] = value;
+        } else {
+          // 다른 항목들은 마지막 '&'를 기준으로 분리
+          const lastAmpersandIndex = item.lastIndexOf('&');
+          if (lastAmpersandIndex !== -1) {
+            const name = item.substring(0, lastAmpersandIndex);
+            const quantityStr = item.substring(lastAmpersandIndex + 1);
+            const quantity = parseInt(quantityStr);
+            if (!isNaN(quantity)) {
+              parsed[name] = quantity;
+            } else {
+              // 수량 파싱 실패 시, 해당 항목을 통째로 키로 사용 (오류 방지)
+              parsed[item] = item;
+            }
+          } else {
+            // '&'가 없는 경우 (예외 처리 또는 단독 항목)
+            parsed[item] = item;
+          }
+        }
+      });
+    }
+    return parsed;
+  };
+
 
   useEffect(() => {
     const fetchOrderData = async () => {
@@ -38,23 +70,23 @@ const OrderModifyPage = () => {
         setLoading(true);
         const response = await axios.get(`/api/orders/${ono}`); // 백엔드 API 호출
         const data = response.data;
+        const parsedRentalEquipment = parseRentalEquipmentString(data.rentalEquipment);
 
-        // 백엔드에서 받은 데이터를 폼 데이터에 매핑
-        // OrderController의 getOrder 메서드가 반환하는 필드명에 맞게 매핑
+        // 백엔드에서 받은 데이터를 폼 데이터에 매핑 (null, undefined 예방)
         setFormData({
           otitle: data.otitle || '',
           playType: data.playType || '',
-          rental: data.rentalEquipment || data.detail ? '필요해요' : '필요없어요', // 장비 정보가 있으면 '필요해요'로 설정
-          rentalEquipment: data.rentalEquipment || '',
+          rental: data.rentalEquipment || data.detail ? '필요해요' : '필요없어요',
+          rentalEquipment: parsedRentalEquipment,
           region: data.region || '',
           rentalDate: data.rentalDate ? new Date(data.rentalDate) : null,
           rentalTime: data.rentalTime || '',
           person: data.person || '',
           ocontent: data.ocontent || '',
         });
-        setSavedRentalEquipment(data.rentalEquipment || '');
+        setSavedRentalEquipmentState(parsedRentalEquipment);
       } catch (err) {
-        setError("m : 견적 정보를 불러오는 데 실패했습니다.");
+        setError("정보를 불러오는 데 실패했습니다. 담당자에게 문의해주세요");
         console.error("Error fetching order data for modification:", err);
       } finally {
         setLoading(false);
@@ -66,15 +98,22 @@ const OrderModifyPage = () => {
     }
   }, [ono]);
   
-  
-  
   const validate = (data) => {
     const newErrors = {};
     
     if (!data.otitle) newErrors.otitle = '제목을 입력해주세요.';
     if (!data.playType) newErrors.playType = '종목을 선택해주세요.';
-    if (data.rental === '필요해요' && !data.rentalEquipment.trim()) {
-      newErrors.rentalEquipment = '대여할 장비 목록을 입력해주세요.';
+    if (data.rental === '필요해요') {
+      const selectedItems = Object.keys(data.rentalEquipment).filter(key => {
+        if (key === '기타') {
+          return data.rentalEquipment[key] !== undefined && data.rentalEquipment[key].trim() !== '';
+        }
+        return typeof data.rentalEquipment[key] === 'number' && data.rentalEquipment[key] > 0;
+      });
+
+      if (selectedItems.length === 0) {
+        newErrors.rentalEquipment = '대여할 장비를 1개 이상 선택하고 수량을 입력해주세요.';
+      }
     }
     const regionParts = data.region.split(" ");
     if (!data.region || (regionParts.length < 2 && regionParts[0] !== "세종특별자치시")) {
@@ -99,35 +138,56 @@ const OrderModifyPage = () => {
 
   // 폼 필드 변경 핸들러
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    
-    if (errors[name]) {
-      setErrors(prevErrors => {
-        const newErrors = { ...prevErrors };
+    const { name, value, type, checked } = e.target;
+
+    setErrors(prevErrors => {
+      const newErrors = { ...prevErrors };
+      if (name === 'rental' && newErrors.rentalEquipment) {
+        delete newErrors.rentalEquipment;
+      }
+      if (newErrors[name]) {
         delete newErrors[name];
-        return newErrors;
-      });
-    }
+      }
+      return newErrors;
+    });
     
     if (name === 'rental') {
       if (value === '필요해요') {
         setFormData(prev => ({
           ...prev,
           rental: value,
-          rentalEquipment: savedRentalEquipment,
+          rentalEquipment: savedRentalEquipmentState,
         }));
       } else { // '필요없어요'
-        setSavedRentalEquipment(formData.rentalEquipment);
+        setSavedRentalEquipmentState(formData.rentalEquipment);
         setFormData(prev => ({
           ...prev,
           rental: value,
-          rentalEquipment: '',
+          rentalEquipment: {},
         }));
       }
-    } else if (name === 'rentalEquipment') {
-      setFormData(prev => ({ ...prev, [name]: value }));
-      setSavedRentalEquipment(value);
-    } else {
+    } 
+    else if (name.startsWith('rentalEquipment-')) {
+      const [prefix, equipmentName] = name.split('-');
+      setFormData(prev => {
+        const newRentalEquipment = { ...prev.rentalEquipment };
+        if (type === 'checkbox') {
+          if (checked) {
+            newRentalEquipment[equipmentName] = equipmentName === '기타' ? '' : 1;
+          } else {
+            delete newRentalEquipment[equipmentName];
+          }
+        } else if (type === 'number' || (type === 'text' && equipmentName === '기타')) {
+          newRentalEquipment[equipmentName] = equipmentName === '기타' ? value : parseInt(value) || 0;
+          if (newRentalEquipment[equipmentName] === 0 || (equipmentName === '기타' && value.trim() === '')) {
+            delete newRentalEquipment[equipmentName];
+          }
+        }
+        setSavedRentalEquipmentState(newRentalEquipment); // 현재 상태를 바로 저장
+        return { ...prev, rentalEquipment: newRentalEquipment };
+      });
+    } 
+    else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
@@ -136,7 +196,6 @@ const OrderModifyPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-
       setFormSubmitted(true);
       const validationErrors = validate(formData);
       setErrors(validationErrors);
@@ -150,6 +209,24 @@ const OrderModifyPage = () => {
       const dataToSend = { ...formData };
       if (formData.rental === '필요없어요') {
         dataToSend.rentalEquipment = '';
+      }
+      else {
+        // rentalEquipment 객체를 문자열로 변환
+        const equipmentString = Object.entries(dataToSend.rentalEquipment)
+          .filter(([key, value]) => {
+            if (key === '기타') {
+              return value !== undefined && value.trim() !== '';
+            }
+            return typeof value === 'number' && value > 0;
+          })
+          .map(([key, value]) => {
+            if (key === '기타') {
+              return `기타&${value}`; // '기타&실제내용' 형태로 변환
+            }
+            return `${key}&${value}`; // 기존 '장비명&수량' 형태 유지
+          })
+          .join(',');
+        dataToSend.rentalEquipment = equipmentString;
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 

@@ -17,7 +17,7 @@ const OrderCreatePage = () => {
   const navigate = useNavigate();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
-  const [savedRentalEquipment, setSavedRentalEquipment] = useState('');
+  const [savedRentalEquipmentState, setSavedRentalEquipmentState] = useState({});
   const [formData, setFormData] = useState({
     otitle: '',
     region: '',
@@ -35,9 +35,19 @@ const OrderCreatePage = () => {
     const newErrors = {};
     if (!data.otitle) newErrors.otitle = '제목을 입력해주세요.';
     if (!data.playType) newErrors.playType = '종목을 선택해주세요.';
-    if (data.rental === '필요해요' && !data.rentalEquipment.trim()) {
-      newErrors.rentalEquipment = '대여할 장비 목록을 입력해주세요.';
+    if (data.rental === '필요해요') {
+      const selectedItems = Object.keys(data.rentalEquipment).filter(key => {
+        if (key === '기타') {
+          return data.rentalEquipment[key] !== undefined && data.rentalEquipment[key].trim() !== '';
+        }
+        return typeof data.rentalEquipment[key] === 'number' && data.rentalEquipment[key] > 0;
+      });
+
+      if (selectedItems.length === 0) {
+        newErrors.rentalEquipment = '대여할 장비를 1개 이상 선택하고 수량을 입력해주세요.';
+      }
     }
+
     const regionParts = data.region.split(" ");
     if (!data.region || (regionParts.length < 2 && regionParts[0] !== "세종특별자치시")) {
       newErrors.region = '시/도와 시/군/구를 모두 선택해주세요.';
@@ -55,37 +65,62 @@ const OrderCreatePage = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    // 사용자가 필드를 수정하기 시작하면 해당 필드의 에러 메시지를 지웁니다.
-    if (errors[name]) {
-      setErrors(prevErrors => {
-        const newErrors = { ...prevErrors };
+    setErrors(prevErrors => {
+      const newErrors = { ...prevErrors };
+      // 'rentalEquipment' 에러는 'rental' 필드가 변경될 때도 지워져야 합니다.
+      if (name === 'rental' && newErrors.rentalEquipment) {
+        delete newErrors.rentalEquipment;
+      }
+      // 다른 필드의 에러는 해당 필드 변경 시 지웁니다.
+      if (newErrors[name]) {
         delete newErrors[name];
-        return newErrors;
-      });
-    }
-
+      }
+      return newErrors;
+    });
 
     if (name === 'rental') {
       if (value === '필요해요') {
         setFormData(prev => ({
           ...prev,
           rental: value,
-          rentalEquipment: savedRentalEquipment,
+          rentalEquipment: savedRentalEquipmentState, // 저장된 값으로 복원
         }));
       } else { // '필요없어요'
-        setSavedRentalEquipment(formData.rentalEquipment);
+        setSavedRentalEquipmentState(formData.rentalEquipment);
         setFormData(prev => ({
           ...prev,
           rental: value,
-          rentalEquipment: '',
+          rentalEquipment: {},
         }));
       }
-    } else if (name === 'rentalEquipment') {
-      setFormData(prev => ({ ...prev, [name]: value }));
-      setSavedRentalEquipment(value);
-    } else {
+    } 
+    else if (name.startsWith('rentalEquipment-')) {
+      const [prefix, equipmentName] = name.split('-');
+      setFormData(prev => {
+        const newRentalEquipment = { ...prev.rentalEquipment };
+        if (type === 'checkbox') {
+          if (checked) {
+            // 체크박스 선택 시, 기본 수량 1 또는 '기타' 항목은 빈 문자열로 초기화
+            newRentalEquipment[equipmentName] = equipmentName === '기타' ? '' : 1;
+          } else {
+            // 체크박스 해제 시, 해당 장비 제거
+            delete newRentalEquipment[equipmentName];
+          }
+        } else if (type === 'number' || (type === 'text' && equipmentName === '기타')) {
+          // 수량 입력 또는 '기타' 텍스트 입력
+          newRentalEquipment[equipmentName] = equipmentName === '기타' ? value : parseInt(value) || 0; // 숫자가 아니면 0
+          // 수량이 0이거나 '기타'가 비어있으면 체크박스가 해제된 것처럼 처리
+          if (newRentalEquipment[equipmentName] === 0 || (equipmentName === '기타' && value.trim() === '')) {
+            delete newRentalEquipment[equipmentName];
+          }
+        }
+        setSavedRentalEquipmentState(newRentalEquipment); // 현재 상태를 바로 저장
+        return { ...prev, rentalEquipment: newRentalEquipment };
+      });
+    } 
+    else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
@@ -104,8 +139,21 @@ const OrderCreatePage = () => {
 
     try {
       const dataToSend = { ...formData };
-      if (formData.rental === '필요없어요') {
+      if (dataToSend.rental === '필요없어요') {
         dataToSend.rentalEquipment = '';
+      } else {
+        const equipmentString = Object.entries(dataToSend.rentalEquipment)
+          .filter(([key, value]) => {
+            // '기타'는 값이 비어있지 않은 경우에만 포함
+            if (key === '기타') {
+              return value !== undefined && value.trim() !== '';
+            }
+            // 그 외 장비는 수량이 0보다 큰 경우에만 포함
+            return typeof value === 'number' && value > 0;
+          })
+          .map(([key, value]) => `${key}&${value}`)
+          .join(',');
+        dataToSend.rentalEquipment = equipmentString;
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 

@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
@@ -16,10 +17,13 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "biz")
+@Table(name = "biz",uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"mno", "ono"})
+    }
+)
 @Getter
 @Setter
-@ToString(exclude = {"member", "order"}) // 순환참조 방지
+@ToString(exclude = {"seller", "request"}) // 순환참조 방지
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor 
@@ -35,7 +39,7 @@ public class Biz extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(name = "ono", nullable = false)
-  private Request order;
+  private Request request;
 
   private int price;
 

@@ -241,8 +241,10 @@ textarea {
   transition: background-color 0.2s ease-in-out;
 }
 
-.register_button:hover {
-  background-color: #1587c8;
+.disabled_button {
+  background-color: #ccc;
+  color: #888;
+  cursor: not-allowed;
 }
 
 /* 이미지 모달 */
@@ -312,5 +314,49 @@ textarea {
 
 .address_cancel_button:hover {
   background-color: #d9363e;
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 1.5rem 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .main_simage {
+    width: 180px;
+    height: 180px;
+  }
+
+  .slider_img_wrapper img,
+  .slider img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .info_title,
+  .content_title {
+    font-size: 1.2rem;
+  }
+
+  .input_field,
+  .textarea {
+    font-size: 0.95rem;
+  }
+
+  .register_button {
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+
+  .slider_wrapper {
+    gap: 0.5rem;
+  }
+
+  .button_blue,
+  .button_red {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
 }
 

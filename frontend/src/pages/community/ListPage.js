@@ -150,7 +150,7 @@ const ListPage = () => {
             >
               <div className="post_number">{item.pno}</div>
               <div className="post_title">{item.ptitle}</div>
-              <div className="post_meta hide_mobile">{item.writerName || item.mno}</div>
+              <div className="post_meta hide_mobile">{item.writerName || "탈퇴한사용자"}</div>
               <div className="post_meta hide_mobile">{formatDisplayDate(item.pregdate)}</div>
               <div className="post_meta">{item.view}</div>
             </div>

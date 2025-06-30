@@ -228,7 +228,7 @@ const ReadPage = () => {
                             <span>
                                 👤{" "}
                                 {community.writerName ||
-                                    community.mno}
+                                    "탈퇴한사용자"}
                             </span>
                             <span>
                                 📅{" "}
@@ -269,10 +269,10 @@ const ReadPage = () => {
                                     <img
                                         src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"
                                             }/images/${c.mprofileimg || "baseprofile.png"}?t=${Date.now()}`}
-                                        alt={`${c.writerName} 프로필`}
+                                        alt={`${c.writerName || "기본"} 프로필`}
                                     />
                                 </span>
-                                <span className="comment_author">{c.writerName}</span>
+                                <span className="comment_author">{c.writerName || "탈퇴한사용자"}</span>
                                 <span className="comment_date">
                                     {new Date(c.cregdate).toLocaleString()}
                                 </span>

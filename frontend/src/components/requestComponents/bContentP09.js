@@ -27,10 +27,11 @@ const formFields = {
       options: ["필요해요", "필요없어요"]
     },
     {
-      type: "text",
+      type: "checkbox-number",
       label: "대여할 장비 목록",
       name: "rentalEquipment",
-      placeholder: "예: 축구화, 장갑, 조끼 등"
+      options: ["축구화", "팀조끼", "축구공", "기타"],
+      placeholder: "기타 장비를 입력하세요"
     }
   ],
   right: [
@@ -145,6 +146,57 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           placeholderText="날짜를 선택하세요"
         />
       );
+    case "checkbox-number":
+      return (
+        <div className="check-box-space-y-2">
+          {field.options.map((option, idx) => (
+            // flexbox를 사용하여 한 줄 정렬
+            <div key={idx} className="check-box-custiom">
+              <input
+                type="checkbox"
+                name={`${field.name}-${option}`}
+                // value는 객체이므로 option이 해당 객체의 키로 존재하는지,
+                // '기타'의 경우 값이 비어있지 않은지 확인
+                checked={!!value[option] || (option === '기타' && value[option] !== undefined && value[option]?.trim() !== '')}
+                onChange={handleChange}
+                disabled={isReadOnly} // 전체 폼 readOnly일 때 비활성화
+                className="form-checkbox"
+              />
+              <label className="check-box-mr-2">{option}</label>
+
+              {/* '기타'는 항상 보이고, 나머지 필드는 체크되었을 때만 보이도록 조건부 렌더링 */}
+              {(option === '기타' || !!value[option]) && (
+                option === '기타' ? (
+                  <input
+                    type="text"
+                    name={`${field.name}-${option}`}
+                    value={value[option] || ''}
+                    onChange={(e) => {
+                      const regex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9\s]*$/;
+                      if (regex.test(e.target.value)) {
+                        handleChange(e);
+                      }
+                    }}
+                    placeholder={currentPlaceholder}
+                    readOnly={isReadOnly} // 전체 폼 readOnly일 때만
+                    className="check-box-setting-grow"
+                  />
+                ) : (
+                  <input
+                    type="number"
+                    name={`${field.name}-${option}`}
+                    value={value[option] || 0}
+                    onChange={handleChange}
+                    readOnly={isReadOnly} // 전체 폼 readOnly일 때만
+                    className="check-box-setting-ori"
+                    min="0"
+                  />
+                )
+              )}
+            </div>
+          ))}
+        </div>
+      );
     default:
       return null;
   }
@@ -153,69 +205,11 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
 
 const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
   const navigate = useNavigate();
-  // const { ono } = useParams();
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
   const [sidoList, setSidoList] = useState([]);
   const [selectedSido, setSelectedSido] = useState("");
   const [sigunguList, setSigunguList] = useState([]);
 
-  //처음 랜더 훅
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const [sidoRes, orderRes] = await Promise.all([
-  //         fetch("/api/vworld/sido").then(res => res.json()),
-  //         axios.get(`/api/orders/${ono}`)
-  //       ]);
-
-  //       const fetchedData = orderRes.data;
-
-  //       // 시도 리스트
-  //       const sidoListData = sidoRes.response.result.featureCollection.features.map(f => ({
-  //         code: f.properties.ctprvn_cd,
-  //         name: f.properties.ctp_kor_nm
-  //       }));
-  //       setSidoList(sidoListData);
-
-  //       // rental 여부 판단
-  //       const defaultRental = (fetchedData.rentalEquipment && fetchedData.rentalEquipment.trim() !== "")
-  //         ? "필요해요" : "필요없어요";
-
-  //       setSavedRentalEquipment(fetchedData.rentalEquipment || '');
-
-  //       // 모든 필드에 대해 null/undefined 방지 및 기본값 설정
-  //       // (initialFields에 없더라도 여기에 추가하면 formData에 포함됨)
-  //       setFormData({
-  //         playType: fetchedData.playType || "",
-  //         rental: defaultRental,
-  //         rentalEquipment: fetchedData.rentalEquipment || "",
-  //         region: fetchedData.region || "",
-  //         rentalDate: fetchedData.rentalDate || null,
-  //         rentalTime: fetchedData.rentalTime || "",
-  //         person: fetchedData.person || "",
-  //         ocontent: fetchedData.ocontent || "",
-  //         ono: fetchedData.ono,
-  //         mno: fetchedData.mno,
-  //         oregdate: fetchedData.oregdate,
-  //         finished: fetchedData.finished,
-  //       });
-
-  //       // 시도 선택값 추출
-  //       const regionParts = fetchedData.region?.split(" ");
-  //       if (regionParts?.length >= 1) {
-  //         setSelectedSido(regionParts[0]);
-  //       }
-
-  //     } catch (err) {
-  //       console.error("시도/견적 데이터 로딩 실패:", err);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [ono]);
-
-
-  // 장비대여여부 전환 훅
   useEffect(() => {
     if (formData.rental === '필요없어요') {
       setIsRentalEquipmentReadOnly(true);
@@ -282,20 +276,6 @@ const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
       });
   }, [selectedSido]);
 
-
-  // // 완료 버튼 동작
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   axios.patch(`/api/orders/${ono}`, formData)
-  //     .then(() => {
-  //       alert("수정 완료");
-  //       navigate("/request");
-  //     })
-  //     .catch((err) => {
-  //       alert("수정 실패");
-  //       console.error(err);
-  //     });
-  // };
 
   return (
     <div className='request-body bg-cover bg-center'>

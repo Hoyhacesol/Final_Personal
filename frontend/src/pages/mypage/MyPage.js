@@ -242,7 +242,10 @@ const MyPage = () => {
               )}
 
               {isRegistered ? (
-                <button className={styles.comp_info_button}>업체정보 수정</button>
+                //수정 버튼 활성화 
+                <Link to="/sellermodify">
+                  <button className={styles.comp_info_button}>업체정보 수정</button>
+                </Link>
               ) : (
                 <button className={styles.comp_info_button2} disabled>
                   수정 전 <br></br>업체소개 작성 필요

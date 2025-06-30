@@ -53,8 +53,8 @@ const Nav = () => {
           <li className={location.pathname.startsWith("/request") ? styles.active : ""}>
             <Link to="/request">견적 요청</Link>
           </li>
-          <li className={location.pathname.startsWith("/bid") ? styles.active : ""}>
-            <Link to="/bid">견적 입찰</Link>
+          <li className={location.pathname.startsWith("/orderlist") ? styles.active : ""}>
+            <Link to="/orderlist">견적 목록</Link>
           </li>
           <li className={location.pathname.startsWith("/sellerlist") ? styles.active : ""}>
             <Link to="/sellerlist">등록된 업체 목록</Link>

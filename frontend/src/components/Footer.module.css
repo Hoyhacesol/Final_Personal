@@ -1,0 +1,161 @@
+.footer {
+  background-color: #444;
+  color: #eee;
+  padding: 20px 0 20px;
+  font-size: 14px;
+}
+
+.footer_container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer_column {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer_logo img {
+  width: 120px;
+}
+
+.brand_tagline {
+  margin-top: 10px;
+  color: #bbb;
+}
+
+.column_title {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.link_list {
+  list-style: none;
+  padding: 0;
+}
+
+.link_list li:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.link_list li a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.link_list li:hover a,
+.active a {
+  color: #fff;
+}
+
+.social_icons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.social_icons a {
+  font-size: 20px;
+  color: #ccc;
+}
+
+.social_icons a:hover {
+  color: #fff;
+}
+
+.newsletter_form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.newsletter_input {
+  flex: 1;
+  padding: 8px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+}
+
+.newsletter_button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #555;
+  color: #fff;
+  cursor: pointer;
+}
+
+.newsletter_button:hover {
+  background-color: #777;
+}
+
+.subscription_msg {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #aaf;
+  text-align: center;
+}
+
+.footer_legal {
+  border-top: 1px solid #444;
+  text-align: center;
+}
+
+.legal_links {
+  list-style: none;
+  padding: 0;
+  display: inline-flex;
+  gap: 15px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+.legal_links li a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+.legal_links li a:hover {
+  color: #fff;
+}
+
+/* Tablet 반응형 */
+@media (max-width: 1024px) {
+  .footer_container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile 반응형 */
+@media (max-width: 600px) {
+  .footer_container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 20px;
+  }
+  .footer_column {
+    align-items: center;
+    text-align: center;
+  }
+  .social_icons {
+    justify-content: center;
+  }
+  .newsletter_form {
+    flex-direction: column;
+  }
+  .newsletter_input,
+  .newsletter_button {
+    width: 100%;
+  }
+  .legal_links {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 15px;
+  }
+}
