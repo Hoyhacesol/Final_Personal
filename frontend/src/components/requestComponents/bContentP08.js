@@ -105,6 +105,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           className={`input-setting-p08 ${field.error ? "border-red-500" : ""}`}
           placeholder={currentPlaceholder}
           readOnly={isReadOnly}
+          maxLength={field.name === 'rentalTime' ? 5 : undefined}
         />
       );
     case "textarea":
@@ -314,16 +315,15 @@ const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
                     {selectedSido !== "세종특별자치시" && (
                       <>
                         <select
-                          value={formData.region?.split(" ")[1] || ""}
+                          value={(formData.region?.split(" ") || []).slice(1).join(" ")}
                           onChange={e => {
                             const region = `${selectedSido} ${e.target.value}`;
                             handleChange({ target: { name: "region", value: region } });
                           }}
                           disabled={!sigunguList.length}
                         >
-                          {/* 시/군/구 플레이스홀더 조건부 렌더링 */}
-                          {(!formData.region || formData.region.split(" ")[0] !== selectedSido || formData.region.split(" ")[1] === "") &&
-                            <option value="">시/군/구</option>}
+                          {/* 시/군/구 플레이스홀더 */}
+                          <option value="">시/군/구</option>
                           {sigunguList.map(s => (
                             <option key={s.code} value={s.name}>{s.name}</option>
                           ))}

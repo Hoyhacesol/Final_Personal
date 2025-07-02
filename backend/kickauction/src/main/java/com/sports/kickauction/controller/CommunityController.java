@@ -79,15 +79,11 @@ public class CommunityController {
                 .body(Map.of("PNO", saved.getPno()));
     }
 
- @PutMapping(
-      value = "/{pno}",
-      consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
+    @PutMapping(value = "/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> modify(
             @PathVariable Long pno,
             @ModelAttribute CommunityDTO communityDTO,
-            @RequestParam(value = "pimageFile", required = false) MultipartFile pimageFile
-    ) {
+            @RequestParam(value = "pimageFile", required = false) MultipartFile pimageFile) {
         communityDTO.setPno(pno);
         log.info("Modify (multipart): {}", communityDTO);
 
@@ -125,6 +121,9 @@ public class CommunityController {
             @PathVariable Long pno,
             @RequestBody CommentDTO dto,
             Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         CommentDTO saved = commentService.writeComment(pno, dto, auth);
         return ResponseEntity.ok(saved);
     }
@@ -135,6 +134,9 @@ public class CommunityController {
             @PathVariable Long cno,
             @RequestBody Map<String, String> body,
             Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         String content = body.get("content");
         return ResponseEntity.ok(commentService.updateComment(pno, cno, content, auth));
     }
@@ -144,6 +146,9 @@ public class CommunityController {
             @PathVariable Long pno,
             @PathVariable Long cno,
             Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         commentService.deleteComment(pno, cno, auth);
         return ResponseEntity.noContent().build();
     }

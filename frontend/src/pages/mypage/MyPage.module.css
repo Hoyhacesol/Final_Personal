@@ -156,10 +156,10 @@ body {
 }
 
 .textcolor1 {
-  color: #18a89b;
+  color: #2e77ff;
 }
 .textcolor2 {
-  color: rgba(34, 139, 131, 0.671);
+  color: rgb(214, 78, 255);
 }
 
 .request_info_button {
@@ -455,7 +455,7 @@ body {
     word-break: break-all;
   }
   .update_button {
-    padding: 0.3rem 0.5rem;
+    padding: 0.3rem 0.3rem;
     font-family: "NotoSansSB";
     font-size: 1rem;
     white-space: nowrap;
@@ -465,23 +465,24 @@ body {
     font-size: 1rem;
     font-weight: 500;
     margin: 0.2rem 0;
+    max-width: 200px;
   }
 
   .request_info_button {
-    padding: 0.3rem 0.5rem;
+    padding: 0.3rem 0.3rem;
     font-family: "NotoSansSB";
     font-size: 1rem;
   }
 
   .comp_info_button {
-    padding: 0.3rem 0.5rem;
+    padding: 0.3rem 0.3rem;
     font-family: "NotoSansSB";
     font-size: 1rem;
   }
 
   .comp_info_button2 {
-    padding: 0.3rem 0.4rem;
-    font-size: 0.75rem;
+    padding: 0.3rem 0.3rem;
+    font-size: 1rem;
   }
 
   .company_no {
@@ -490,6 +491,9 @@ body {
     margin: 0.2rem 0;
   }
 
+  .company_address {
+    max-width: 200px;
+  }
   /* 주석: 모바일-업체정보 줄바꿈 */
   .address_input_wrapper {
     flex-wrap: wrap;

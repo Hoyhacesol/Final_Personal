@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +47,8 @@ public class MessageController {
 
     // 쪽지 보내기
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
+
     public ResponseEntity<?> sendMessage(
             Principal principal,
             @RequestParam Long receiverId,
@@ -62,6 +65,7 @@ public class MessageController {
 
     // 1:1 대화내역 조회 (나-상대방)
     @GetMapping("/dialog")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getDialog(
             Principal principal,
             @RequestParam Long target // 상대 mno
@@ -95,6 +99,7 @@ public class MessageController {
 
     // 채팅방 열면 채팅기록 불러오기
     @GetMapping("/rooms")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMyMessageRooms(Principal principal) {
         Member me = memberService.findByUserId(principal.getName());
         List<MessageRoomDTO> rooms = messageService.getAllRoomsForMember(me.getMno());
@@ -103,6 +108,7 @@ public class MessageController {
 
     // 닉네임 검색 후 채팅시작
     @GetMapping("/find-user")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> findUserByNickname(@RequestParam String nickname, Authentication authentication) {
         System.out.println("🔍 nickname 검색 요청: " + nickname);
 
@@ -155,6 +161,7 @@ public class MessageController {
 
     //주석: 읽음처리
     @PutMapping("/mark-read")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> markMessagesAsRead(
         Principal principal,
         @RequestParam Long partnerId
@@ -169,6 +176,7 @@ public class MessageController {
 
     // 주석: 읽지 않은 메세지 총 개수
     @GetMapping("/unread/total")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Long> getTotalUnreadCount(Principal principal) {
         Member me = memberService.findByUserId(principal.getName());
         long count = messageRepository.countUnreadByReceiver(me);

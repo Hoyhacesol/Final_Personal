@@ -104,6 +104,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           className={`w-full border px-3 py-2 rounded ${field.error ? "border-red-500" : ""}`}
           placeholder={currentPlaceholder}
           readOnly={isReadOnly}
+          maxLength={field.name === 'rentalTime' ? 5 : undefined}
         />
       );
     case "textarea":
@@ -220,18 +221,16 @@ const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
 
   //지역 정보를 select 두개로 나눠서 표기하기 위한 훅
   useEffect(() => {
-    if (formData.region) {
-      const parts = formData.region.split(" ");
-      if (parts.length === 2) {
-        setSelectedSido(parts[0]);
-      } else if (parts.length === 1) {
-        // 예외: 세종시 같은 단일 행정구역
+    if (formData.region) { // 폼 데이터에 지역 정보가 있으면
+      const parts = formData.region.split(" "); // 공백으로 분리
+      // 첫 번째 부분을 '시/도'로 설정합니다.
+      if (parts[0]) {
         setSelectedSido(parts[0]);
       }
-    } else { // formData.region이 비어있을 경우 selectedSido 초기화
+    } else { // 지역 정보가 없으면 초기화
       setSelectedSido("");
     }
-  }, [formData.region, sidoList]);
+  }, [formData.region]);
   // 시/도 목록 로드
   useEffect(() => {
     fetch("/api/vworld/sido")
@@ -326,16 +325,15 @@ const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
 
                     {selectedSido !== "세종특별자치시" && (
                       <select
-                        value={formData.region.split(" ")[1] || ""}
+                        value={(formData.region?.split(" ") || []).slice(1).join(" ")}
                         onChange={(e) => {
                           const region = `${selectedSido} ${e.target.value}`;
                           handleChange({ target: { name: "region", value: region } });
                         }}
                         disabled={!sigunguList.length}
                       >
-                        {/* 시/군/구 플레이스홀더 조건부 렌더링 */}
-                        {(!formData.region || formData.region.split(" ")[0] !== selectedSido || formData.region.split(" ")[1] === "") &&
-                          <option value="">시/군/구</option>}
+                        {/* 시/군/구 플레이스홀더 */}
+                        <option value="">시/군/구</option>
                         {sigunguList.map(s => (
                           <option key={s.code} value={s.name}>{s.name}</option>
                         ))}

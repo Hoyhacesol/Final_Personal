@@ -37,7 +37,7 @@ const sellerRouter = () => [
     path: "bizregister", // 임시 라우트 추가
     element: (
       <Suspense fallback={Loading}>
-        <BizRegister ono={35}/>
+        <BizRegister ono={1}/>
       </Suspense>
     ),
   },

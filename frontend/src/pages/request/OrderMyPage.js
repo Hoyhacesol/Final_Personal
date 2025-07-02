@@ -1,24 +1,33 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import OrderList from "../../components/requestComponents/bContentP10";
 import Hero from "../../components/requestComponents/bHero";
+import Pagination from '../../components/requestComponents/bPagination';
 
 // 견적리스트
 
 const { List } = OrderList;
 
 const OrderMyPage = () => {
-  const [activeLists, setActiveLists] = useState([]);
-  const [closedOrders, setClosedOrders] = useState([]);
-  const [cancelledOrders, setCancelledOrders] = useState([]);
+  // 각 목록의 페이지네이션 데이터를 저장하는 상태
+  const [activeData, setActiveData] = useState(null);
+  const [closedData, setClosedData] = useState(null);
+  const [cancelledData, setCancelledData] = useState(null);
+
+  // 각 목록의 현재 페이지 번호를 관리하는 상태
+  const [activePage, setActivePage] = useState(1);
+  const [closedPage, setClosedPage] = useState(1);
+  const [cancelledPage, setCancelledPage] = useState(1);
+
+  // 로딩 및 에러 상태
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // 마감 처리 요청을 보낸 견적의 ono를 저장하는 Set (중복 요청 방지)
-  const finishingOrdersRef = useRef(new Set()); 
+  // 401 에러 발생 시 중복 리디렉션을 방지하기 위한 플래그
+  const isRedirecting = useRef(false);
 
   const myPageHero = {
     mainTitle: "나의 견적",
@@ -26,163 +35,147 @@ const OrderMyPage = () => {
     notion: "이번에는 어디서 할까?"
   };
 
-  // fetchMyOrders는 초기 로딩 및 필요 시 수동으로만 호출
-  const fetchMyOrders = useCallback(async () => {
+  // 상태(status)와 페이지(page)를 받아 해당 목록 데이터를 서버에 요청하는 함수
+  const fetchPaginatedOrders = useCallback(async (status, page, setter) => {
+    // 이미 리디렉션이 진행 중이면 추가 API 호출을 막습니다.
+    if (isRedirecting.current) return;
+
     try {
-      setLoading(true);
-      const response = await axios.get('http://localhost:8080/api/orders/my-orders', { withCredentials: true });
-
-      const contentType = response.headers['content-type'];
-      if (!contentType || !contentType.includes('application/json')) {
-        navigate('/');
-        alert("로그인이 필요합니다.");
-        throw new Error("로그인하지 않았거나 응답 형식이 JSON이 아닙니다.");
-      }
-
-      const data = response.data;
-      const { activeOrders, closedOrders, cancelledOrders } = data;
-
-      const now = new Date();
-      const initialActiveWithTime = (activeOrders ?? []).map((quote) => {
-        const regDate = new Date(quote.oregdate);
-        const deadline = new Date(regDate);
-        deadline.setDate(regDate.getDate() + 7);
-        deadline.setHours(regDate.getHours()); // 시간 정보 보존
-
-        const timeLeft = deadline - now;
-        
-        let timeStr = "";
-        let isUrgent = false;
-
-        if (timeLeft <= 0) {
-            timeStr = "마감";
-        } else {
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            // timeStr = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
-            if (days > 0) timeStr += `${days}일 `;
-            if (hours > 0) timeStr += `${hours}시간 `;
-            if (minutes > 0) timeStr += `${minutes}분 `;
-            if (seconds > 0) timeStr += `${seconds}초`;
-            
-            isUrgent = timeLeft < (1000 * 60 * 60 * 12) && timeLeft > 0;
-        }
-
-        return {
-          ...quote,
-          timeLeftStr: timeStr,
-          isUrgent: isUrgent,
-          rawTimeLeft: timeLeft // 남은 시간 원본 값 저장 (음수 여부 판단용)
-        };
+      const response = await axios.get(`/api/orders/my-orders/paginated`, {
+        params: { status, page, size: 5 }, // 페이지 당 5개씩 요청
+        withCredentials: true,
       });
-
-      setActiveLists(initialActiveWithTime);
-      setClosedOrders(closedOrders ?? []);
-      setCancelledOrders(cancelledOrders ?? []);
-
+      setter(response.data);
     } catch (err) {
-      setError("내 견적 목록을 불러오는 데 실패했습니다.");
-      console.error("Error fetching my orders:", err);
-    } finally {
-      setLoading(false);
+      if (err.response && err.response.status === 401) {
+        // 여러 API 호출이 동시에 401 오류를 반환하더라도, 리디렉션은 한 번만 실행합니다.
+        if (!isRedirecting.current) {
+          isRedirecting.current = true; // 플래그를 true로 설정
+          alert("로그인이 필요합니다.");
+          navigate('/');
+        }
+      } else {
+        setError(`'${status}' 목록을 불러오는 데 실패했습니다.`);
+        console.error(`Error fetching ${status} orders:`, err);
+      }
     }
   }, [navigate]);
 
-  // 첫 로딩 시 데이터 페치
+  // '진행 견적' 페이지가 변경될 때마다 데이터 요청
   useEffect(() => {
-    fetchMyOrders();
-  }, [fetchMyOrders]);
+    setLoading(true);
+    fetchPaginatedOrders('active', activePage, setActiveData).finally(() => setLoading(false));
+  }, [activePage, fetchPaginatedOrders]);
 
-  // 남은 시간 업데이트 및 마감 처리 (Interval)
+  // '마감 견적' 페이지가 변경될 때마다 데이터 요청
   useEffect(() => {
+    fetchPaginatedOrders('closed', closedPage, setClosedData);
+  }, [closedPage, fetchPaginatedOrders]);
+
+  // '취소 견적' 페이지가 변경될 때마다 데이터 요청
+  useEffect(() => {
+    fetchPaginatedOrders('cancelled', cancelledPage, setCancelledData);
+  }, [cancelledPage, fetchPaginatedOrders]);
+
+  // '진행 견적'의 남은 시간을 업데이트하는 타이머
+  useEffect(() => {
+    if (!activeData || !activeData.dtoList || activeData.dtoList.length === 0) {
+      return;
+    }
+
     const interval = setInterval(() => {
       const now = new Date();
+      let needsUpdate = false;
 
-      // activeLists를 필터링하면서 timeLeft를 계산하고, 마감된 항목은 처리
-      const nextActiveLists = []; // 다음 activeLists가 될 배열
-
-      activeLists.forEach(quote => {
+      const updatedDtoList = activeData.dtoList.map(quote => {
+        // rawTimeLeft가 없는 초기 로딩 상태를 위해 oregdate로 재계산
         const regDate = new Date(quote.oregdate);
         const deadline = new Date(regDate);
         deadline.setDate(regDate.getDate() + 7);
-        deadline.setHours(regDate.getHours()); // 시간 정보 보존용
+        deadline.setHours(regDate.getHours());
+        deadline.setMinutes(regDate.getMinutes());
+        deadline.setSeconds(regDate.getSeconds());
 
         const timeLeft = deadline - now;
-        
-        // 마감 처리 로직: timeLeft가 0 이하이고 아직 처리 요청을 보내지 않은 경우
-        if (timeLeft <= 0 && !finishingOrdersRef.current.has(quote.ono)) {
-          // console.log(`견적 ${quote.ono} 마감! 서버에 PATCH 요청 보냄.`);
-          finishingOrdersRef.current.add(quote.ono); // 요청 중인 ono 추가
 
-          axios.patch(`/api/orders/finish/${quote.ono}`, {}, { withCredentials: true })
-            .then(response => {
-              // console.log(`견적 ${quote.ono} 마감 처리 성공:`, response.data);
-              // 성공적으로 마감 처리되면 클라이언트 상태 즉시 업데이트
-              setClosedOrders(prevClosed => [...prevClosed, { ...quote, timeLeftStr: "마감됨", isUrgent: false }]); // 마감된 견적을 닫힌 목록에 추가
-            })
-            .catch(err => {
-              console.error(`견적 ${quote.ono} 마감 처리 실패:`, err);
-              if (err.response) {
-                console.error("서버 응답 데이터:", err.response.data);
-                console.error("서버 응답 상태 코드:", err.response.status);
-              }
-            })
-            .finally(() => {
-              finishingOrdersRef.current.delete(quote.ono); // 요청 완료되었으니 Set에서 제거 (성공/실패 무관)
-            });
-          
-          // 아직 마감되지 않은 견적
-        } else if (timeLeft > 0) { 
-            let timeStr = "";
-            let isUrgent = false;
+        if (timeLeft <= 0) {
+          if (quote.rawTimeLeft > 0 || quote.rawTimeLeft === undefined) {
+            needsUpdate = true;
+          }
+          return { ...quote, timeLeftStr: "마감됨", isUrgent: false, rawTimeLeft: 0 };
+        } else {
+          const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            // timeStr = `${days}일 ${hours}시간 ${minutes}분 ${seconds}초`;
-            if (days > 0) timeStr += `${days}일 `;
-            if (hours > 0) timeStr += `${hours}시간 `;
-            if (minutes > 0) timeStr += `${minutes}분 `;
-            if (seconds > 0) timeStr += `${seconds}초`;
+          let timeStr = "";
+          if (days > 0) timeStr += `${days}일 `;
+          if (hours > 0) timeStr += `${hours}시간 `;
+          if (minutes > 0) timeStr += `${minutes}분 `;
+          if (seconds > 0) timeStr += `${seconds}초`;
+          if (timeStr.trim() === '') timeStr = '0초';
 
-            // 모두 0일 경우 기본값 설정
-            if (timeStr.trim() === '') {
-              timeStr = '0초';
-            }
+          const isUrgent = timeLeft < (1000 * 60 * 60 * 12);
 
-            isUrgent = timeLeft < (1000 * 60 * 60 * 12) && timeLeft > 0;
-
-            // 업데이트된 정보를 가진 견적을 다음 activeLists에 추가
-            nextActiveLists.push({
-                ...quote,
-                timeLeftStr: timeStr,
-                isUrgent: isUrgent,
-                rawTimeLeft: timeLeft
-            });
+          return { ...quote, timeLeftStr: timeStr, isUrgent, rawTimeLeft: timeLeft };
         }
       });
 
-      // 최종적으로 activeLists 상태 업데이트
-      setActiveLists(nextActiveLists);
+      // 변경 사항이 있을 때만 상태 업데이트
+      if (needsUpdate || JSON.stringify(activeData.dtoList) !== JSON.stringify(updatedDtoList)) {
+        setActiveData(prev => ({ ...prev, dtoList: updatedDtoList }));
+      }
+    }, 1000);
 
-    }, 1000); // 1초마다 갱신
+    return () => clearInterval(interval);
+  }, [activeData]);
 
-    return () => clearInterval(interval); // 언마운트 시 정리
-  }, [activeLists, closedOrders]); // activeLists와 closedOrders가 바뀔 때마다 타이머 재설정
-
-  // 로딩 및 에러 메시지
   if (loading) return <div className="text-center mt-20">로딩 중...</div>;
-  if (error) return <div className="text-center mt-20 text-red-500">{error}</div>;
+  if (error && !activeData) return <div className="text-center mt-20 text-red-500">{error}</div>;
 
   return (
     <>
         <Hero {...myPageHero} />
-        <List title="진행 견적" quotes={activeLists} type="active"/>
-        <List title="마감 견적" quotes={closedOrders} type="closed" />
-        <List title="취소 견적" quotes={cancelledOrders} type="cancelled" />
+
+        {/* 진행 견적 */}
+        <List title="진행 견적" quotes={activeData?.dtoList || []} type="active"/>
+        {activeData && activeData.totalCount > 0 && (
+          <Pagination
+            current={activeData.currentPage}
+            size={activeData.size}
+            totalCount={activeData.totalCount}
+            onPageChange={setActivePage}
+            prev={activeData.prev}
+            next={activeData.next}
+          />
+        )}
+
+        {/* 마감 견적 */}
+        <List title="마감 견적" quotes={closedData?.dtoList || []} type="closed" />
+        {closedData && closedData.totalCount > 0 && (
+          <Pagination
+            current={closedData.currentPage}
+            size={closedData.size}
+            totalCount={closedData.totalCount}
+            onPageChange={setClosedPage}
+            prev={closedData.prev}
+            next={closedData.next}
+          />
+        )}
+
+        {/* 취소 견적 */}
+        <List title="취소 견적" quotes={cancelledData?.dtoList || []} type="cancelled" />
+        {cancelledData && cancelledData.totalCount > 0 && (
+          <Pagination
+            current={cancelledData.currentPage}
+            size={cancelledData.size}
+            totalCount={cancelledData.totalCount}
+            onPageChange={setCancelledPage}
+            prev={cancelledData.prev}
+            next={cancelledData.next}
+          />
+        )}
     </>
   );
 };

@@ -259,7 +259,7 @@ export default function MessengerPanel({ targetUser, onClose }) {
                 </div>
               ))
             ) : (
-              <div className={styles.no_message}>아직 대화가 없습니다.</div>
+              <div className={styles.no_message}></div>
             )}
             {/* 스크롤 기준점 */}
             <div ref={messagesEndRef} />

@@ -7,6 +7,7 @@ const OrderMyPage = lazy(() => import("../pages/request/OrderMyPage"))
 const OrderReadPage = lazy(() => import("../pages/request/OrderReadPage"))
 const OrderCreatePage = lazy(() => import("../pages/request/OrderCreatePage"))
 const OrderModifyPage = lazy(() => import("../pages/request/OrderModifyPage"))
+const BizRegisterPage = lazy(() => import("../pages/biz/BizRegisterPage"))
 
     return [
         {
@@ -23,6 +24,9 @@ const OrderModifyPage = lazy(() => import("../pages/request/OrderModifyPage"))
         },
         {
             path: "modify/:ono", element: <Suspense fallback={Loading}><OrderModifyPage /></Suspense>
+        },
+        {
+            path: ":ono/bizregister",element: <Suspense fallback={Loading}><BizRegisterPage /></Suspense>
         }
     ]
 }

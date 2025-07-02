@@ -69,4 +69,9 @@ public class BizServiceImpl implements BizService {
     public boolean hasAlreadyBid(Long mno, Long ono) {
         return bizRepository.existsBySeller_MnoAndRequest_Ono(mno, ono);
     }
+
+    @Override
+    public Long getSellerMnoByOrderOno(Long ono) {
+        return bizRepository.findSellerMnoByRequestOno(ono);
+    }
 }

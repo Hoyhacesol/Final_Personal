@@ -7,7 +7,7 @@ import lombok.*;
 @Entity
 @Table(name = "review")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Review {
+public class Review extends BaseEntity{
     @Id
     // PK가 order 번호(ono)와 1:1이라면 그대로 사용하고,
     // 자동 생성이 필요하면 @GeneratedValue 전략 추가하세요.
@@ -23,6 +23,6 @@ public class Review {
     @Column(name = "rcontent", columnDefinition="VARCHAR(4000)")
     private String rcontent;
 
-    @Column(name = "rregdate", insertable = false, updatable = false)
-    private LocalDateTime rregdate;
+    // @Column(name = "rregdate", insertable = false, updatable = false)
+    // private LocalDateTime rregdate;
 }

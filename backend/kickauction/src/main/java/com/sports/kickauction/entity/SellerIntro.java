@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
 @Entity
 @Table(name = "seller_intro")
+@EqualsAndHashCode(callSuper = false)
 @Data
 @ToString
 @Builder

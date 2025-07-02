@@ -323,6 +323,48 @@
   border-radius: 8px;
 }
 
+/* 리뷰 */
+
+.review_section {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.review_list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review_item {
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.review_rating {
+  font-weight: bold;
+  color: #ff9800;
+}
+
+.review_content {
+  margin: 6px 0;
+}
+
+.review_date {
+  font-size: 0.85em;
+  color: #999;
+}
+
+.review_scroll_container {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
 /* 로딩 */
 .loading_wrapper {
   display: flex;

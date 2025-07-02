@@ -9,4 +9,6 @@ public interface BizService {
     Optional<Member> getLoggedInMember();
     void registerBiz(Long mno, BizRegisterDTO dto);
     boolean hasAlreadyBid(Long mno, Long ono);
+
+    Long getSellerMnoByOrderOno(Long ono);
 }

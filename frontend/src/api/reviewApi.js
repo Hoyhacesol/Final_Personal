@@ -13,3 +13,8 @@ export const postReview = ({ ono, mno, rating, comment }) => {
     rcontent: comment
   }, { withCredentials: true });
 };
+
+export const getReviewsBySeller = async (mno) => {
+  const res = await axios.get(`${prefix}/${mno}`);
+  return res.data;
+};

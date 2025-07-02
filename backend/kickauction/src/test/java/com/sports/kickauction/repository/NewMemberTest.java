@@ -18,9 +18,6 @@ public class NewMemberTest {
   @Autowired
     private MemberRepository memberRepository;
 
-    @Autowired
-    private SellerRepository sellerRepository;
-
     @Test
     @Transactional
     @Rollback(false)

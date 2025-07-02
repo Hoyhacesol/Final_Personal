@@ -10,7 +10,7 @@ import '../css/ReviewModal.css';
  *  - onClose: function, 닫기 콜백
  *  - onSubmit: function({ rating, comment }), 제출 콜백
  */
-const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
+const ReviewModal = ({ isOpen, onClose, mno, onSubmit }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
 
@@ -43,8 +43,9 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
   };
 
   const handleSubmit = () => {
+    if (!mno) return;
     const intRating = Math.round(rating * 2);
-    onSubmit({ rating: intRating, comment });
+    onSubmit({ mno, rating: intRating, comment });
     onClose();
   };
 

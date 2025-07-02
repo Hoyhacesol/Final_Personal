@@ -115,9 +115,13 @@ const OrderModifyPage = () => {
         newErrors.rentalEquipment = '대여할 장비를 1개 이상 선택하고 수량을 입력해주세요.';
       }
     }
-    const regionParts = data.region.split(" ");
-    if (!data.region || (regionParts.length < 2 && regionParts[0] !== "세종특별자치시")) {
-      newErrors.region = '시/도와 시/군/구를 모두 선택해주세요.';
+    // 지역 유효성 검사 강화: 시/군/구 미선택 시 오류 발생
+    const regionParts = data.region.trim().split(/\s+/);
+    if (!data.region.trim()) {
+      newErrors.region = '시/도를 선택해주세요.';
+    } else if (regionParts.length < 2 && regionParts[0] !== "세종특별자치시") {
+      // '세종특별자치시'가 아니면서 시/군/구가 없는 경우
+      newErrors.region = '시/군/구를 선택해주세요.';
     }
     if (!data.rentalDate) newErrors.rentalDate = '날짜를 선택해주세요.';
 
@@ -126,6 +130,10 @@ const OrderModifyPage = () => {
       newErrors.rentalTime = '상세 시간을 입력해주세요.';
     } else if (!timeRegex.test(data.rentalTime)) {
       newErrors.rentalTime = '시간을 HH:MM 형식으로 입력해주세요.';
+    } else {
+      const [hours, minutes] = data.rentalTime.split(':').map(Number);
+      if (hours >= 24) newErrors.rentalTime = '시간은 24시 미만으로 입력해주세요.';
+      else if (minutes >= 60) newErrors.rentalTime = '분은 60분 미만으로 입력해주세요.';
     }
 
     if (!data.person || data.person <= 0) newErrors.person = '인원은 1명 이상이어야 합니다.';
@@ -187,6 +195,17 @@ const OrderModifyPage = () => {
         return { ...prev, rentalEquipment: newRentalEquipment };
       });
     } 
+    else if (name === 'rentalTime') {
+      const onlyNums = value.replace(/[^\d]/g, ''); // 숫자 이외의 문자 제거
+      let formattedTime = onlyNums;
+
+      // 숫자가 2개를 초과하면 자동으로 콜론(:) 추가
+      if (onlyNums.length > 2) {
+        formattedTime = `${onlyNums.slice(0, 2)}:${onlyNums.slice(2, 4)}`;
+      }
+
+      setFormData(prev => ({ ...prev, [name]: formattedTime }));
+    }
     else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -232,7 +251,7 @@ const OrderModifyPage = () => {
 
       await axios.patch(`/api/orders/${ono}`, dataToSend); // PATCH 요청
       alert("견적 정보가 성공적으로 수정되었습니다.");
-      navigate(`/request/read/${ono}`); // 수정 후 상세 페이지로 이동
+      navigate(`/request/read/${ono}`, { replace: true }); // 수정 후 상세 페이지로 이동 (history를 대체)
     } catch (err) {
       alert("견적 수정에 실패했습니다.");
       console.error("Error updating order:", err);

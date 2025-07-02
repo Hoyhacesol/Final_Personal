@@ -276,7 +276,6 @@ function Updateinfo() {
 
       const newProfileImg = res.data.filename || user.profileimg;
 
-      alert("회원 정보가 변경되었어요.");
       setUser({ ...user, nickname, phone, profileimg: newProfileImg });
       window.location.href = "/mypage";
     } catch (err) {

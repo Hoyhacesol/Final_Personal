@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sports.kickauction.dto.RequestDTO;
+import com.sports.kickauction.dto.RequestPageCustomReqDTO;
+import com.sports.kickauction.dto.RequestPageCustomResDTO;
 import com.sports.kickauction.dto.RequestPageRequestDTO;
 import com.sports.kickauction.dto.RequestPageResponseDTO;
 import com.sports.kickauction.dto.RequestReadDTO;
@@ -186,8 +188,6 @@ public class RequestController {
             DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
             // System.out.println("OAuth2 attributes: " + oauthUser.getAttributes()); //data check
 
-            
-            
             Map<String, Object> attributes = oauthUser.getAttributes();
 
             String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId(); // "google", "kakao" 등
@@ -220,6 +220,79 @@ public class RequestController {
             return ResponseEntity.noContent().build(); // 내용 없음 (204 No Content)
         }
     }
+
+    // 내 견적 목록 페이징 조회 (GET /api/orders/my-orders/paginated?status=active&page=1)
+    @GetMapping("/my-orders/paginated")
+    public ResponseEntity<?> getMyOrdersPaginated(RequestPageCustomReqDTO requestPageCustomReqDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+
+        Object principal = authentication.getPrincipal();
+        String loginUserId;
+
+        if (principal instanceof org.springframework.security.core.userdetails.User) {
+            loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof DefaultOAuth2User) {
+            DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
+            Map<String, Object> attributes = oauthUser.getAttributes();
+            String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+
+            if ("google".equals(registrationId)) {
+                loginUserId = (String) attributes.get("user_id");
+            } else if ("kakao".equals(registrationId)) {
+                Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+                loginUserId = (String) kakaoAccount.get("email");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("지원하지 않는 소셜 로그인 방식입니다.");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알 수 없는 사용자 인증 방식입니다.");
+        }
+
+        if (requestPageCustomReqDTO.getStatus() == null || requestPageCustomReqDTO.getStatus().isBlank()) {
+            return ResponseEntity.badRequest().body("견적 상태(status)는 필수입니다.");
+        }
+
+        try {
+            Member member = memberRepository.findByUserId(loginUserId)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginUserId));
+            RequestPageCustomResDTO<RequestDTO> response = requestService.getMyOrdersByStatusPaginated(member.getMno().intValue(), requestPageCustomReqDTO);
+            return ResponseEntity.ok(response);
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /**
+     * 견적에 대한 업체를 확정합니다.
+     * @param ono 견적 ID
+     * @param payload 요청 본문, "companyId" 키로 선택된 업체의 mno를 포함
+     * @return 처리 결과 메시지
+     */
+    @PatchMapping("/{ono}/select")
+    public ResponseEntity<Map<String, String>> selectCompany(
+            @PathVariable("ono") int ono,
+            @RequestBody Map<String, Long> payload) {
+        
+        Long sellerMno = payload.get("companyId");
+        if (sellerMno == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "companyId가 필요합니다."));
+        }
+        // int sellerMnoInt = sellerMno.intValue();
+
+        try {
+            requestService.confirmCompanyAndFinalizeOrder(ono, sellerMno);
+            return ResponseEntity.ok(Map.of("message", "업체가 성공적으로 확정되었습니다."));
+        } catch (Exception e) {
+            System.err.println("업체 확정 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(Map.of("message", "처리 중 오류가 발생했습니다."));
+        }
+    }
+
+
+
 
     // 견적 마감상태 변경 PATCH
     @PatchMapping("/finish/{ono}")

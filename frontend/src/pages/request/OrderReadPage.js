@@ -42,6 +42,14 @@ const OrderReadPage = () => {
     return user?.role === "SELLER";
   }, [user]);
 
+  const hasSellerBid = useMemo(() => {
+    if (!isSeller || !companies || companies.length === 0 || !user) {
+      return false;
+    }
+    // 현재 로그인한 판매자의 mno가 companies 리스트에 있는지 확인
+    return companies.some(company => Number(company.seller.mno) === Number(user.mno));
+  }, [isSeller, user, companies]);
+
 
 
   // 마감 처리 요청 중복 방지용 ref
@@ -207,7 +215,7 @@ const OrderReadPage = () => {
   return (
     <>
       <Hero {...heroContent} />
-      <BContentP11 quote={quoteDetail} companies={companies} isOwner={isOwner} isSeller={isSeller}/>
+      <BContentP11 quote={quoteDetail} companies={companies} isOwner={isOwner} isSeller={isSeller} hasSellerBid={hasSellerBid}/>
     </>
   );
 };

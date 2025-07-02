@@ -24,18 +24,19 @@ public class NewMessageTest {
 
     @Test
     public void insertDummyMessages() {
-        Member sender2 = memberRepository.findById(2L).orElseThrow();
-        Member sender5 = memberRepository.findById(5L).orElseThrow();
-        Member sender13 = memberRepository.findById(13L).orElseThrow();
-        Member sender9 = memberRepository.findById(9L).orElseThrow();
-        Member receiver14 = memberRepository.findById(14L).orElseThrow();
+        Member member2 = memberRepository.findById(2L).orElseThrow();
+        Member member5 = memberRepository.findById(5L).orElseThrow();
+        Member member13 = memberRepository.findById(13L).orElseThrow();
+        Member member9 = memberRepository.findById(9L).orElseThrow();
+        Member member14 = memberRepository.findById(14L).orElseThrow();
 
         List<Message> messages = List.of(
-            createMessage(sender2, receiver14, "ㄹㅇ", LocalDateTime.of(2025, 7, 1, 9, 49, 30)),
-            createMessage(sender2, receiver14, "ㅋㅋㅋㅋ", LocalDateTime.of(2025, 7, 1, 9, 49, 34)),
-            createMessage(sender5, receiver14, "[킥옥션 자동발송]\n<의뢰자닉네임>님이 <제안자닉네임>님의 제안을 선택했어요.", LocalDateTime.of(2025, 7, 1, 14, 35, 36)),
-            createMessage(sender13, receiver14, "님아", LocalDateTime.of(2025, 7, 1, 14, 51, 34)),
-            createMessage(sender9, receiver14, "[킥옥션 자동발송]\n<제안자닉네임>님이 <order>건에 대해 <가격>으로 새롭게 제안했어요.", LocalDateTime.of(2025, 7, 2, 8, 16, 55))
+            createMessage(member14, member2, "배고파", LocalDateTime.of(2025, 7, 1, 9, 45, 30)),
+            createMessage(member2, member14, "ㄹㅇ", LocalDateTime.of(2025, 7, 1, 9, 49, 30)),
+            createMessage(member2, member14, "ㅋㅋㅋㅋ", LocalDateTime.of(2025, 7, 1, 9, 49, 34)),
+            createMessage(member5, member14, "[킥옥션 자동발송]\n<의뢰자닉네임>님이 <제안자닉네임>님의 제안을 선택했어요.", LocalDateTime.of(2025, 7, 1, 14, 35, 36)),
+            createMessage(member13, member14, "님아", LocalDateTime.of(2025, 7, 1, 14, 51, 34)),
+            createMessage(member9, member14, "[킥옥션 자동발송]\n<제안자닉네임>님이 <order>건에 대해 <가격>으로 새롭게 제안했어요.", LocalDateTime.of(2025, 7, 2, 8, 16, 55))
         );
 
         messageRepository.saveAll(messages);

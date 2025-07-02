@@ -212,7 +212,7 @@ const SellerModifyPage = () => {
       registeredRef.current = true;
       deleteQueueRef.current = [];
       alert("업체 정보가 수정되었습니다.");
-      navigate("/sellerlist");
+      navigate("/mypage");
     } catch (e) {
       console.error(e);
       alert("수정 실패");
@@ -257,6 +257,7 @@ const SellerModifyPage = () => {
     <input
       id="sname"
       type="text"
+      maxLength={20}
       autoComplete="off"
       value={basicInfo.sname}
       onChange={(e) => setBasicInfo(prev => ({ ...prev, sname: e.target.value }))}

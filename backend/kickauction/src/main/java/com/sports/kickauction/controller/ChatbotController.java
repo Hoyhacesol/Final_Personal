@@ -3,6 +3,7 @@ package com.sports.kickauction.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,7 @@ public class ChatbotController {
     private String openaiApiKey;
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> askChat(@RequestBody Map<String, Object> request) {
         Object promptObj = request.get("prompt");
         if (promptObj == null || !(promptObj instanceof String prompt) || prompt.trim().isEmpty()) {
@@ -28,7 +30,7 @@ public class ChatbotController {
         Map<String, Object> body = new HashMap<>();
         body.put("model", "gpt-3.5-turbo");
         List<Map<String, String>> messages = new ArrayList<>();
-        messages.add(Map.of("role", "system", "content", "너는 친절한 고객 상담 챗봇이야."));
+        messages.add(Map.of("role", "system", "content", "너는 축구·풋살 장비 역경매 사이트 '킥옥션'의 상담 챗봇이야. 킥옥션은 축구와 풋살에 필요한 장소나 장비를 예약,대여에 필요한 과정을 경매를 통한 매칭으로 쉽게 할 수 있게 해줘."));
         messages.add(Map.of("role", "user", "content", prompt));
         body.put("messages", messages);
         System.out.println("사용 중인 openaiApiKey: " + openaiApiKey);

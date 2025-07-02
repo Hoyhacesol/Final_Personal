@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import axios from "axios";
+import { FaArrowLeft } from 'react-icons/fa';
 
 import "./requestDebugStyle.css";
 
 
 
 // 견적 상세보기
-const BContentP11 = ({ quote, companies, isOwner, isSeller  }) => {
+const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => {
   const navigate = useNavigate();
   const { ono } = useParams(); // URL 파라미터 (견적 ID)
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -59,7 +60,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller  }) => {
       return;
   }
     
-    try { // 📍📍📍구현 필요
+    try {
       await axios.patch(`/api/orders/${ono}/select`, {
         companyId: selectedCompanyId,
       });
@@ -67,8 +68,9 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller  }) => {
       navigate(`/request/list`);
     } catch (error) {
 
-      console.error("업체 확정 오류 (-미구현-):", error);
-      alert("업체 확정에 실패했습니다.");
+      console.error("업체 확정 오류 :", error);
+      const errorMessage = error.response?.data?.message || "업체 확정에 실패했습니다. 다시 시도해주세요.";
+      alert(errorMessage);
     }
   };
 
@@ -88,15 +90,31 @@ const handleSellerDeleteClick = async () => {
     <div className='request-body bg-cover bg-center'>
       <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto mt-6
          bcontent-container">
-        {/* 견적 제목 및 요약 */}
-        <div className="mb-4 border-b pb-4   bcontent-summary">
+        {/* 견적 제목 및 요약 (상대 위치 지정) */}
+        <div className="relative mb-4 border-b pb-4 bcontent-summary">
+          {/* 뒤로가기 버튼 (절대 위치 지정) */}
+          <button
+            onClick={() => navigate(-1)}
+            className="rq-undo-btn"
+            aria-label="뒤로가기"
+          >
+            <FaArrowLeft size={20} />
+          </button>
           <div className="text-sm text-gray-600">현재 견적</div>
           <p>
-            {quote.finished ? (
-              <span style={{ color: 'red', fontWeight: 'bold' }}>마감됨</span>
-            ) : (
-              <span style={{ color: quote.isUrgent ? 'orange' : 'inherit' }}>진행중 : {quote.timeLeftStr}</span>
-            )}
+            {(() => {
+              if (quote.finished === 11) {
+                return <span style={{ color: 'green', fontWeight: 'bold' }}>확정을 완료했어요</span>;
+              }
+              if (quote.finished) {
+                return <span style={{ color: 'red', fontWeight: 'bold' }}>마감되었어요</span>;
+              }
+              return (
+                <span style={{ color: quote.isUrgent ? 'orange' : 'inherit' }}>
+                  진행중이에요 : {quote.timeLeftStr}
+                </span>
+              );
+            })()}
           </p>
           <div className="font-bold text-lg mt-1">{displayOtitle}</div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
@@ -126,11 +144,11 @@ const handleSellerDeleteClick = async () => {
                   onClick={() => handleCompanyCardClick(company)}
                 >
                   <div className="text-sm font-semibold">
-                    {company.seller.sname} | {company.seller.slocation} | 리뷰 {company.seller.hiredCount?company.seller.hiredCount:'-'}건
+                    {company.seller.sname} | {company.seller.slocation} | 리뷰 {company.seller.hiredCount ?? '-'}건
                   </div>
                   <div className="text-sm mt-1 truncate">{company.biz.bcontent}</div>
                   <div className="text-sm mt-1 truncate">{company.biz.banswer}</div>
-                  <div className="font-semibold mt-2">제시가 {company.biz.price}원~</div> {/* DTO에서 price를 받으므로 price 사용 */}
+                  <div className="font-semibold mt-2">제시가 {(company.biz.price ?? 0).toLocaleString('ko-KR')}원~</div>
                 </div>
               ))
             ) : (
@@ -143,7 +161,7 @@ const handleSellerDeleteClick = async () => {
 
 
         {/* 하단 버튼 */}
-        {isOwner && (
+        {isOwner && !(quote.finished===11) &&(
           <div className="flex justify-between mt-6   rq-button-group">
             <button onClick={handleModifyClick} className="md-button">
               수정
@@ -156,18 +174,22 @@ const handleSellerDeleteClick = async () => {
             </button>
           </div>
         )}
-        {!isOwner && isSeller  && (
-          <div className="flex justify-between mt-6   rq-button-group">
-            <button onClick={handleSellerCreateClick} className="md-button">
-              입찰
-            </button>
-            <button onClick={handleSellerModifyClick} className="md-button">
-              수정
-            </button>
-            <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800   confirm-button">
-              포기
-            </button>
+        {!isOwner && isSeller && !(quote.finished===11) && (
+          hasSellerBid ? (
+            <div className="flex justify-between mt-6 rq-button-group">
+              <button onClick={handleSellerModifyClick} className="md-button">수정</button>
+              <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
+            </div>
+          ) : (
+            <div className="mt-6">
+            <Link
+              to={`/request/${ono}/bizregister`}
+              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
+            >
+              입찰하기
+            </Link>
           </div>
+          )
         )}
       </div>
     </div>

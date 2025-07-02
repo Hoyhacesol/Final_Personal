@@ -1,6 +1,9 @@
 package com.sports.kickauction.repository;
 
 import com.sports.kickauction.entity.Review;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +18,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Long countByMno(Long mno);
 
     // (선택) 특정 업체의 모든 리뷰가 필요하면
-    List<Review> findByMno(Long mno);
+    List<Review> findBizMnoByOno(Long ono);
 }

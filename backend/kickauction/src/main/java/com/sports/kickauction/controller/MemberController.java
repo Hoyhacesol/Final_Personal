@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sports.kickauction.dto.MemberSellerDTO;
 import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.entity.Request;
+import com.sports.kickauction.repository.BizRepository;
+import com.sports.kickauction.repository.RequestRepository;
 import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.MemberService;
 import com.sports.kickauction.service.SellerService;
@@ -39,6 +43,8 @@ public class MemberController {
   
   private final MemberService memberService;
   private final SellerService sellerService;
+  private final RequestRepository requestRepository;
+  private final BizRepository bizRepository;
 
     // 매핑:이메일 체크
     @GetMapping("/email_check")
@@ -112,6 +118,7 @@ public class MemberController {
 
     // 매핑: 프로필사진 업로드
     @PostMapping("/upload_profile")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> uploadProfileImage(
         @RequestParam("file") MultipartFile file,
         @RequestParam("mno") Long mno) {
@@ -149,6 +156,7 @@ public class MemberController {
 
     // 매핑: 회원정보 업데이트
     @PutMapping("/update")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateMember(
         @RequestParam Long mno,
         @RequestParam String userName,
@@ -262,6 +270,7 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     // 매핑: 마이페이지- ROLE변경(->seller)
     @PatchMapping("/changetoseller")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> changetoseller(
            @RequestParam Long mno,
            @RequestParam(required = false) String sname,
@@ -280,6 +289,7 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     // 매핑: 마이페이지- ROLE변경(->user)
     @PatchMapping("/changetouser")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> changetouser(@RequestParam Long mno) {
           memberService.changeToUser(mno);
           return ResponseEntity.ok("변경 완료");
@@ -294,6 +304,8 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
 
     // 매핑: 회원탈퇴
     @DeleteMapping("/{mno}")
+    @PreAuthorize("isAuthenticated()")
+    
     public ResponseEntity<?> deleteMember(
     @PathVariable Long mno,
     HttpServletRequest request
@@ -313,5 +325,39 @@ public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request)
         }
     }
 
+    // 매핑: 해당 mno의 회원의 활성화중인 order중 가장 최근꺼 숫자구하기
+    @GetMapping("/{mno}/latest-biz-count")
+    public ResponseEntity<Map<String, Object>> getLatestBizCount(@PathVariable Long mno) {
+        // 주석: (finished = 0 )
+        Request latestOngoingOrder = requestRepository
+        .findTopByMnoAndFinishedOrderByOregdateDesc(mno, 0)
+        .orElse(null);
 
+    int count = (latestOngoingOrder == null) ? 0 : bizRepository.countByRequest(latestOngoingOrder);
+
+   return ResponseEntity.ok(
+    Map.of("hasRequest", latestOngoingOrder != null, "count", count)
+    );
+    }
+
+    // 매핑: 진행중/완료 견적 수
+    @GetMapping("/{mno}/request-counts")
+    public ResponseEntity<?> getMyRequestCounts(@PathVariable Long mno) {
+        int ongoing = requestRepository.countByMnoAndFinished(mno, 0);
+        int completed = requestRepository.countByMnoAndFinishedNot(mno, 0);
+        int total = requestRepository.countByMno(mno);
+
+        return ResponseEntity.ok(Map.of(
+            "ongoing", ongoing,
+            "completed", completed,
+            "total", total
+        ));
+    }
+
+    // 매핑: 자신의 모든biz 수 
+    @GetMapping("/{mno}/biz-count")
+    public ResponseEntity<Map<String, Integer>> getTotalBizCount(@PathVariable Long mno) {
+        int count = bizRepository.countBySeller_Mno(mno);
+        return ResponseEntity.ok(Map.of("count", count));
+    }
 }

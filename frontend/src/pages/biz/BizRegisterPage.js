@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate,useLocation} from "react-router-dom";
+import { useNavigate,useLocation,useParams} from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { registerBiz,checkBizRegistered } from "../../api/BizApi";
 import { getSellerRegistered } from "../../api/SellerApi";
@@ -10,8 +10,8 @@ import {
 import titleImage from "../../assets/img/title.png";
 import "../../css/BizRegisterPage.css";
 
-const BizRegisterPage = ({ ono }) => {
-  // const { ono } = useParams(); // 견적 요청 ID
+const BizRegisterPage = () => {
+  const { ono } = useParams(); // 견적 요청 ID
   const { user, loading } = useAuth();
   const [bcontent, setBcontent] = useState("");
   const [banswer, setBanswer] = useState("");

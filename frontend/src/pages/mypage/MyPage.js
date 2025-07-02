@@ -19,6 +19,8 @@ const MyPage = () => {
   const [prevAddress, setPrevAddress] = useState("");
   const [hasTempAddress, setHasTempAddress] = useState(false);
   const [agree, setAgree] = useState("");
+  const [requestCounts, setRequestCounts] = useState({ ongoing: 0, completed: 0 });
+  const [bizCount, setBizCount] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -43,6 +45,39 @@ const MyPage = () => {
 
     fetchCompanyInfo();
   }, [user?.mno]);
+
+  // 주석: 내정보탭- 진행중/완료된 견적 수 가져옴
+  useEffect(() => {
+    const fetchRequestCounts = async () => {
+      try {
+        const res = await fetch(`/api/members/${user.mno}/request-counts`);
+        const data = await res.json();
+        setRequestCounts(data);
+      } catch (err) {
+        console.error("견적 개수 가져오기 실패", err);
+      }
+    };
+
+    if (user) fetchRequestCounts();
+  }, [user]);
+
+  // 주석: seller회원->biz수 불러옴
+  useEffect(() => {
+    const fetchBizCount = async () => {
+      try {
+        const res = await fetch(`/api/members/${user.mno}/biz-count`);
+        if (!res.ok) throw new Error("서버 오류");
+
+        const data = await res.json();
+        setBizCount(data.count || 0);
+      } catch (err) {
+        console.error("입찰 수 불러오기 실패", err);
+        setBizCount(0);
+      }
+    };
+
+    if (user?.role === "SELLER") fetchBizCount();
+  }, [user]);
 
   if (!user) return <p>비정상적인 접근입니다. 로그인 상태를 확인하세요.</p>;
 
@@ -210,14 +245,30 @@ const MyPage = () => {
           <h3 className={styles.section_title}>내 견적</h3>
           <div className={styles.request_info_container}>
             <div className={styles.request_texts}>
-              <p className={styles.request_info}>
-                현재 진행중 견적: <strong className={styles.textcolor1}>n</strong>개
-              </p>
-              <p className={styles.request_info}>
-                완료된 견적: <strong className={styles.textcolor2}>n</strong>개
-              </p>
+              {user?.role === "SELLER" ? (
+                <p className={styles.request_info}>
+                  지금까지 킥옥션과 함께 <strong className={styles.textcolor2}>{bizCount}</strong>번 입찰하셨어요!
+                </p>
+              ) : (
+                <>
+                  <p className={styles.request_info}>
+                    현재 <strong className={styles.textcolor1}>{requestCounts.ongoing}</strong> 개의 의뢰를 모집 중이고,
+                  </p>
+                  <p className={styles.request_info}>
+                    지금까지 <strong className={styles.textcolor2}>{requestCounts.total}</strong> 번 킥옥션을 사용해 주셨어요!
+                  </p>
+                </>
+              )}
             </div>
-            <button className={styles.request_info_button}>견적 상세정보</button>
+            {user?.role === "SELLER" ? (
+              <button className={styles.request_info_button} onClick={() => navigate("/orderlist")}>
+                신규 견적목록
+              </button>
+            ) : (
+              <button className={styles.request_info_button} onClick={() => navigate("/request/list")}>
+                견적 상세정보
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -242,14 +293,14 @@ const MyPage = () => {
               )}
 
               {isRegistered ? (
-                //수정 버튼 활성화 
+                //수정 버튼 활성화
                 <Link to="/sellermodify">
                   <button className={styles.comp_info_button}>업체정보 수정</button>
                 </Link>
               ) : (
-                <button className={styles.comp_info_button2} disabled>
-                  수정 전 <br></br>업체소개 작성 필요
-                </button>
+                <Link to="/sellerList/register">
+                  <button className={styles.comp_info_button}>업체정보 등록</button>
+                </Link>
               )}
             </div>
           </div>

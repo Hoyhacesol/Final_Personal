@@ -27,6 +27,7 @@ public class Seller {
     @JoinColumn(name = "mno")
     private Member member;
 
+    @Column(length = 20)
     private String sname;
     private String slocation;
 }
