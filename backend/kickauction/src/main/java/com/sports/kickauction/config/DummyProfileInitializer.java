@@ -11,31 +11,44 @@ import java.nio.file.*;
 
 @Component
 @RequiredArgsConstructor
-public class DefaultImageInitializer {
+public class DummyProfileInitializer {
 
     @Value("${upload.path}")
     private String uploadPath;
 
-    private final String DEFAULT_IMAGE_NAME = "default.png";
-    private final String BASE_PROFILE_IMAGE_NAME = "baseprofile.png";
-    private final String BASE_CHATBOT_IMAGE_NAME = "chatbot.png";
+    private final String PIC1 = "p01.jpg";
+    private final String PIC2 = "p02.jpg";
+    private final String PIC3 = "p03.png";
+    private final String PIC4 = "p04.png";
+    private final String PIC5 = "p05.png";
+    private final String PIC6 = "p06.gif";
+    private final String PIC7 = "p07.png";
+    private final String PIC8 = "p08.png";
+    private final String PIC9 = "p09.jpg";
+    private final String PIC10 = "p10.gif";   
+    private final String PIC11 = "p11.gif";  
+    private final String PIC12 = "p12.jpg";  
 
     @PostConstruct
     public void init() throws IOException {
-        Path defaultDir = Paths.get(uploadPath, "default");
-        if (!Files.exists(defaultDir)) {
-            Files.createDirectories(defaultDir);
-        }
 
         Path pfDir = Paths.get(uploadPath);
         if (!Files.exists(pfDir)) {
             Files.createDirectories(pfDir);
         }
 
-        copyIfNotExists(DEFAULT_IMAGE_NAME, defaultDir);
-
-        copyIfNotExists(BASE_PROFILE_IMAGE_NAME, pfDir);
-        copyIfNotExists(BASE_CHATBOT_IMAGE_NAME, pfDir);
+        copyIfNotExists(PIC1, pfDir);
+        copyIfNotExists(PIC2, pfDir);
+        copyIfNotExists(PIC3, pfDir);
+        copyIfNotExists(PIC4, pfDir);
+        copyIfNotExists(PIC5, pfDir);
+        copyIfNotExists(PIC6, pfDir);
+        copyIfNotExists(PIC7, pfDir);
+        copyIfNotExists(PIC8, pfDir);
+        copyIfNotExists(PIC9, pfDir);
+        copyIfNotExists(PIC10, pfDir);
+        copyIfNotExists(PIC11, pfDir);
+        copyIfNotExists(PIC12, pfDir);
         
     }
 
@@ -44,9 +57,7 @@ public class DefaultImageInitializer {
             if (!Files.exists(target)) {
                 ClassPathResource resource = new ClassPathResource("static/" + fileName);
                 Files.copy(resource.getInputStream(), target);
-                System.out.println("[기본 이미지] " + fileName + " 복사 완료");
             } else {
-                System.out.println("[기본 이미지] " + fileName + " 이미 존재함");
             }
         }
 }

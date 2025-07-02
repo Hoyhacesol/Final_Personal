@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,6 +51,7 @@ public class SecurityConfig {
                 // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 // .cors(withDefaults())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // .cors(Customizer.withDefaults())
                 // api/display/** 안넣으면 이미지 문제생길시 허용이안됨 */
                 .authorizeHttpRequests(auth -> auth
                         // 1) 모든 옵션 요청 허용
@@ -66,7 +68,9 @@ public class SecurityConfig {
                                 "/api/**",
                                 "/images/**",
                                 "/api/display/**",
-                                "/api/members/**")
+                                "/api/members/**",
+                                "/api/messages/**"
+                                )
 
                         // SELLER만 가능한 API
                         // .requestMatchers("/api/seller/register", "/api/seller/register-info", "/api/seller/modify", "/api/seller/modify-info")

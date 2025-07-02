@@ -3,10 +3,10 @@
   position: fixed;
   right: 42px;
   bottom: 42px;
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: #fd93aa;
+  background: #86b0fd;
   border: none;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
   display: flex;
@@ -14,11 +14,33 @@
   justify-content: center;
   z-index: 9999;
   cursor: pointer;
-  transition: box-shadow 0.15s;
+  transition: 0.35s;
 }
 .chatting_icon:hover {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  background: #ff4677;
+  background: #608ee4;
+}
+
+.chat_icon {
+  width: 36px;
+  height: 36px;
+  color: white;
+}
+
+.chat_icon_badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ff4d6d;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 4px 2px;
+  min-width: 20px;
+  text-align: center;
+  line-height: 1;
+  box-shadow: 0 0 0 2px #fff;
 }
 
 .messenger_panel {
@@ -33,19 +55,19 @@
   position: fixed;
   right: 42px;
   bottom: 42px;
-  z-index: 10000;
-  font-family: "Pretendard", "Noto Sans KR", sans-serif;
+  z-index: 680;
+  font-family: "PretendardRG";
 }
 
 .messenger_header {
-  background: #fd93aa;
+  background: #96aeff;
   color: #fff;
   height: 52px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: left;
   padding: 0 24px;
-  font-size: 1.1rem;
+  font-size: 1.35rem;
   font-weight: bold;
   letter-spacing: 0.5px;
 }
@@ -56,6 +78,7 @@
   color: #fff;
   font-size: 2rem;
   cursor: pointer;
+  margin-left: auto;
 }
 
 .messenger_body {
@@ -87,7 +110,7 @@
 }
 .messenger_list_item:hover,
 .messenger_list_item.selected {
-  background: #ffe6ef;
+  background: #e6e6ff;
 }
 .profile_thumb {
   width: 46px;
@@ -192,6 +215,7 @@
 .message_text {
   display: block;
   line-height: 1.6;
+  white-space: pre-line;
 }
 .input_row {
   display: flex;
@@ -211,7 +235,7 @@
   font-size: 1.05rem;
 }
 .send_btn {
-  background: #fd93aa;
+  background: #96aeff;
   color: #fff;
   border: none;
   border-radius: 11px;
@@ -222,5 +246,91 @@
   transition: background 0.15s;
 }
 .send_btn:hover {
-  background: #ff4677;
+  background: #6a8cff;
+}
+
+.newchat_btn {
+  margin-left: 1.35rem;
+  background: white;
+  color: #6a8cff;
+  border: 1px solid #96aeff;
+  border-radius: 8px;
+  font-weight: bold;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 1.12rem;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.search_modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  width: 280px;
+  text-align: center;
+}
+
+.search_modal input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  margin-bottom: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.search_modal_btns {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.search_modal_btns button {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.search_modal_btns button:first-child {
+  background-color: #ff5b9f;
+  color: white;
+}
+
+.search_modal_btns button:last-child {
+  background-color: #eee;
+}
+
+.message_bubble_me .message_time {
+  color: #ffd1eae0;
+}
+
+.message_bubble_you .message_time {
+  color: #9e8585;
+}
+
+.pink {
+  color: #e2699c;
+  font-weight: bold;
+}
+
+/* 반응형 */
+@media (max-width: 750px) {
+  .chatting_icon {
+    display: none;
+  }
 }

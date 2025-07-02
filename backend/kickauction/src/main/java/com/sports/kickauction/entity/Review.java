@@ -20,7 +20,7 @@ public class Review {
     @Column(name = "rating", nullable = false)
     private Integer rating;
 
-    @Column(name = "rcontent", columnDefinition="VARCHAR2(4000)")
+    @Column(name = "rcontent", columnDefinition="VARCHAR(4000)")
     private String rcontent;
 
     @Column(name = "rregdate", insertable = false, updatable = false)

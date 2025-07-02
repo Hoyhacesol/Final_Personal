@@ -46,6 +46,10 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime sentAt;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isRead = false;
+
     @Builder.Default
     @Column(nullable = false)
     private Boolean deletedBySender = false;

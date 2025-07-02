@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sports.kickauction.dto.MessageRoomDTO;
 import com.sports.kickauction.entity.Member;
@@ -24,6 +25,7 @@ public class MessageServiceImpl implements MessageService {
                 .sender(sender)
                 .receiver(receiver)
                 .content(content)
+                .isRead(false)
                 .build();
         return messageRepository.save(message);
     }
@@ -72,5 +74,15 @@ public class MessageServiceImpl implements MessageService {
         rooms.add(dto);
     }
     return rooms;
+    }
+
+    @Override
+    @Transactional
+    public void markMessagesAsRead(Member me, Member partner) {
+        List<Message> unreadMessages = messageRepository.findBySenderAndReceiverAndIsReadFalse(partner, me);
+        for (Message msg : unreadMessages) {
+            msg.setIsRead(true);
+        }
+        messageRepository.saveAll(unreadMessages);
     }
 }

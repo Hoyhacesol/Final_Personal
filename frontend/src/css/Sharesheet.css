@@ -14,3 +14,23 @@
   font-family: "PaperlogyMD";
   src: url(../assets/fonts/Paperlogy_MD.ttf);
 }
+
+@font-face {
+  font-family: "PretendardMD";
+  src: url(../assets/fonts/Pretendard_MD.otf);
+}
+
+@font-face {
+  font-family: "PretendardRG";
+  src: url(../assets/fonts/Pretendard_RG.otf);
+}
+
+@font-face {
+  font-family: "GyeongiTitleMD";
+  src: url(../assets/fonts/GyeongiTitle_MD.ttf);
+}
+
+@font-face {
+  font-family: "GyeongiTitleBD";
+  src: url(../assets/fonts/GyeongiTitle_BD.ttf);
+}

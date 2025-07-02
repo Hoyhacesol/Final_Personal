@@ -25,4 +25,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   // 주석: 전화번호(하이픈무시)와 이메일로 사용자 검색
   @Query("SELECT m FROM Member m WHERE m.userId = :email AND REPLACE(m.phone, '-', '') = :phone")
   Optional<Member> findByUserIdAndPhone(@Param("email") String email, @Param("phone") String phone);
+
+    Optional<Member> findByUserName(String userName);
 }

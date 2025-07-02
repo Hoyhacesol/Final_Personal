@@ -1,11 +1,14 @@
 package com.sports.kickauction.service;
 
+import java.util.Optional;
+
 import com.sports.kickauction.entity.Member;
 
 public interface MemberService {
 
     Member findById(Long mno);
     Member findByUserId(String userId);
+    Optional<Member> findByUserName(String userName);
     
     // 주석: 중복검사용 
     boolean existsByUserId(String userId);
@@ -41,5 +44,6 @@ public interface MemberService {
     // 주석: 회원탈퇴
     boolean deleteMember(Long mno);
 
+    // 닉네임검색 채팅시작
 
 }

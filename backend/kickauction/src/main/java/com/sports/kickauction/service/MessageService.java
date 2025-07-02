@@ -24,4 +24,6 @@ public interface MessageService {
     void deleteMessage(Long msgId, Member who, boolean isSender);
     
     public List<MessageRoomDTO> getAllRoomsForMember(Long myMno);
+
+    void markMessagesAsRead(Member me, Member partner);
 }

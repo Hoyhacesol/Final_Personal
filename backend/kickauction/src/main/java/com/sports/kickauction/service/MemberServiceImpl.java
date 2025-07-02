@@ -43,6 +43,11 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByUserId(userId).orElse(null);
     }
 
+    @Override
+    public Optional<Member> findByUserName(String userName) {
+        return memberRepository.findByUserName(userName);
+    }
+
     // 주석: 신규 일반 회원 등록 register()
     @Override
     public Member register(Member member) {

@@ -25,4 +25,6 @@ public class MessageDTO {
 
     private String content;
     private LocalDateTime sentAt;
+
+    private Boolean isRead;
 }
