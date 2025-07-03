@@ -61,6 +61,11 @@ const OrderMyPage = () => {
     }
   }, [navigate]);
 
+  // 마감된 견적 목록을 새로고침하는 함수
+  const refreshClosedOrders = useCallback(() => {
+    fetchPaginatedOrders('closed', closedPage, setClosedData);
+  }, [closedPage, fetchPaginatedOrders]);
+
   // '진행 견적' 페이지가 변경될 때마다 데이터 요청
   useEffect(() => {
     setLoading(true);
@@ -152,7 +157,7 @@ const OrderMyPage = () => {
         )}
 
         {/* 마감 견적 */}
-        <List title="마감 견적" quotes={closedData?.dtoList || []} type="closed" />
+        <List title="마감 견적" quotes={closedData?.dtoList || []} type="closed" onReviewUpdate={refreshClosedOrders} />
         {closedData && closedData.totalCount > 0 && (
           <Pagination
             current={closedData.currentPage}

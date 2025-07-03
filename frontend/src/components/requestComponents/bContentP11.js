@@ -8,7 +8,7 @@ import "./requestDebugStyle.css";
 
 
 // 견적 상세보기
-const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => {
+const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onCompanyInfoClick }) => {
   const navigate = useNavigate();
   const { ono } = useParams(); // URL 파라미터 (견적 ID)
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
@@ -73,17 +73,11 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid  }) => 
       alert(errorMessage);
     }
   };
-
-const handleSellerCreateClick = async () => {
-  console.log("업체 : 견적 작성 클릭");
-}
-const handleSellerModifyClick = async () => {
-  console.log("업체 : 견적 수정 클릭");
-}
-const handleSellerDeleteClick = async () => {
-  console.log("업체 : 견적 삭제(포기,취소) 클릭");
-}
-
+  
+  const handleCompanyInfoClick = (e, company) => {
+    e.stopPropagation(); // 부모 요소의 클릭 이벤트(업체 선택) 전파를 막습니다.
+    onCompanyInfoClick(company); // 부모로부터 받은 모달 열기 함수를 호출합니다.
+  };
   
 
   return (
@@ -143,12 +137,24 @@ const handleSellerDeleteClick = async () => {
                   }`}
                   onClick={() => handleCompanyCardClick(company)}
                 >
-                  <div className="text-sm font-semibold">
-                    {company.seller.sname} | {company.seller.slocation} | 리뷰 {company.seller.hiredCount ?? '-'}건
+                  <div
+                    className="company-info text-sm font-semibold"
+                    onClick={(e) => handleCompanyInfoClick(e, company)}
+                  >
+                    <span className="company-name">{company.seller.sname}</span>
+                    <div className="company-details">
+                      <span className="company-location">{company.seller.slocation}</span>
+                      <span className="company-review">리뷰 {company.seller.hiredCount ?? '-'}건</span>
+                    </div>
+                    <hr/>
                   </div>
                   <div className="text-sm mt-1 truncate">{company.biz.bcontent}</div>
                   <div className="text-sm mt-1 truncate">{company.biz.banswer}</div>
-                  <div className="font-semibold mt-2">제시가 {(company.biz.price ?? 0).toLocaleString('ko-KR')}원~</div>
+                  <div className="font-semibold mt-2 truncate">
+                    {company.biz.price && company.biz.price > 0
+                      ? `제시가 ${company.biz.price.toLocaleString('ko-KR')}원~`
+                      : '가격 협의'}
+                  </div>
                 </div>
               ))
             ) : (
@@ -161,24 +167,27 @@ const handleSellerDeleteClick = async () => {
 
 
         {/* 하단 버튼 */}
-        {isOwner && !(quote.finished===11) &&(
-          <div className="flex justify-between mt-6   rq-button-group">
-            <button onClick={handleModifyClick} className="md-button">
-              수정
-            </button>
-            <button onClick={handleDeleteClick} className="md-button">
-              삭제
-            </button>
-            <button onClick={handleConfirmClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800   confirm-button">
-              선택 업체 확정
-            </button>
+        {isOwner && quote.finished !== 11 && (
+          <div className="flex justify-between mt-6 rq-button-group">
+            {/* 진행 중인 견적(finished가 0 또는 false)일 때만 수정 버튼 표시 */}
+            {!quote.finished && (
+              <button onClick={handleModifyClick} className="md-button">
+                수정
+              </button>
+            )}
+              <button onClick={handleDeleteClick} className="md-button">
+                삭제
+              </button>
+              <button onClick={handleConfirmClick} className="confirm-button">
+                선택 업체 확정
+              </button>
           </div>
         )}
         {!isOwner && isSeller && !(quote.finished===11) && (
           hasSellerBid ? (
             <div className="flex justify-between mt-6 rq-button-group">
-              <button onClick={handleSellerModifyClick} className="md-button">수정</button>
-              <button onClick={handleSellerDeleteClick} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
+              <button  className="md-button">수정</button>
+              <button  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
             </div>
           ) : (
             <div className="mt-6">

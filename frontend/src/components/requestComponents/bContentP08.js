@@ -203,7 +203,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
   }
 };
 
-const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
+const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {}, isSubmitting = false }) => {
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
   const [sidoList, setSidoList] = useState([]);
   const [selectedSido, setSelectedSido] = useState("");
@@ -342,8 +342,10 @@ const BContentP08 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
           ))}
           <button
             type="submit"
-            className="full-submit-button">
-            등록
+            className="full-submit-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? '등록 중...' : '등록'}
           </button>
         </div>
       </form>

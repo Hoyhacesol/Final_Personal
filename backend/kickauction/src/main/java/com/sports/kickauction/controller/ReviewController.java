@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import com.sports.kickauction.dto.ReviewDTO;
 import com.sports.kickauction.service.BizService;
 import com.sports.kickauction.service.ReviewService;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RestController
 @RequestMapping("/api/reviews")
 @RequiredArgsConstructor
@@ -31,6 +33,20 @@ public class ReviewController {
             dto.getRcontent()
         );
 
+        return ResponseEntity.ok().build();
+    }
+
+
+    // Request >>>>>>>>>>>>>>>>>>>>>>>>>>>
+    @GetMapping("/{ono}")
+    public ResponseEntity<ReviewDTO> getReview(@PathVariable("ono") Long ono) {
+        ReviewDTO reviewDTO = reviewService.getReviewByOno(ono);
+        return ResponseEntity.ok(reviewDTO);
+    }
+    @PutMapping("/{ono}")
+    public ResponseEntity<Void> updateReview(@PathVariable("ono") Long ono, @RequestBody ReviewDTO reviewDTO) {
+        log.info("리뷰 조회 요청: ono=" + ono);
+        reviewService.updateReview(ono, reviewDTO);
         return ResponseEntity.ok().build();
     }
 

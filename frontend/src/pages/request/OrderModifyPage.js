@@ -31,6 +31,7 @@ const OrderModifyPage = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 헬퍼 함수: "축구화&1,팀조끼&2,기타&~" 문자열을 객체로 파싱
   const parseRentalEquipmentString = (equipmentString) => {
@@ -214,6 +215,8 @@ const OrderModifyPage = () => {
   // 폼 제출 핸들러 (수정)
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // 중복 제출 방지
+
     try {
       setFormSubmitted(true);
       const validationErrors = validate(formData);
@@ -224,6 +227,7 @@ const OrderModifyPage = () => {
         return;
       }
 
+      setIsSubmitting(true);
       // '필요없어요'를 선택했을 경우 rentalEquipment와 detail을 비운다.
       const dataToSend = { ...formData };
       if (formData.rental === '필요없어요') {
@@ -255,6 +259,8 @@ const OrderModifyPage = () => {
     } catch (err) {
       alert("견적 수정에 실패했습니다.");
       console.error("Error updating order:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -271,6 +277,7 @@ const OrderModifyPage = () => {
         handleSubmit={handleSubmit}
         formSubmitted={formSubmitted}
         errors={errors}
+        isSubmitting={isSubmitting}
       />
     </>
   );

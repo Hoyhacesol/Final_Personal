@@ -1,6 +1,5 @@
 package com.sports.kickauction.dto;
 
-import lombok.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +7,10 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.lang.Integer;
 
 @Data
@@ -28,6 +31,9 @@ public class RequestDTO {
     private String ocontent;
     private LocalDateTime oregdate;
     private int finished;
+
+
+    private boolean hasReview; // 리뷰 여부(DB와 무관)
 
     @Builder.Default
     private Map<String, Object> extraAttributes = new HashMap<>();

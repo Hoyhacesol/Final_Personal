@@ -4,8 +4,11 @@ import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import { useAuth } from "../../contexts/Authcontext";
 import { useMemo } from 'react';
 import axios from 'axios';
+import { getSellerDetail } from '../../api/SellerApi'; // 업체 상세 정보 API
+import { getImageUrl } from '../../api/UploadImageApi'; // 이미지 URL API
 
 import BContentP11 from "../../components/requestComponents/bContentP11";
+import useBodyScrollLock from '../../hooks/useBodyScrollLock'; // 스크롤 방지 훅 임포트
 import Hero from "../../components/requestComponents/bHero";
 
 const heroContent = {
@@ -22,6 +25,14 @@ const OrderReadPage = () => {
   const [error, setError] = useState(null);
   const { user } = useAuth();
   const navigate = useNavigate(); // useNavigate 훅 사용
+
+  // 모달 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSellerDetail, setSelectedSellerDetail] = useState(null);
+  const [enlargedImage, setEnlargedImage] = useState(null);
+
+  // 모달 상태에 따라 스크롤 방지 훅 호출
+  useBodyScrollLock(isModalOpen || !!enlargedImage);
 
   const isOwner = useMemo(() => {
     let checkVal;
@@ -49,6 +60,43 @@ const OrderReadPage = () => {
     // 현재 로그인한 판매자의 mno가 companies 리스트에 있는지 확인
     return companies.some(company => Number(company.seller.mno) === Number(user.mno));
   }, [isSeller, user, companies]);
+
+ 
+  // MainPage.js와 동일한 모달 열기/닫기 로직
+  const openCompanyModal = async (company) => { // 업체 전체 정보를 받도록 수정
+    try {
+      // 1. 기본 업체 상세 정보 API 호출 (MainPage와 동일)
+      const detail = await getSellerDetail(company.seller.mno);
+
+      // 2. API 결과와 현재 페이지의 제안 내용(biz)을 합침
+      const modalData = {
+        ...detail, // simage, phone, info, introContent 등
+        biz: company.biz // price, bcontent, banswer 등
+      };
+
+      setSelectedSellerDetail(modalData);
+      setEnlargedImage(null);
+      setIsModalOpen(true);
+    } catch (err) {
+      console.error("업체 상세 정보 로딩 실패:", err);
+      alert("업체 정보를 불러오는 데 실패했습니다.");
+    }
+  };
+
+  const closeCompanyModal = () => {
+    setIsModalOpen(false);
+    setSelectedSellerDetail(null);
+    setEnlargedImage(null);
+  };
+
+  // MainPage.js와 동일한 이미지 안전 처리 헬퍼
+  const getSafeImage = (simage) => {
+    if (!Array.isArray(simage) || simage.length === 0) {
+      return "default/default.png";
+    }
+    const first = simage[0]?.trim();
+    return (first && first !== "undefined") ? first : "default/default.png";
+  };
 
 
 
@@ -215,9 +263,79 @@ const OrderReadPage = () => {
   return (
     <>
       <Hero {...heroContent} />
-      <BContentP11 quote={quoteDetail} companies={companies} isOwner={isOwner} isSeller={isSeller} hasSellerBid={hasSellerBid}/>
+      <BContentP11
+        quote={quoteDetail}
+        companies={companies}
+        isOwner={isOwner}
+        isSeller={isSeller}
+        hasSellerBid={hasSellerBid}
+        onCompanyInfoClick={openCompanyModal}
+      />
+
+      {/* 업체 상세 정보 모달 (MainPage.js와 동일한 구조) */}
+      {isModalOpen && selectedSellerDetail && (() => {
+        const mainImg = getSafeImage(selectedSellerDetail.simage);
+        return (
+          <div className="rq-modal-overlay" onClick={closeCompanyModal}>
+            <div className="rq-modal_content" onClick={e => e.stopPropagation()}>
+              <div className="rq-modal_header">
+                <h3>업체 상세 정보</h3>
+                <button onClick={closeCompanyModal}>✕</button>
+              </div>
+              <div className="rq-modal_body">
+                <div className="seller_top">
+                  <div
+                    className={`seller_image ${mainImg === "default/default.png" ? "non_clickable" : "clickable"}`}
+                    onClick={() => {
+                      if (mainImg !== "default/default.png") {
+                        setEnlargedImage(getImageUrl(mainImg));
+                      }
+                    }}
+                  >
+                    <img src={getImageUrl(mainImg)} alt="대표 이미지" />
+                  </div>
+                  <div className="seller_info">
+                    <strong>{selectedSellerDetail.sname}</strong><br />
+                    연락처: {selectedSellerDetail.phone || "정보 없음"}<br />
+                    주소: {selectedSellerDetail.slocation || "정보 없음"}
+                  </div>
+                  <div className="seller_inforeview">
+                    <div>선정 횟수 : {selectedSellerDetail.hiredCount || 0}</div>
+                    <div>리뷰 평점 : {selectedSellerDetail.avgRating || 0}</div>
+                    <div>리뷰 개수 : {selectedSellerDetail.reviewCount || 0}</div>
+                  </div>
+                </div>
+                <div className="seller_detail">
+                  <p><strong>업체 정보</strong><br />{selectedSellerDetail.info || "정보 없음"}</p>
+                  <p><strong>업체 소개</strong><br />{selectedSellerDetail.introContent || "소개 없음"}</p>
+                  <hr className="rq-modal-divider" />
+                  <p><strong>제안 내용</strong></p>
+                  <p><strong>한 줄 소개 :</strong> {selectedSellerDetail.biz.bcontent}</p>
+                  <p><strong>질문 답변 :</strong><br /><span className="preserve-lines">{selectedSellerDetail.biz.banswer}</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* 이미지 확대 모달 */}
+      {enlargedImage && (
+        <div className="rq-modal-overlay" onClick={closeCompanyModal}>
+          <div className="rq-modal_content enlarged_image_modal" onClick={e => e.stopPropagation()}>
+            <div className="rq-modal_header">
+              <h3>이미지 확대 보기</h3>
+              <button onClick={closeCompanyModal}>✕</button>
+            </div>
+            <div className="rq-modal_body" style={{ textAlign: "center" }}>
+              <img src={enlargedImage} alt="확대 이미지" className="rq-enlarged_image_content" />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
+
 
 export default OrderReadPage;

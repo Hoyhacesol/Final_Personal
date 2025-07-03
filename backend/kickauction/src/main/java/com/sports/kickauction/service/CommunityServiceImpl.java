@@ -15,6 +15,7 @@ import com.sports.kickauction.dto.PageRequestDTO;
 import com.sports.kickauction.dto.PageResponseDTO;
 import com.sports.kickauction.entity.Community;
 import com.sports.kickauction.dto.CommunityDTO;
+import com.sports.kickauction.repository.CommentRepository;
 import com.sports.kickauction.repository.CommunityRepository;
 
 import jakarta.annotation.PostConstruct;
@@ -43,6 +44,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     private final ModelMapper modelMapper;
     private final CommunityRepository communityRepository;
+    private final CommentRepository commentRepository;
 
     @PostConstruct
     public void initModelMapper() {
@@ -102,7 +104,6 @@ public class CommunityServiceImpl implements CommunityService {
         // return modelMapper.map(updated, CommunityDTO.class);
     }
 
-    
     @Override
     public void incrementViewCount(Long pno) {
         communityRepository.findById(pno).ifPresent(entity -> {
@@ -238,6 +239,10 @@ public class CommunityServiceImpl implements CommunityService {
                     if (entity.getMember() != null) {
                         cd.setWriterName(entity.getMember().getUserName());
                     }
+
+                    long cnt = commentRepository.countByPno(entity.getPno());
+                    cd.setCommentCount(cnt);
+
                     return cd;
                 })
                 .collect(Collectors.toList());

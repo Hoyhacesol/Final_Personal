@@ -16,6 +16,7 @@ import Hero from "../../components/requestComponents/bHero";
 const OrderCreatePage = () => {
   const navigate = useNavigate();
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [savedRentalEquipmentState, setSavedRentalEquipmentState] = useState({});
   const [formData, setFormData] = useState({
@@ -147,6 +148,8 @@ const OrderCreatePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // 중복 제출 방지
+
     setFormSubmitted(true);
     
     const validationErrors = validate(formData);
@@ -157,6 +160,7 @@ const OrderCreatePage = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       const dataToSend = { ...formData };
       if (dataToSend.rental === '필요없어요') {
@@ -185,6 +189,8 @@ const OrderCreatePage = () => {
     } catch (err) {
       alert("견적 생성 실패");
       console.error("Error creating order:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -198,6 +204,7 @@ const OrderCreatePage = () => {
         handleSubmit={handleSubmit}
         formSubmitted={formSubmitted}
         errors={errors}
+        isSubmitting={isSubmitting}
       />
     </>
   );

@@ -23,5 +23,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     Optional<Community> findTopByPnoLessThanOrderByPnoDesc(Long pno);
 
     // pno 기준 바로 다음 글 (pno보다 큰 값 중에서 가장 작은 pno)
-    Optional<Community> findTopByPnoGreaterThanOrderByPnoAsc(Long pno);            
+    Optional<Community> findTopByPnoGreaterThanOrderByPnoAsc(Long pno);   
+    
+      long countByPno(Long pno);
 }

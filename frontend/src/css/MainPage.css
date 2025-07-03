@@ -50,6 +50,8 @@
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid #F6F7F9;
+  margin: 8px 0;
+  max-width: 226px;
 }
 
 .order_item .order_title {
@@ -60,6 +62,23 @@
 
 .order_item:hover {
   border: 1px solid #909090;
+}
+
+.order_item h3 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.order_item p {
+  font-size: 1rem;
+  color: #555;
+  flex-grow: 1;
+}
+
+.order_item span {
+  font-size: 0.875rem;
+  color: #999;
+  text-align: right;
 }
 
 /* MainPage.css 맨 아래에 추가 */
@@ -81,29 +100,6 @@
 .orderlist_section .slick-track,
 .orderlist_section .slick-slide {
   height: auto !important;
-}
-
-/* order_item 상/하단에 마진 추가 */
-.order_item {
-  margin: 8px 0;
-  /* 위/아래 8px 띄워서 잘림 방지 및 간격 확보 */
-}
-
-.order_item h3 {
-  font-size: 1.25rem;
-  margin: 0;
-}
-
-.order_item p {
-  font-size: 1rem;
-  color: #555;
-  flex-grow: 1;
-}
-
-.order_item span {
-  font-size: 0.875rem;
-  color: #999;
-  text-align: right;
 }
 
 /* 커뮤니티 최신글 섹션 */
@@ -419,14 +415,6 @@
   gap: 1rem;
   justify-content: flex-start;
   margin: 1rem 0;
-}
-
-/* 항목 크기 조정: 한 줄에 최대 3개 */
-.orderlist_simple .order_item,
-.sellerlist_simple .seller_item {
-  flex: 1 1 calc(100% / 3 - 1rem);
-  max-width: calc(100% / 3 - 1rem);
-  box-sizing: border-box;
 }
 
 /* 반응형 조정 */

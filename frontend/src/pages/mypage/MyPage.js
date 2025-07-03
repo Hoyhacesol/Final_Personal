@@ -306,6 +306,7 @@ const MyPage = () => {
           </div>
         </section>
       )}
+
       {/* 회원정보 찾기 / 회원가입 */}
       <div className={styles.mypage_help}>
         <Link to="/help">고객센터</Link>

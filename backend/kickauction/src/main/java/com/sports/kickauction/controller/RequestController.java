@@ -222,6 +222,7 @@ public class RequestController {
     }
 
     // 내 견적 목록 페이징 조회 (GET /api/orders/my-orders/paginated?status=active&page=1)
+    @SuppressWarnings("unchecked")
     @GetMapping("/my-orders/paginated")
     public ResponseEntity<?> getMyOrdersPaginated(RequestPageCustomReqDTO requestPageCustomReqDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

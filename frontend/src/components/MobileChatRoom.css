@@ -1,0 +1,168 @@
+.mobile-chatroom {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+}
+
+/* ─── 상단 헤더 ─── */
+.chatroom-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: #8c9eff;
+  border-bottom: 1px solid #8c9eff;
+  font-weight: bold;
+  font-size: 1rem;
+  flex-shrink: 0;
+  color: white;
+  font-family: "NotoSansRG";
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  margin-right: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+.close-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: white;
+  cursor: pointer;
+}
+
+.chatroom-header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.chatroom-header-name {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* ─── 채팅 내역 ─── */
+.chatroom-body {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background-color: #fefefe;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ─── 입력창 ─── */
+.chatroom-input {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.chatroom-input input {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  outline: none;
+  margin-right: 8px;
+}
+
+.chatroom-input button {
+  background-color: #8c9eff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.chatroom-input button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pink {
+  color: #e2699c;
+  font-weight: bold;
+}
+
+/* 말풍선 공통 */
+.chat-bubble {
+  max-width: 80%;
+  width: fit-content;
+  padding: 0.75rem 1rem;
+  border-radius: 15px;
+  font-size: 1.03rem;
+  word-break: break-word;
+  position: relative;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+/* 보낸 메시지 */
+.sent {
+  align-self: flex-end;
+  margin-left: auto;
+  background: #435066;
+  color: #fff;
+  border-radius: 15px 15px 2px 15px;
+  box-shadow: 0 2px 8px rgba(60, 80, 120, 0.09);
+}
+
+.sent .chat-time {
+  font-size: 0.7rem;
+  color: #ffd1eae0;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* 받은 메시지 */
+.received {
+  align-self: flex-start;
+  background: #fff;
+  color: #435066;
+  border-radius: 15px 15px 15px 2px;
+  border: 1px solid #f0d8e6;
+  box-shadow: 0 2px 8px rgba(100, 110, 140, 0.05);
+}
+
+.received .chat-time {
+  font-size: 0.7rem;
+  color: #9e8585;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.speaker_area {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.message_profile_thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 7px;
+  object-fit: cover;
+  border: 1.5px solid #ffe6ef;
+}
+
+.speaker_name {
+  font-size: 0.9rem;
+  color: #b39bb2;
+  font-weight: 600;
+}

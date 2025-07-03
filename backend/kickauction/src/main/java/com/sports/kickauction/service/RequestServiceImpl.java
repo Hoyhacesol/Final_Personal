@@ -34,6 +34,7 @@ import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
 import com.sports.kickauction.repository.BizRepository;
 import com.sports.kickauction.repository.RequestRepository;
+import com.sports.kickauction.repository.ReviewRepository;
 import com.sports.kickauction.repository.SellerIntroRepository;
 import com.sports.kickauction.dto.PageResponseDTO;
 
@@ -51,6 +52,8 @@ public class RequestServiceImpl implements RequestService {
     private BizRepository bizRepository;
     @Autowired
     private SellerIntroRepository sellerIntroRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
 
 
 
@@ -291,6 +294,9 @@ public class RequestServiceImpl implements RequestService {
 
     // Request 엔티티를 RequestDTO로 변환하는 헬퍼 메서드
     private RequestDTO convertToRequestDTO(Request request) {
+        boolean hasReview = reviewRepository.existsByOno(Long.valueOf(request.getOno()));
+        log.info("리뷰 확인: ono=" + request.getOno() + ", hasReview=" + hasReview);
+
         return RequestDTO.builder()
             .ono(request.getOno())
             .mno(request.getMno())
@@ -304,6 +310,7 @@ public class RequestServiceImpl implements RequestService {
             .ocontent(request.getOcontent())
             .oregdate(request.getOregdate())
             .finished(request.getFinished())
+            .hasReview(hasReview) // 리뷰 존재 여부 설정
             .build();
     }
 

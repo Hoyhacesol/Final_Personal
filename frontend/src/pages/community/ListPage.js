@@ -149,14 +149,29 @@ const ListPage = () => {
               onClick={() => navigate(`/community/read/${item.pno}?page=${page}&size=${size}`)}
             >
               <div className="post_number">{item.pno}</div>
-              <div className="post_title">{item.ptitle}</div>
-              <div className="post_meta hide_mobile">{item.writerName || "탈퇴한사용자"}</div>
-              <div className="post_meta hide_mobile">{formatDisplayDate(item.pregdate)}</div>
+              <div className="post_title">
+                {item.ptitle}
+                {item.commentCount > 0 && (
+                  <span className="comment_count">[{item.commentCount}]</span>
+                )}
+              </div>
+              <div className="post_meta hide_mobile">
+                {item.writerName || "탈퇴한사용자"}
+              </div>
+              <div className="post_meta hide_mobile">
+                {formatDisplayDate(item.pregdate)}
+              </div>
               <div className="post_meta">{item.view}</div>
             </div>
           ))
         ) : (
-          <div className="no_data">등록된 게시글이 없습니다.</div>
+          <div className="table_row pnone" onClick={handleClickWrite}>
+            <div className="post_number">0</div>
+            <div className="post_title">아직 게시글이 없습니다.(첫 글을 써보시는 건 어떨까요?)</div>
+            <div className="post_meta hide_mobile">작성자</div>
+            <div className="post_meta hide_mobile">2025-00-00</div>
+            <div className="post_meta">0</div>
+          </div>
         )}
       </div>
 

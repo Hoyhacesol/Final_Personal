@@ -11,4 +11,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByPnoOrderByCregdateDesc(Long pno);
 
     Optional<Comment> findByCnoAndPno(Long cno, Long pno);
+
+    long countByPno(Long pno);
 }

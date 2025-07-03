@@ -6,9 +6,12 @@ import com.sports.kickauction.dto.ReviewDTO;
 import com.sports.kickauction.dto.SellerReviewReadDTO;
 import com.sports.kickauction.entity.Review;
 import com.sports.kickauction.repository.ReviewRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+
 
 @Service
 @Transactional
@@ -27,4 +30,29 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.save(review);
     }
 
+
+
+
+    // Request >>>>>>>>>>>>>>>>>>>>>>>>>>>
+    @Override
+    @Transactional(readOnly = true)
+    public ReviewDTO getReviewByOno(Long ono) {
+        Review review = reviewRepository.findByOno(ono)
+                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다. ONO: " + ono));
+        
+        return ReviewDTO.builder()
+                .ono(review.getOno())
+                .rating(review.getRating())
+                .rcontent(review.getRcontent())
+                .build();
+    }
+
+    @Override
+    public void updateReview(Long ono, ReviewDTO reviewDTO) {
+        Review review = reviewRepository.findByOno(ono)
+                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다. ONO: " + ono));
+        review.setRating(reviewDTO.getRating());
+        review.setRcontent(reviewDTO.getRcontent());
+        reviewRepository.save(review);
+    }
 }

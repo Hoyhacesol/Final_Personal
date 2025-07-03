@@ -33,7 +33,7 @@ const MainPage = () => {
   const [enlargedImage, setEnlargedImage] = useState(null);
 
   // 기준 이하일 때 Slider 대신 flex 레이아웃으로
-  const orderSlides = 1;
+  const orderSlides = 5;
   const sellerSlides = 5;
 
   useEffect(() => {

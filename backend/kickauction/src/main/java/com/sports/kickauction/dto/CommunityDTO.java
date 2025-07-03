@@ -39,4 +39,6 @@ public class CommunityDTO {
     private String prevTitle;
     private Long nextPno;
     private String nextTitle;
+
+    private Long commentCount;
 }

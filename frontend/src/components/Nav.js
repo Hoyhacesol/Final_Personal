@@ -3,10 +3,15 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/Authcontext";
 import styles from "./Nav.module.css";
 import "../css/Sharesheet.css";
-// import logo from "../assets/img/kickauction_logo.png";
 import logo2 from "../assets/img/logo_v2.png";
+import { IoHome } from "react-icons/io5";
+import { BsChatDotsFill } from "react-icons/bs";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { LuLogIn } from "react-icons/lu";
+import { BsPersonFillGear } from "react-icons/bs";
+import { MdPersonAdd } from "react-icons/md";
 
-const Nav = () => {
+const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
   const location = useLocation(); //주석: 현재 위치한 탭을 인식해 가상요소 효과 적용.
 
   const navigate = useNavigate();
@@ -181,8 +186,14 @@ const Nav = () => {
                 <strong>{user.nickname}</strong> 님
               </p>
               <p className={styles.recentsuggest}>
-                {/* 최근 견적 요청에 <strong>{latestRequestCount}</strong>개의 제안 도착 */}
-                최근 견적 요청에 <span className={styles.recentsuggest_count}>3 </span>개의 제안이 도착했어요.
+                {!hasRequest ? (
+                  "진행 중인 견적 요청이 없어요."
+                ) : (
+                  <>
+                    최근 견적 요청에 <span className={styles.recentsuggest_count}>{latestRequestCount ?? 0}</span>
+                    개의 제안이 도착했어요.
+                  </>
+                )}
               </p>
               <div className={styles.sidebar_buttons}>
                 <Link to="/mypage" onClick={handleLinkClick} className={styles.sidebar_btn2}>
@@ -203,7 +214,7 @@ const Nav = () => {
           <Link to="/request" onClick={handleLinkClick}>
             견적 요청
           </Link>
-          <Link to="/bid" onClick={handleLinkClick}>
+          <Link to="/orderlist" onClick={handleLinkClick}>
             견적 입찰
           </Link>
           <Link to="/sellerlist" onClick={handleLinkClick}>
@@ -217,6 +228,59 @@ const Nav = () => {
           </Link>
         </nav>
       </div>
+
+      {/* 주석: 모바일 하단 4메뉴 바 */}
+      {user && (
+        <nav className={styles.mobile_bottomnav}>
+          <Link to="/">
+            <IoHome className={styles.fourmenuicon} />
+            <br />
+            메인화면
+          </Link>
+          <button className={styles.fourmenubutton} onClick={onChatClick}>
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <BsChatDotsFill className={styles.fourmenuicon} />
+              {!chatOpen && unreadCount > 0 && <span className={styles.chat_icon_badge}>{unreadCount}</span>}
+            </div>
+            <br />
+            {chatOpen ? "닫기" : "KickChat"}
+          </button>
+          <Link to="/community">
+            <FaPeopleGroup className={styles.fourmenuicon} />
+            <br />
+            커뮤니티
+          </Link>
+          <Link to="/mypage">
+            <BsPersonFillGear className={styles.fourmenuicon} />
+            <br />
+            마이페이지
+          </Link>
+        </nav>
+      )}
+      {!user && (
+        <nav className={styles.mobile_bottomnav}>
+          <Link to="/">
+            <IoHome className={styles.fourmenuicon} />
+            <br />
+            메인화면
+          </Link>
+          <Link to="/community">
+            <FaPeopleGroup className={styles.fourmenuicon} />
+            <br />
+            커뮤니티
+          </Link>
+          <Link to="/presignup">
+            <MdPersonAdd className={styles.fourmenuicon} />
+            <br />
+            회원가입
+          </Link>
+          <Link to="/login" state={{ from: location.pathname }}>
+            <LuLogIn className={styles.fourmenuicon} />
+            <br />
+            로그인
+          </Link>
+        </nav>
+      )}
     </>
   );
 };

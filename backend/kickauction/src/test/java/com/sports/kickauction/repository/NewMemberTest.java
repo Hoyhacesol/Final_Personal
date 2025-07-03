@@ -47,7 +47,7 @@ public class NewMemberTest {
                 .role("USER")
                 .social(0)
                 .userId("android@gmail.com")
-                .userName("유명한문어")
+                .userName("레드와인")
                 .userPw(encoded("qwer1"))
                 .build(),
             Member.builder()
@@ -65,7 +65,7 @@ public class NewMemberTest {
                 .role("USER")
                 .social(1)
                 .userId("kinggnu@naver.com")
-                .userName("동행복권")
+                .userName("박병호")
                 .userPw(encoded("qwer1"))
                 .build(),
             Member.builder()
@@ -101,7 +101,7 @@ public class NewMemberTest {
                 .role("USER")
                 .social(0)
                 .userId("cracker@naver.com")
-                .userName("즛토마요")
+                .userName("ZUTOMAYO")
                 .userPw(encoded("qwer1"))
                 .build(),
             Member.builder()
@@ -110,7 +110,7 @@ public class NewMemberTest {
                 .role("SELLER")
                 .social(0)
                 .userId("seller@naver.com")
-                .userName("백인분의어부")
+                .userName("버번")
                 .userPw(encoded("qwer1"))
                 .build(),
             Member.builder()
@@ -128,7 +128,7 @@ public class NewMemberTest {
                 .role("SELLER")
                 .social(0)
                 .userId("style@naver.com")
-                .userName("아이폰7개보유")
+                .userName("오금동벤제마")
                 .userPw(encoded("qwer1"))
                 .build(),
             Member.builder()
@@ -137,7 +137,7 @@ public class NewMemberTest {
                 .role("SELLER")
                 .social(0)
                 .userId("killer@naver.com")
-                .userName("직거래살인마")
+                .userName("고척스카이돔")
                 .userPw(encoded("qwer1"))
                 .build(),
             Member.builder()

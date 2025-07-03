@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import axios from "axios";
 // 오류 발생시 참고 -> tailwind처럼 처음 사용시 npm install react-datepicker & date-fns 두개 필요***
 import DatePicker from "react-datepicker"; 
@@ -204,7 +204,7 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
 };
 
 
-const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {} }) => {
+const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, errors = {}, isSubmitting = false }) => {
   const navigate = useNavigate();
   const [isRentalEquipmentReadOnly, setIsRentalEquipmentReadOnly] = useState(false);
   const [sidoList, setSidoList] = useState([]);
@@ -353,13 +353,15 @@ const BContentP09 = ({ formData, handleChange, handleSubmit, formSubmitted, erro
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="cancel-button">
+              className="cancel-button"
+              disabled={isSubmitting}>
               취소
             </button>
             <button
               type="submit"
-              className="submit-button">
-              등록
+              className="submit-button"
+              disabled={isSubmitting}>
+              {isSubmitting ? '수정 중...' : '수정'}
             </button>
           </div>
         </div>

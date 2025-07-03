@@ -15,4 +15,6 @@ public class CommentDTO {
     private String mprofileimg;  // 작성자 프로필이미지
     private String content;
     private LocalDateTime cregdate;
+
+    private long commentCount;
 }

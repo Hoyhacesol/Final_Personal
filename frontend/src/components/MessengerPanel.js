@@ -277,7 +277,8 @@ export default function MessengerPanel({ targetUser, onClose }) {
       {searchModalOpen && (
         <div className={styles.overlay}>
           <div className={styles.search_modal}>
-            <h3>닉네임으로 유저 검색</h3>
+            <h3>새로운 채팅방 생성</h3>
+            <p>자유롭게 일상, 경매에 대한 이야기를 나눠보세요! 비방,음란성 메세지는 계정 정지 처리 될 수 있으며, 그로 인해 유발된 거래 문제에 킥옥션은 책임지지 않습니다.</p>
             <input type="text" placeholder="닉네임 입력.." value={searchNickname} onChange={(e) => setSearchNickname(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearchUser()} />
             <div className={styles.search_modal_btns}>
               <button onClick={handleSearchUser}>채팅 시작</button>
