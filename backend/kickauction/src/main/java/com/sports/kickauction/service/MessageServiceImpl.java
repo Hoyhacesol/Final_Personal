@@ -85,4 +85,13 @@ public class MessageServiceImpl implements MessageService {
         }
         messageRepository.saveAll(unreadMessages);
     }
+
+    @Override
+    public void sendSystemMessageForBiz(Member sender, Member receiver, String otitle, Long price) {
+    String content = String.format(
+        "[킥옥션 자동발송]\n%s님이 \"%s\" 건에 대해 %,d원으로 새롭게 제안했어요.",
+        sender.getUserName(), otitle, price
+    );
+    sendMessage(sender, receiver, content);
+}
 }

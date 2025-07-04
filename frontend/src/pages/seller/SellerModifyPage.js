@@ -362,6 +362,7 @@ const SellerModifyPage = () => {
         className={styles["input_field"]}
         autoComplete="off"
         placeholder="업체 정보를 작성해주세요!"
+        maxLength={255}
         value={formData.info}
         onChange={e => setFormData(prev => ({ ...prev, info: e.target.value }))}
       />
@@ -370,6 +371,7 @@ const SellerModifyPage = () => {
         name="introContent"
         className={styles["textarea"]}
         placeholder="업체소개 글을 작성해주세요!"
+        maxLength={255}
         value={formData.introContent}
         onChange={e => setFormData(prev => ({ ...prev, introContent: e.target.value }))}
       />

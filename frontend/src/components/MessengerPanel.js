@@ -151,7 +151,6 @@ export default function MessengerPanel({ targetUser, onClose }) {
       try {
         const userPrompt = input.trim();
 
-        console.log("프론트로부터 받은 prompt: " + userPrompt);
         const res = await fetch("/api/chatbot", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

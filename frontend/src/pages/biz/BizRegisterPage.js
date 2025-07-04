@@ -57,14 +57,36 @@ const BizRegisterPage = () => {
     }
 
     try {
-      const data = await getOrderDetail(ono);
-      setOrder(data);
-      setIsAllowed(true);
-    } catch (err) {
-      console.error("견적 정보 불러오기 실패:", err);
-      alert("견적 정보를 불러올 수 없습니다.");
-      navigate("/orderlist");
-    }
+  const data = await getOrderDetail(ono);
+
+  // 상태 확인 (마감, 취소, 낙찰)
+  if (data.finished === 1) {
+    alert("이미 마감된 견적입니다.");
+    navigate("/orderlist");
+    return;
+  } else if (data.finished === 2) {
+    alert("취소된 견적입니다.");
+    navigate("/orderlist");
+    return;
+  } else if (data.finished === 11) {
+    alert("이미 낙찰된 견적입니다.");
+    navigate("/orderlist");
+    return;
+  }
+  if (data.mno === user.mno) {
+  alert("자신이 작성한 요청에는 입찰할 수 없습니다.");
+  navigate("/orderlist");
+  return;
+  }
+
+  setOrder(data);
+  setIsAllowed(true);
+} catch (err) {
+  console.error("견적 정보 불러오기 실패:", err);
+  alert("견적 정보를 불러올 수 없습니다.");
+  navigate("/orderlist");
+}
+
   };
 
   runChecksAndFetch();

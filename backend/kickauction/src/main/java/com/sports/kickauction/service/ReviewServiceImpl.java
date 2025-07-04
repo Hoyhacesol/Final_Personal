@@ -2,6 +2,7 @@ package com.sports.kickauction.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.sports.kickauction.dto.ReviewDTO;
 import com.sports.kickauction.dto.SellerReviewReadDTO;
 import com.sports.kickauction.entity.Review;
@@ -54,5 +55,10 @@ public class ReviewServiceImpl implements ReviewService {
         review.setRating(reviewDTO.getRating());
         review.setRcontent(reviewDTO.getRcontent());
         reviewRepository.save(review);
+    }
+
+    @Override
+    public Page<SellerReviewReadDTO> getReviewsBySeller(Long sellerMno, Pageable pageable) {
+        return reviewRepository.findReviewsBySellerMno(sellerMno, pageable);
     }
 }

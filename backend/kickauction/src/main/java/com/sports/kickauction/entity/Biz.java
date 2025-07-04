@@ -41,7 +41,7 @@ public class Biz extends BaseEntity {
   @JoinColumn(name = "ono", nullable = false)
   private Request request;
 
-  private int price;
+  private Long price;
 
   private String bcontent;
 

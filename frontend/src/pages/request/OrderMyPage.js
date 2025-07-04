@@ -42,7 +42,7 @@ const OrderMyPage = () => {
 
     try {
       const response = await axios.get(`/api/orders/my-orders/paginated`, {
-        params: { status, page, size: 5 }, // 페이지 당 5개씩 요청
+        params: { status, page, size: 3 }, // 페이지 당 3개씩 요청
         withCredentials: true,
       });
       setter(response.data);
@@ -68,7 +68,9 @@ const OrderMyPage = () => {
 
   // '진행 견적' 페이지가 변경될 때마다 데이터 요청
   useEffect(() => {
-    setLoading(true);
+    // 페이지네이션 시 깜빡임 현상을 막기 위해 setLoading(true)를 호출하지 않습니다.
+    // 최초 로딩은 loading 상태의 기본값(true)으로 처리하고,
+    // 데이터 로딩이 끝나면 finally에서 setLoading(false)를 호출하여 로딩 화면을 제거합니다.
     fetchPaginatedOrders('active', activePage, setActiveData).finally(() => setLoading(false));
   }, [activePage, fetchPaginatedOrders]);
 
@@ -81,60 +83,6 @@ const OrderMyPage = () => {
   useEffect(() => {
     fetchPaginatedOrders('cancelled', cancelledPage, setCancelledData);
   }, [cancelledPage, fetchPaginatedOrders]);
-
-  // '진행 견적'의 남은 시간을 업데이트하는 타이머
-  useEffect(() => {
-    if (!activeData || !activeData.dtoList || activeData.dtoList.length === 0) {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      const now = new Date();
-      let needsUpdate = false;
-
-      const updatedDtoList = activeData.dtoList.map(quote => {
-        // rawTimeLeft가 없는 초기 로딩 상태를 위해 oregdate로 재계산
-        const regDate = new Date(quote.oregdate);
-        const deadline = new Date(regDate);
-        deadline.setDate(regDate.getDate() + 7);
-        deadline.setHours(regDate.getHours());
-        deadline.setMinutes(regDate.getMinutes());
-        deadline.setSeconds(regDate.getSeconds());
-
-        const timeLeft = deadline - now;
-
-        if (timeLeft <= 0) {
-          if (quote.rawTimeLeft > 0 || quote.rawTimeLeft === undefined) {
-            needsUpdate = true;
-          }
-          return { ...quote, timeLeftStr: "마감됨", isUrgent: false, rawTimeLeft: 0 };
-        } else {
-          const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-          let timeStr = "";
-          if (days > 0) timeStr += `${days}일 `;
-          if (hours > 0) timeStr += `${hours}시간 `;
-          if (minutes > 0) timeStr += `${minutes}분 `;
-          if (seconds > 0) timeStr += `${seconds}초`;
-          if (timeStr.trim() === '') timeStr = '0초';
-
-          const isUrgent = timeLeft < (1000 * 60 * 60 * 12);
-
-          return { ...quote, timeLeftStr: timeStr, isUrgent, rawTimeLeft: timeLeft };
-        }
-      });
-
-      // 변경 사항이 있을 때만 상태 업데이트
-      if (needsUpdate || JSON.stringify(activeData.dtoList) !== JSON.stringify(updatedDtoList)) {
-        setActiveData(prev => ({ ...prev, dtoList: updatedDtoList }));
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [activeData]);
 
   if (loading) return <div className="text-center mt-20">로딩 중...</div>;
   if (error && !activeData) return <div className="text-center mt-20 text-red-500">{error}</div>;
@@ -181,6 +129,8 @@ const OrderMyPage = () => {
             next={cancelledData.next}
           />
         )}
+
+        <div className='bottom-margin-setter'></div>
     </>
   );
 };

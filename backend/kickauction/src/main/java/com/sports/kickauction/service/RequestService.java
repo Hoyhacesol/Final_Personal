@@ -44,8 +44,5 @@ public interface RequestService {
     // ---
     // 특정 회원의 견적을 상태별로 페이지네이션 반환 타입이 RequestPageResponseDTO<RequestDTO>로 변경
     RequestPageCustomResDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, RequestPageCustomReqDTO dto);
-    // 전체 견적 리스트를 finished 상태로 필터링하여 페이지네이션
-    // 반환 타입이 RequestPageResponseDTO<RequestReadDTO>로 변경
-    RequestPageCustomResDTO<RequestReadDTO> getOrderMyList(RequestPageCustomReqDTO dto);
 
 }

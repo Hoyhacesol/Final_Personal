@@ -103,7 +103,7 @@ function OrderListPage() {
             >
                   <div className="order-card">
                     <div className="order-card-left">
-                      <h4 className="order-title">{order.ocontent}</h4>
+                      <h4 className="order-title">{order.otitle}</h4>
                       <p className="order-playtype"><FaRunning /> {order.playType}</p>
                       <p className="order-location"><FaMapMarkerAlt /> {order.olocation}</p>
                       <p className="order-date"><FaRegCalendarAlt /> {order.rentalDate?.slice(0, 10)}</p>

@@ -56,7 +56,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
 
   const handleConfirmClick = async () => {
     if (!selectedCompanyId) {
-      alert("업체를 선택해주세요.");
+      alert("마음에 드는 업체의 견적을 선택해주세요.");
       return;
   }
     
@@ -64,10 +64,9 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
       await axios.patch(`/api/orders/${ono}/select`, {
         companyId: selectedCompanyId,
       });
-      alert("업체가 확정되었습니다!");
+      // alert("업체가 확정되었습니다!");
       navigate(`/request/list`);
     } catch (error) {
-
       console.error("업체 확정 오류 :", error);
       const errorMessage = error.response?.data?.message || "업체 확정에 실패했습니다. 다시 시도해주세요.";
       alert(errorMessage);

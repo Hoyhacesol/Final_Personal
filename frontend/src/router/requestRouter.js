@@ -1,8 +1,14 @@
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
+
+
+
+
 
 const requestRouter = () => {
-const Loading = <div>Loading....</div>
+const Loading = <LoadingSpinner />;
+
 const OrderMyPage = lazy(() => import("../pages/request/OrderMyPage"))
 const OrderReadPage = lazy(() => import("../pages/request/OrderReadPage"))
 const OrderCreatePage = lazy(() => import("../pages/request/OrderCreatePage"))
@@ -10,7 +16,7 @@ const OrderModifyPage = lazy(() => import("../pages/request/OrderModifyPage"))
 const BizRegisterPage = lazy(() => import("../pages/biz/BizRegisterPage"))
 
     return [
-        {
+        {   
             path: "list", element: <Suspense fallback={Loading}><OrderMyPage /></Suspense>
         },
         {

@@ -14,6 +14,7 @@ const OrderMaster = () => {
     }, [user]);
     return (
         <div className="request-component">
+            <div className="rq-bg-setter"> </div>
             <div id="min-h-screen pt-12   orderMaster">
                 <div><Outlet /></div>
             </div>

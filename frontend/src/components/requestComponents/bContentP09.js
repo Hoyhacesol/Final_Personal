@@ -48,10 +48,10 @@ const formFields = {
       name: "rentalDate"
     },
     {
-      type: "text",
+      type: "time",
       label: "상세 시간",
       name: "rentalTime",
-      placeholder: "시작 시간을 입력해주세요"
+      placeholder: "05:30"
     },
     {
       type: "number",
@@ -105,6 +105,19 @@ const renderField = (field ,value, handleChange, isReadOnly = false) => {
           placeholder={currentPlaceholder}
           readOnly={isReadOnly}
           maxLength={field.name === 'rentalTime' ? 5 : undefined}
+        />
+      );
+    case "time":
+      return (
+        <input
+          type="time"
+          name={field.name}
+          value={value || ""}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          readOnly={isReadOnly}
+          min="05:00"
+          max="22:00"
         />
       );
     case "textarea":

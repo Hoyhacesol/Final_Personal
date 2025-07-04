@@ -28,14 +28,14 @@ public class MemberRepositoyTests {
 @Transactional
 @Rollback(false)
 public void insertDummySellersWithIntro() {
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 16; i <= 40; i++) {
         // 1. Member 생성
         Member member = Member.builder()
                 .userId("testuser" + i)
                 .userPw("1234")
                 .userName("테스트회원" + i)
                 .phone("0109999" + String.format("%04d", i))
-                .role("Seller")
+                .role("SELLER")
                 .social(0)
                 .build();
         memberRepository.save(member);

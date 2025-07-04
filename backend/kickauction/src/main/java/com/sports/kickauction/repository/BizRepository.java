@@ -26,4 +26,7 @@ public interface BizRepository extends JpaRepository<Biz, Long> {
 
     // 주석: 자신의 모든 biz 개수
     int countBySeller_Mno(Long mno);
+
+    // 입찰 여부 확인
+    boolean existsByRequest_OnoAndSeller_Mno(int ono, Long mno);
 }

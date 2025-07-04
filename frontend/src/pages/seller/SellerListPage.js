@@ -1,6 +1,6 @@
 import { useEffect, useState,useCallback,useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { useNavigate, useSearchParams} from "react-router-dom";
+import { FaPhoneAlt, FaMapMarkerAlt,FaStar, FaStarHalfAlt, FaRegStar} from "react-icons/fa";
 import { useAuth } from "../../contexts/Authcontext";
 import {
   getSellerList,
@@ -31,6 +31,16 @@ const SellerListPage = () => {
   const [reviewPage, setReviewPage] = useState(0);
   const [hasMoreReviews, setHasMoreReviews] = useState(true);
   const observer = useRef();
+  const reviewSectionRef = useRef(null);
+
+  const formatDate = (dateStr) => {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return "날짜 오류";
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const da = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${da}`;
+};
 
   const [seller_data, setSellerData] = useState({
     dtoList: [],
@@ -80,17 +90,43 @@ const SellerListPage = () => {
     setPage(page_from_url);
   }, [search_params]);
 
+  useEffect(() => {
+  if (modal_open) {
+    document.body.style.overflow = "hidden";  // 스크롤 잠금
+  } else {
+    document.body.style.overflow = "auto";    // 스크롤 복원
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";    // cleanup
+  };
+}, [modal_open]);
+
+
   const open_modal = async (mno) => {
   try {
     const detail = await getSellerDetail(mno);
     setSelectedSeller(detail);
     setSlideIndex(0);
-    // const fetchedReviews = await getReviewsBySeller(mno);
-    // setReviews(fetchedReviews);
     setModalOpen(true);
   } catch (err) {
     console.error("상세 불러오기 실패", err);
   }
+};
+
+const renderStars = (rating) => {
+  const stars = [];
+  const halfRating = rating / 2;
+  for (let i = 1; i <= 5; i++) {
+    if (halfRating >= i) {
+      stars.push(<FaStar key={i} className={styles.star} />);
+    } else if (halfRating >= i - 0.5) {
+      stars.push(<FaStarHalfAlt key={i} className={styles.star} />);
+    } else {
+      stars.push(<FaRegStar key={i} className={styles.star} />);
+    }
+  }
+  return stars;
 };
 
 const lastReviewElementRef = useCallback(
@@ -116,10 +152,18 @@ const lastReviewElementRef = useCallback(
   [reviewPage, hasMoreReviews, showReviews, selected_seller]
 );
 
-  const close_modal = () => setModalOpen(false);
+    const close_modal = () => {
+    setModalOpen(false);
+    setSelectedSeller(null);
+    setReviews([]);
+    setReviewPage(0);
+    setHasMoreReviews(true);
+    setShowReviews(false);  
+  };
   const go_to_register = () => navigate("/sellerlist/register");
 
   return (
+    <div className={styles["page_wrapper"]}>
     <div className={styles["wrap_container"]}>
       <div className={styles["header"]}>
         <h2 className={styles["page_title"]}>업체 정보 한눈에 보기</h2>
@@ -133,47 +177,48 @@ const lastReviewElementRef = useCallback(
         )}
       </div>
 
-      {loading ? (
-        <div className={styles["loading_wrapper"]}>
-          <div className={styles["spinner"]}></div>
-          <div>불러오는 중입니다...</div>
+     {loading ? (
+  <div className={styles["loading_wrapper"]}>
+    <div className={styles["spinner"]}></div>
+    <div>불러오는 중입니다...</div>
+  </div>
+) : seller_data.dtoList.length === 0 ? (
+  <div className={styles["no_data"]}>등록된 업체가 없습니다.</div>
+) : (
+  <div className={styles["card_container"]}>
+    {seller_data.dtoList.map((seller, idx) => (
+      <div
+        className={styles["card"]}
+        key={idx}
+        onClick={() => open_modal(seller.mno)}
+      >
+        <div className={styles["card_header"]}>
+          <div className={styles["image"]}>
+            <img
+              src={getImageUrl(get_safe_image(seller.simage))}
+              alt="대표"
+            />
+          </div>
+          <div className={styles["count"]}>
+            선정 횟수: {seller.hiredCount || 0}
+          </div>
+          <div className={styles["count"]}>
+            리뷰 평점: {seller.avgRating || 0}
+          </div>
         </div>
-      ) : (
-        <div className={styles["card_container"]}>
-          {seller_data.dtoList.map((seller, idx) => (
-            <div
-              className={styles["card"]}
-              key={idx}
-              onClick={() => open_modal(seller.mno)}
-            >
-              <div className={styles["card_header"]}>
-                <div className={styles["image"]}>
-                  <img
-                    src={getImageUrl(get_safe_image(seller.simage))}
-                    alt="대표"
-                  />
-                </div>
-                <div className={styles["count"]}>
-                  선정 횟수: {seller.hiredCount || 0}
-                </div>
-                <div className={styles["count"]}>
-                  리뷰 평점: {seller.avgRating || 0}
-                  </div>
-              </div>
-              <div className={styles["info"]}>
-                <div className={styles["name"]}>
-                  {seller.sname || "업체명 없음"}
-                </div>
-                <div className={styles["address"]}>
-                  {seller.slocation || "주소 없음"}
-                </div>
-              </div>
-              <button className={styles["detail_btn"]}>상세정보</button>
-            </div>
-          ))}
+        <div className={styles["info"]}>
+          <div className={styles["name"]}>
+            {seller.sname || "업체명 없음"}
+          </div>
+          <div className={styles["address"]}>
+            {seller.slocation || "주소 없음"}
+          </div>
         </div>
-      )}
-
+        <button className={styles["detail_btn"]}>상세정보</button>
+      </div>
+    ))}
+  </div>
+)}
 
       <Pagination
         className={styles["fixed_pagination"]}
@@ -187,6 +232,7 @@ const lastReviewElementRef = useCallback(
           window.location.href = `/sellerlist?page=${pageNum}`
         }}
       />
+
 
       {modal_open && selected_seller && (() => {
         const simage = selected_seller.simage;
@@ -260,51 +306,62 @@ const lastReviewElementRef = useCallback(
 
                   <hr />
 
-                  {/* <div className={styles["review_section"]}>
-  <button
-    className={styles["toggle_review_btn"]}
-    onClick={async () => {
-      if (!showReviews) {
-        const data = await getReviewsBySeller(selected_seller.mno, 0);
-        setReviews(data.content);
-        setReviewPage(1);
-        setHasMoreReviews(!data.last);
-      }
-      setShowReviews(prev => !prev);
-    }}
-  >
-    {showReviews ? "리뷰 닫기" : "리뷰 보기"}
-  </button>
+                 <div className={styles["review_section"]} ref={reviewSectionRef}>
+                    <button
+                    className={styles["toggle_review_btn"]}
+                    onClick={async () => {
+                      if (!showReviews) {
+                        setReviews([]);           // 초기화 추가
+                        setReviewPage(0);         // 초기화 추가
+                        const data = await getReviewsBySeller(selected_seller.mno, 0);
+                        setReviews(data.content);
+                        setReviewPage(1);
+                        setHasMoreReviews(!data.last);
+                      }
+                      setShowReviews(prev => !prev);
+
+                      setTimeout(() => {
+                        reviewSectionRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+                      }, 100); // 모달 렌더링 이후 이동하도록 약간 지연
+                    }}
+                  >
+                    {showReviews ? "리뷰 닫기" : "리뷰 보기"}
+                  </button>
+
 
   {showReviews && (
-    <div className={styles["review_scroll_container"]}>
-      {reviews.length === 0 ? (
-        <p>아직 리뷰가 없습니다.</p>
-      ) : (
-        <ul className={styles["review_list"]}>
-          {reviews.map((rev, idx) => {
-            const isLast = idx === reviews.length - 1;
-            return (
-              <li
-                key={idx}
-                className={styles["review_item"]}
-                ref={isLast ? lastReviewElementRef : null}
-              >
-                <div className={styles["review_rating"]}>
-                  별점: {(rev.rating / 2).toFixed(1)} / 5
-                </div>
-                <div className={styles["review_content"]}>{rev.rcontent}</div>
-                <div className={styles["review_date"]}>
-                  {new Date(rev.rregdate).toLocaleDateString()}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
-  )}
-</div> */}
+          <div className={styles["review_scroll_container"]}>
+            {Array.isArray(reviews) && reviews.length === 0 ? (
+              <p>아직 리뷰가 없습니다.</p>
+            ) : (
+              <ul className={styles["review_list"]}>
+                {reviews.map((rev, idx) => {
+                  const isLast = idx === reviews.length - 1;
+                  return (
+                    <li
+                      key={idx}
+                      className={styles["review_item"]}
+                      ref={isLast ? lastReviewElementRef : null}
+                    >
+                      <div className={styles["review_rating"]}>
+                        {renderStars(rev.rating)} 
+                      </div>
+                      <div className={styles["review_author"]}>
+                        작성자: {rev.username || "익명"}
+                      </div>
+                      <div className={styles["review_content"]}>{rev.rcontent}</div>
+                      <div className={styles["review_date"]}>
+                        {formatDate(rev.regDate)}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        )}
+      </div>
+
 
 
               </div>
@@ -336,6 +393,7 @@ const lastReviewElementRef = useCallback(
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

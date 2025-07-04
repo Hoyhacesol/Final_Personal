@@ -220,8 +220,22 @@ public class RequestServiceImpl implements RequestService {
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // --- getMyOrdersByStatusPaginated ---
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public RequestPageCustomResDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, RequestPageCustomReqDTO dto) {
+        
+        // '취소' 상태의 견적을 먼저 삭제 getMyOrdersByMemberNo() 메서드의 로직을 페이징 메서드에도 동일하게 적용
+        List<Request> allOrdersForMember = requestRepository.findByMno(memberNo);
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Request> expiredCancelledOrders = allOrdersForMember.stream()
+            .filter(order -> order.getFinished() == 2 && order.getOregdate() != null && order.getOregdate().isBefore(now))
+            .collect(Collectors.toList());
+
+        if (!expiredCancelledOrders.isEmpty()) {
+            requestRepository.deleteAll(expiredCancelledOrders);
+        }
+        
+        
         String status = dto.getStatus();
         Pageable pageable = dto.getPageable(Sort.by("ono").descending());
 
@@ -255,22 +269,6 @@ public class RequestServiceImpl implements RequestService {
         return new RequestPageCustomResDTO<>(dtoList, dto, result.getTotalElements());
     }
 
-    // --- getOrderMyList ---
-    @Override
-    @Transactional(readOnly = true)
-    public RequestPageCustomResDTO<RequestReadDTO> getOrderMyList(RequestPageCustomReqDTO dto) {
-        Pageable pageable = dto.getPageable(Sort.by("ono").descending());
-
-        Integer finishedParam = dto.getFinished();
-
-        Page<Request> result = requestRepository.findByFinishedFilter(finishedParam, pageable);
-
-        List<RequestReadDTO> dtoList = result.getContent().stream()
-            .map(this::convertToRequestReadDTO) // 메서드명 변경: Request -> RequestReadDTO 변환
-            .collect(Collectors.toList());
-
-        return new RequestPageCustomResDTO<>(dtoList, dto, result.getTotalElements());
-    }
     
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -311,19 +309,6 @@ public class RequestServiceImpl implements RequestService {
             .oregdate(request.getOregdate())
             .finished(request.getFinished())
             .hasReview(hasReview) // 리뷰 존재 여부 설정
-            .build();
-    }
-
-    // Request 엔티티를 RequestReadDTO로 변환하는 헬퍼 메서드
-    private RequestReadDTO convertToRequestReadDTO(Request request) {
-        return RequestReadDTO.builder()
-            .ono(request.getOno())
-            .playType(request.getPlayType())
-            .olocation(request.getOlocation())
-            .rentalDate(request.getRentalDate())
-            .oregdate(request.getOregdate())
-            .rentaltime(request.getRentalTime())
-            .ocontent(request.getOcontent())
             .build();
     }
 
@@ -460,7 +445,7 @@ public class RequestServiceImpl implements RequestService {
     List<RequestReadDTO> dtoList = result.getContent().stream()
         .map(req -> RequestReadDTO.builder()
             .ono(req.getOno())
-            .ocontent(req.getOcontent())
+            .otitle(req.getOtitle())
             .playType(req.getPlayType())
             .olocation(req.getOlocation())
             .rentalDate(req.getRentalDate())

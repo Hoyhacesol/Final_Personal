@@ -59,7 +59,6 @@ function LoginPage() {
       const userData = await checkAuth();
 
       setUser(userData);
-      console.log("userData:", userData);
 
       if (remember) {
         localStorage.setItem("rememberedEmail", userid);

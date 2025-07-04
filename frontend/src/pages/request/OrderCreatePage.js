@@ -46,6 +46,15 @@ const OrderCreatePage = () => {
 
       if (selectedItems.length === 0) {
         newErrors.rentalEquipment = '대여할 장비를 1개 이상 선택하고 수량을 입력해주세요.';
+      } else {
+        // 수량 100개 초과 검사
+        const overMax = selectedItems.some(key => {
+          if (key !== '기타') {
+            return data.rentalEquipment[key] > 100;
+          }
+          return false;
+        });
+        if (overMax) newErrors.rentalEquipment = '장비 수량은 100개를 초과할 수 없습니다.';
       }
     }
 
@@ -59,16 +68,12 @@ const OrderCreatePage = () => {
     }
     if (!data.rentalDate) newErrors.rentalDate = '날짜를 선택해주세요.';
 
-    const timeRegex = /^\d{2}:\d{2}$/;
-    if (!data.rentalTime.trim()) {
+    if (!data.rentalTime) {
       newErrors.rentalTime = '상세 시간을 입력해주세요.';
-    } else if (!timeRegex.test(data.rentalTime)) {
-      newErrors.rentalTime = '시간을 HH:MM 형식으로 입력해주세요.';
-    } else {
-      const [hours, minutes] = data.rentalTime.split(':').map(Number);
-      if (hours >= 24) newErrors.rentalTime = '시간은 24시 미만으로 입력해주세요.';
-      else if (minutes >= 60) newErrors.rentalTime = '분은 60분 미만으로 입력해주세요.';
+    } else if (data.rentalTime < "05:00" || data.rentalTime > "22:00") {
+      newErrors.rentalTime = '시간은 오전 5시부터 오후 10시까지만 선택 가능합니다.';
     }
+
     if (!data.person || data.person <= 0) newErrors.person = '인원은 1명 이상이어야 합니다.';
     
     return newErrors;
@@ -129,17 +134,6 @@ const OrderCreatePage = () => {
         setSavedRentalEquipmentState(newRentalEquipment); // 현재 상태를 바로 저장
         return { ...prev, rentalEquipment: newRentalEquipment };
       });
-    } 
-    else if (name === 'rentalTime') {
-      const onlyNums = value.replace(/[^\d]/g, ''); // 숫자 이외의 문자 제거
-      let formattedTime = onlyNums;
-
-      // 숫자가 2개를 초과하면 자동으로 콜론(:) 추가
-      if (onlyNums.length > 2) {
-        formattedTime = `${onlyNums.slice(0, 2)}:${onlyNums.slice(2, 4)}`;
-      }
-
-      setFormData(prev => ({ ...prev, [name]: formattedTime }));
     }
     else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -156,7 +150,7 @@ const OrderCreatePage = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
-      alert("입력 양식을 다시 확인해주세요.");
+      // alert("입력 양식을 다시 확인해주세요.");
       return;
     }
 
@@ -184,7 +178,7 @@ const OrderCreatePage = () => {
       const response = await axios.post('/api/orders', dataToSend);
       const newOno = response.data.ono; // 백엔드에서 생성된 ono를 map으로 받아옴
 
-      alert("견적 생성 성공");
+      // alert("견적 생성 성공");
       navigate(`/request/read/${newOno}`, { replace: true }); // 생성 후 상세 페이지로 이동 (history를 대체)
     } catch (err) {
       alert("견적 생성 실패");
@@ -206,6 +200,7 @@ const OrderCreatePage = () => {
         errors={errors}
         isSubmitting={isSubmitting}
       />
+      <div className='bottom-margin-setter'></div>
     </>
   );
 };

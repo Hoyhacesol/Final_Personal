@@ -60,7 +60,7 @@ public class CommunityServiceImpl implements CommunityService {
         // 2) 이미지 저장
         if (pimageFile != null && !pimageFile.isEmpty()) {
             try {
-                Path uploadPath = Paths.get(uploadDir);
+                Path uploadPath = Paths.get(uploadDir, "community");
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
@@ -139,7 +139,7 @@ public class CommunityServiceImpl implements CommunityService {
 
             // 3) 새 이미지 저장
             try {
-                Path uploadPath = Paths.get(uploadDir);
+                Path uploadPath = Paths.get(uploadDir, "community");
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }

@@ -1,9 +1,10 @@
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 
 const communityRouter = () => {
-const Loading = <div>Loading....</div>
+const Loading = <LoadingSpinner />;
 const CommunityList = lazy(() => import("../pages/community/ListPage"))
 const CommunityRead = lazy(() => import("../pages/community/ReadPage"))
 const CommunityWrite = lazy(() => import("../pages/community/WritePage"))

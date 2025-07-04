@@ -34,8 +34,8 @@ public class RequestPageCustomResDTO<E> {
 
         this.totalPage = (int) Math.ceil((double) totalCount / size);
 
-        //  페이지 블럭 단위 계산 (5개씩)
-        int blockSize = 5;
+        //  페이지 블럭 단위 계산 (3개씩)
+        int blockSize = 3;
         int tempEnd = (int)(Math.ceil(currentPage / (double) blockSize)) * blockSize;
         int start = tempEnd - (blockSize - 1);
         int end = Math.min(tempEnd, totalPage);

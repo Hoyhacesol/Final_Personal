@@ -1,5 +1,6 @@
 package com.sports.kickauction.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -27,8 +29,11 @@ import com.sports.kickauction.dto.RequestPageRequestDTO;
 import com.sports.kickauction.dto.RequestPageResponseDTO;
 import com.sports.kickauction.dto.RequestReadDTO;
 import com.sports.kickauction.entity.Member;
+import com.sports.kickauction.entity.Message;
 import com.sports.kickauction.repository.MemberRepository;
+import com.sports.kickauction.repository.MessageRepository;
 import com.sports.kickauction.repository.RequestRepository;
+import com.sports.kickauction.service.MessageService;
 import com.sports.kickauction.service.RequestService;
 
 import lombok.extern.log4j.Log4j2;
@@ -41,15 +46,19 @@ import lombok.extern.log4j.Log4j2;
 public class RequestController {
 
     private final RequestRepository requestRepository;
+    private final MessageRepository messageRepository;
+    private final MessageService messageService;
 
     @Autowired
     private RequestService requestService;
 
     private final MemberRepository memberRepository;
 
-    public RequestController(MemberRepository memberRepository, RequestRepository requestRepository) {
+    public RequestController(MemberRepository memberRepository, RequestRepository requestRepository, MessageRepository messageRepository, MessageService messageService) {
         this.memberRepository = memberRepository;
         this.requestRepository = requestRepository;
+        this.messageRepository = messageRepository;
+        this.messageService = messageService;
     }
     //견적 리스트
     @GetMapping("/list")
@@ -88,9 +97,6 @@ public class RequestController {
             responseMap.put("oregdate", order.getOregdate());
             responseMap.put("finished", order.getFinished());
 
-
-            // 업체 목록 (companies)은 getOrderDetails 응답에 포함되지 않으므로,
-            // 별도의 API 호출이 필요하거나 OrderDTO/RequestDTO에 포함되어야 합니다.
             responseMap.put("companies", order.getAttributes().get("companies"));
 
             return ResponseEntity.ok(responseMap);
@@ -128,13 +134,12 @@ public class RequestController {
         } 
         else if (principal instanceof DefaultOAuth2User) {
             DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
-            // System.out.println("OAuth2 attributes: " + oauthUser.getAttributes()); //data check
             Map<String, Object> attributes = oauthUser.getAttributes();
 
             String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId(); // "google", "kakao" 등
 
             if ("google".equals(registrationId)) {
-                loginUserId = (String) attributes.get("user_id"); // 커스텀 OAuth2UserService가 추가한 값
+                loginUserId = (String) attributes.get("user_id");
             } else if ("kakao".equals(registrationId)) {
                 Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
                 loginUserId = (String) kakaoAccount.get("email");
@@ -186,14 +191,13 @@ public class RequestController {
         } 
         else if (principal instanceof DefaultOAuth2User) {
             DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
-            // System.out.println("OAuth2 attributes: " + oauthUser.getAttributes()); //data check
 
             Map<String, Object> attributes = oauthUser.getAttributes();
 
             String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId(); // "google", "kakao" 등
 
             if ("google".equals(registrationId)) {
-                loginUserId = (String) attributes.get("user_id"); // 커스텀 OAuth2UserService가 추가한 값
+                loginUserId = (String) attributes.get("user_id");
             } else if ("kakao".equals(registrationId)) {
                 Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
                 loginUserId = (String) kakaoAccount.get("email");
@@ -270,24 +274,49 @@ public class RequestController {
      * 견적에 대한 업체를 확정합니다.
      * @param ono 견적 ID
      * @param payload 요청 본문, "companyId" 키로 선택된 업체의 mno를 포함
+     * @param authentication 현재 로그인한 사용자 정보
      * @return 처리 결과 메시지
      */
     @PatchMapping("/{ono}/select")
     public ResponseEntity<Map<String, String>> selectCompany(
             @PathVariable("ono") int ono,
-            @RequestBody Map<String, Long> payload) {
-        
-        Long sellerMno = payload.get("companyId");
+            @RequestBody Map<String, Long> payload,
+            Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "로그인이 필요합니다."));
+        }
+
+        // 1. 프론트엔드로부터 선택된 업체의 ID(mno)를 받습니다.
+        Long sellerMno = payload.get("companyId"); // JS의 companyId
         if (sellerMno == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "companyId가 필요합니다."));
         }
-        // int sellerMnoInt = sellerMno.intValue();
 
         try {
+            // 2. 현재 로그인한 사용자(의뢰자)와 선택된 업체(제안자)의 Member 정보를 DB에서 조회합니다.
+            String currentUserId = authentication.getName();
+            Member requester = memberRepository.findByUserId(currentUserId)
+                    .orElseThrow(() -> new UsernameNotFoundException("현재 로그인된 사용자를 찾을 수 없습니다: " + currentUserId));
+
+            Member provider = memberRepository.findById(sellerMno)
+                    .orElseThrow(() -> new UsernameNotFoundException("선택된 업체 정보를 찾을 수 없습니다: " + sellerMno));
+
+            // 3. DB에서 조회한 안전한 정보로 메시지 내용을 생성합니다.
+            String messageContent = String.format(
+                "[킥옥션 자동발송]\n%s님이 %s님의 제안을 선택했어요.",
+                requester.getUserName(), // <의뢰자닉네임>
+                provider.getUserName()   // <제안자닉네임>
+            );
+
+            // 4. MessageService를 사용하여 메시지를 발송합니다.
+            messageService.sendMessage(requester, provider, messageContent);
+
+            // 5. 기존의 업체 확정 로직을 실행합니다.
             requestService.confirmCompanyAndFinalizeOrder(ono, sellerMno);
             return ResponseEntity.ok(Map.of("message", "업체가 성공적으로 확정되었습니다."));
         } catch (Exception e) {
-            System.err.println("업체 확정 중 오류 발생: " + e.getMessage());
+            log.error("업체 확정 중 오류 발생: ono={}, sellerMno={}", ono, sellerMno, e);
             return ResponseEntity.internalServerError().body(Map.of("message", "처리 중 오류가 발생했습니다."));
         }
     }

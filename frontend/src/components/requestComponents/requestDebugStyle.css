@@ -1,11 +1,36 @@
 
 .request-component{
-    min-height: 100vh;
-    background-color: skyblue;
+  min-height: 100vh;
+  /* background-color: skyblue; */
 }
-/* .request-body{} */
+.rq-bg-setter{
+  background-image: url(../../assets/img/title.png);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; 
+  background-size: cover;
+  background-position: center;
+  z-index: -100;
 
-/* @media (prefers-reduced-motion: reduce)  */
+}
+.rq-bg-setter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.request-body{
+}
+
+
 @media (min-width: 750px) {
   /* .request-component{} */
   /* .request-body{} */
@@ -31,18 +56,50 @@
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
 
+.bottom-margin-setter{
+  min-height: 100px;
+  height: 10vh;
+  max-height: 200px;
+  width: 100%;
 }
 /* Titles ------------------------------------------------------------------------------------------------------ */
 
 .bHero-section {
-  background-size: cover;           /* bg-cover */
-  background-position: center;      /* bg-center */
-  text-align: center;               /* text-center */
-  color: white;                     /* text-white */
-  padding-top: 4rem;                /* py-16 */
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  color: #1E1E1E;
+  padding-top: 4rem;
   padding-bottom: 4rem;
   cursor: default;
+}
+.bHero-section .subTitle{
+  color: #1F9CE7;
+  font-size: 2.5rem;
+  transform: translateX(-8vh);
+}
+.bHero-section .mainTitle{
+  font-size: 3rem;
+  /* font-weight: bold; */
+}
+.bHero-section .notion{
+  font-size: 1.5rem;
+}
+
+@media (min-width: 750px) {
+  .bHero-section .subTitle{
+    color: #1F9CE7;
+    font-size: 3rem;
+
+  }
+  .bHero-section .mainTitle{
+    font-size: 4rem;
+  }
+  .bHero-section .notion{
+    font-size: 2rem;
+  }
 }
 
 

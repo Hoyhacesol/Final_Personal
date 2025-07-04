@@ -26,4 +26,7 @@ public interface MessageService {
     public List<MessageRoomDTO> getAllRoomsForMember(Long myMno);
 
     void markMessagesAsRead(Member me, Member partner);
+
+    // 입찰 시 자동 메시지 전송
+    void sendSystemMessageForBiz(Member sender, Member receiver, String otitle, Long price);
 }

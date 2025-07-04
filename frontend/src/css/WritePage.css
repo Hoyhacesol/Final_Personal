@@ -156,6 +156,7 @@
   .write_header button {
     width: 100%;
     max-width: 300px;
+    justify-content: center;
   }
 
   .write_content {

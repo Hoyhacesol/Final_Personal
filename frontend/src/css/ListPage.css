@@ -1,3 +1,10 @@
+#list_page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  overflow-x: hidden;  
+}
+ 
  .list_header {
      display: flex;
      justify-content: space-between;
@@ -73,6 +80,7 @@
      display: inline-flex;
      align-items: center;
      gap: 8px;
+     white-space: nowrap;
  }
 
  .btn:hover {
@@ -264,5 +272,14 @@
 
      .search_box {
          max-width: none;
+     }
+
+     .list_header {
+         justify-content: center;
+     }
+
+
+     .btn {
+         padding: 12px 14px;
      }
  }

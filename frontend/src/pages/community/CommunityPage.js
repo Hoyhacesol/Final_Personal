@@ -1,5 +1,4 @@
 import { Outlet, useOutletContext } from "react-router-dom";
-import "../../css/CommunityPage.css";
 
 const CommunityPage = () => {
   const parentContext = useOutletContext();

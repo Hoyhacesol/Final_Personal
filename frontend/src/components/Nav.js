@@ -57,7 +57,6 @@ const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
         }
 
         const countData = await res.json();
-        console.log("[latestRequestCount 응답]", countData);
 
         if (typeof countData.count === "number") {
           setLatestRequestCount(countData.count);

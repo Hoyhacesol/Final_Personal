@@ -114,6 +114,15 @@ const OrderModifyPage = () => {
 
       if (selectedItems.length === 0) {
         newErrors.rentalEquipment = '대여할 장비를 1개 이상 선택하고 수량을 입력해주세요.';
+      } else {
+        // 수량 100개 초과 검사
+        const overMax = selectedItems.some(key => {
+          if (key !== '기타') {
+            return data.rentalEquipment[key] > 100;
+          }
+          return false;
+        });
+        if (overMax) newErrors.rentalEquipment = '장비 수량은 100개를 초과할 수 없습니다.';
       }
     }
     // 지역 유효성 검사 강화: 시/군/구 미선택 시 오류 발생
@@ -126,15 +135,10 @@ const OrderModifyPage = () => {
     }
     if (!data.rentalDate) newErrors.rentalDate = '날짜를 선택해주세요.';
 
-    const timeRegex = /^\d{2}:\d{2}$/;
-    if (!data.rentalTime.trim()) {
+    if (!data.rentalTime) {
       newErrors.rentalTime = '상세 시간을 입력해주세요.';
-    } else if (!timeRegex.test(data.rentalTime)) {
-      newErrors.rentalTime = '시간을 HH:MM 형식으로 입력해주세요.';
-    } else {
-      const [hours, minutes] = data.rentalTime.split(':').map(Number);
-      if (hours >= 24) newErrors.rentalTime = '시간은 24시 미만으로 입력해주세요.';
-      else if (minutes >= 60) newErrors.rentalTime = '분은 60분 미만으로 입력해주세요.';
+    } else if (data.rentalTime < "05:00" || data.rentalTime > "22:00") {
+      newErrors.rentalTime = '시간은 오전 5시부터 오후 10시까지만 선택 가능합니다.';
     }
 
     if (!data.person || data.person <= 0) newErrors.person = '인원은 1명 이상이어야 합니다.';
@@ -195,17 +199,6 @@ const OrderModifyPage = () => {
         setSavedRentalEquipmentState(newRentalEquipment); // 현재 상태를 바로 저장
         return { ...prev, rentalEquipment: newRentalEquipment };
       });
-    } 
-    else if (name === 'rentalTime') {
-      const onlyNums = value.replace(/[^\d]/g, ''); // 숫자 이외의 문자 제거
-      let formattedTime = onlyNums;
-
-      // 숫자가 2개를 초과하면 자동으로 콜론(:) 추가
-      if (onlyNums.length > 2) {
-        formattedTime = `${onlyNums.slice(0, 2)}:${onlyNums.slice(2, 4)}`;
-      }
-
-      setFormData(prev => ({ ...prev, [name]: formattedTime }));
     }
     else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -223,7 +216,7 @@ const OrderModifyPage = () => {
       setErrors(validationErrors);
 
       if (Object.keys(validationErrors).length > 0) {
-        alert("입력 양식을 다시 확인해주세요.");
+        // alert("입력 양식을 다시 확인해주세요.");
         return;
       }
 
@@ -254,7 +247,7 @@ const OrderModifyPage = () => {
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 
       await axios.patch(`/api/orders/${ono}`, dataToSend); // PATCH 요청
-      alert("견적 정보가 성공적으로 수정되었습니다.");
+      // alert("견적 정보가 성공적으로 수정되었습니다.");
       navigate(`/request/read/${ono}`, { replace: true }); // 수정 후 상세 페이지로 이동 (history를 대체)
     } catch (err) {
       alert("견적 수정에 실패했습니다.");
@@ -279,6 +272,7 @@ const OrderModifyPage = () => {
         errors={errors}
         isSubmitting={isSubmitting}
       />
+      <div className='bottom-margin-setter'></div>
     </>
   );
 };

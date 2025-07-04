@@ -18,5 +18,5 @@ public class RequestReadDTO {
     private LocalDateTime rentalDate;
     private LocalDateTime oregdate;
     private String rentaltime;
-    private String ocontent; 
+    private String otitle; 
 }
