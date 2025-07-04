@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class BizController {
     private final BizService bizService;
 
     //등록
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
     public ResponseEntity<?> registerBiz(@RequestBody BizRegisterDTO dto) {
         return bizService.getLoggedInMember()
@@ -35,6 +37,7 @@ public class BizController {
                 }
     
         // 입찰 여부 체크 API
+        @PreAuthorize("isAuthenticated()")
         @GetMapping("/check/{ono}")
         public ResponseEntity<?> checkAlreadyBid(@PathVariable Long ono) {
             return bizService.getLoggedInMember()

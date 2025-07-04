@@ -4,7 +4,7 @@ import { API_SERVER_HOST } from "./common";
 const prefix = `${API_SERVER_HOST}`;
 
 export const getImageUrl = (path) => {
-  return `${prefix}/api/display?file=${path}`;
+  return `${prefix}/api/display?file=${encodeURIComponent(path)}`;
 };
 
 export const uploadImage = async (files) => {

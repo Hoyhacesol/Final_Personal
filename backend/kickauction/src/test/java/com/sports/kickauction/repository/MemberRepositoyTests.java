@@ -28,7 +28,7 @@ public class MemberRepositoyTests {
 @Transactional
 @Rollback(false)
 public void insertDummySellersWithIntro() {
-    for (int i = 16; i <= 40; i++) {
+    for (int i = 1; i <= 150; i++) {
         // 1. Member 생성
         Member member = Member.builder()
                 .userId("testuser" + i)

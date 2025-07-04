@@ -56,9 +56,10 @@ const OrderItem = ({ quote, type, onReviewClick }) => {
         <div className="text-sm text-gray-600">
           {quote.playType} | {quote.region || '지역 null'} | {displayDate} {quote.rentalTime || '시간 null'} | {quote.person ? `${quote.person}명` : '인원 null'}
         </div>
-        {type === 'active' && (
-          <div className={`text-sm mt-1 ${timeInfo.isUrgent ? 'text-red-600' : 'text-gray-600'}`}>
-            {timeInfo.timeLeftStr}
+        {/* type이 'active'이고, isUrgent가 true일 때만 마감 임박 문구를 표시하도록 수정 */}
+        {type === 'active' && timeInfo.isUrgent && (
+          <div className="text-red-600 text-sm mt-1">
+            마감 임박! {timeInfo.timeLeftStr} 남았어요!
           </div>
         )}
       </Link>

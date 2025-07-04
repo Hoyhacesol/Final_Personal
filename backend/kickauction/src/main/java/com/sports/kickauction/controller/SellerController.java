@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,6 +46,7 @@ public class SellerController {
         return sellerService.getSellerByMno(mno);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/register")
     public ResponseEntity<?> registerSeller(@RequestBody SellerRegisterDTO dto) {
     return sellerService.getLoggedInMember().map(member -> {
@@ -60,7 +62,7 @@ public class SellerController {
     }).orElse(ResponseEntity.status(401).build());
     }
 
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/registered")
     public ResponseEntity<Boolean> checkRegistered() {
     return sellerService.getLoggedInMember()
@@ -68,7 +70,7 @@ public class SellerController {
         .orElse(ResponseEntity.status(401).build());
     }
 
-   
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/register-info")
     public ResponseEntity<?> getSellerRegisterInfo() {
     Optional<Member> optionalMember = sellerService.getLoggedInMember();
@@ -86,7 +88,7 @@ public class SellerController {
     return ResponseEntity.ok(dto);
 }
 
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify-info")
     public ResponseEntity<?> getSellerModifyInfo() {
     return sellerService.getLoggedInMember()
@@ -106,7 +108,7 @@ public class SellerController {
     }
 
 
-
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/modify")
     public ResponseEntity<?> modifySeller(@RequestBody SellerModifyDTO dto) {
     return sellerService.getLoggedInMember()

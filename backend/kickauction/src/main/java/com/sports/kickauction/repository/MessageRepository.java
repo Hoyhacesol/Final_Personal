@@ -88,4 +88,8 @@ ORDER BY sub.last_sent_at DESC
     // 읽지 않은 메세지 총 개수 카운팅
     @Query("SELECT COUNT(m) FROM Message m WHERE m.receiver = :me AND m.isRead = false AND m.deletedByReceiver = false")
     long countUnreadByReceiver(@Param("me") Member me);
+
+    //주석: 탈퇴시 삭제처리
+    void deleteBysender_Mno(Long sender);
+    void deleteByReceiver_Mno(Long receiverMno);
 }

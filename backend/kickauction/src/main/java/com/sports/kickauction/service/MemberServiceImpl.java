@@ -7,7 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Seller;
+import com.sports.kickauction.repository.BizRepository;
 import com.sports.kickauction.repository.MemberRepository;
+import com.sports.kickauction.repository.MessageRepository;
+import com.sports.kickauction.repository.RequestRepository;
+import com.sports.kickauction.repository.ReviewRepository;
 import com.sports.kickauction.repository.SellerIntroRepository;
 import com.sports.kickauction.repository.SellerRepository;
 
@@ -21,6 +25,10 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final SellerRepository sellerRepository;
     private final SellerIntroRepository sellerIntroRepository;
+    private final RequestRepository requestRepository;
+    private final BizRepository bizRepository;
+    private final ReviewRepository reviewRepository;
+    private final MessageRepository messageRepository;
     private final PasswordEncoder passwordEncoder;
     
     @Override
@@ -189,10 +197,14 @@ public class MemberServiceImpl implements MemberService {
 
     Member member = optional.get();
 
-    // 1. SELLER,SELLER_INTRO, ORDER, BIZ, REVIEW 테이블 제거
+    // 1. SELLER,SELLER_INTRO, ORDER, BIZ, REVIEW, Message 레포에서 해당인원 제거
+    messageRepository.deleteBysender_Mno(mno);
+    messageRepository.deleteByReceiver_Mno(mno);
+    reviewRepository.deleteByMno(mno);
+    bizRepository.deleteBySeller_Mno(mno);
+    requestRepository.deleteByMno(mno);
     sellerIntroRepository.deleteByMno(mno);
     sellerRepository.deleteByMno(mno);
-    
     
      // 2. Member테이블 처리
     member.setUserId(null);

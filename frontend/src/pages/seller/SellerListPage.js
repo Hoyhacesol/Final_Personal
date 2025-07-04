@@ -61,7 +61,7 @@ const SellerListPage = () => {
   };
 
   useEffect(() => {
-    if (user?.role !== "SELLER") return;
+    if (!user || user.role !== "SELLER") return;
     const fetch_registration = async () => {
       const registered = await getSellerRegistered();
       setIsRegistered(registered);

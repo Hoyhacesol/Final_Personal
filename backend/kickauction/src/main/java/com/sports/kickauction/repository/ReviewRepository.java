@@ -12,6 +12,9 @@ import java.util.Optional;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    //주석: 탈퇴시 삭제처리
+    void deleteByMno(Long mno);
+
     // 1) 평균 평점 – r.mno 필드를 직접 사용
     @Query("SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.mno = :mno")
     Double findAvgRatingByMno(@Param("mno") Long mno);

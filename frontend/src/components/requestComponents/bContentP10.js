@@ -69,7 +69,7 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
         </div>
         {type === 'cancelled' && (
           <span className="text-gray-500 text-sm">
-            취소된 견적은 7일 후 삭제됩니다.
+            취소된 견적은 3일 후 삭제됩니다.
           </span>
         )}
         <ul className="space-y-2">

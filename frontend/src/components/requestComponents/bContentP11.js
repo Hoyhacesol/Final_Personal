@@ -102,11 +102,14 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               if (quote.finished) {
                 return <span style={{ color: 'red', fontWeight: 'bold' }}>마감되었어요</span>;
               }
-              return (
-                <span style={{ color: quote.isUrgent ? 'orange' : 'inherit' }}>
-                  진행중이에요 : {quote.timeLeftStr}
-                </span>
-              );
+              if (quote.isUrgent) {
+                return (
+                  <span style={{ color: '#DC2626', fontWeight: 'bold' }}>
+                    마감 임박! {quote.timeLeftStr} 남았어요!
+                  </span>
+                );
+              }
+              return <span>진행중이에요 : {quote.timeLeftStr}</span>;
             })()}
           </p>
           <div className="font-bold text-lg mt-1">{displayOtitle}</div>
@@ -118,7 +121,6 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
             <div>요청사항 : {displayOcontent}</div>
             <div>시간📆 : {displayDate} {displayTime}</div>
           </div>
-          {quote.isUrgent && ( <div className="text-red-600 text-sm mt-1">마감 임박! {quote.timeLeftStr} 남았어요!</div> )}
         </div>
 
         {/* 견적 제안 리스트 */}
@@ -175,7 +177,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               </button>
             )}
               <button onClick={handleDeleteClick} className="md-button">
-                삭제
+                취소
               </button>
               <button onClick={handleConfirmClick} className="confirm-button">
                 선택 업체 확정

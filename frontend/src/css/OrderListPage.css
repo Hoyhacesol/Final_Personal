@@ -202,6 +202,8 @@
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.25rem;
+  word-break: break-all;
+  white-space: normal;
 }
 
 .order-playtype,
@@ -324,8 +326,15 @@
   }
 
   .order-pagination {
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.15rem;
+    padding: 0.3rem 0;
+  }
+
+  .order-page-btn {
+    padding: 0.25rem 0.4rem;
+    font-size: 13px;
   }
 }
+  
+
 

@@ -177,8 +177,8 @@
 }
 
 .fixed_pagination {
-  position: relative;
-  bottom: 0;
+  position: absolute;
+  bottom: 50px;
   left: 0;
   width: 100%;
   text-align: center;
@@ -520,5 +520,12 @@
   .modal_body {
     padding: 16px;
     font-size: 14px;
+  }
+
+  .fixed_pagination {
+    position: relative;
+    padding-top: 70px;
+    margin-bottom: -50px;
+    z-index: 1;
   }
 }

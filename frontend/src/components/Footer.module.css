@@ -131,6 +131,19 @@
   }
 }
 
+@media (max-width: 750px) {
+.footer {
+          padding-bottom: 5rem;
+}
+
+  .footer_container .footer_column:nth-child(1),
+  .footer_container .footer_column:nth-child(2) {
+    display: none;
+  }
+}
+
+
+
 /* Mobile 반응형 */
 @media (max-width: 600px) {
   .footer_container {

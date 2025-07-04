@@ -6,6 +6,8 @@ import { putSellerUpdate, getSellerModifyInfo, getSellerRegistered } from "../..
 import { uploadImage, getImageUrl, removeImage, removeImageOnExit } from "../../api/UploadImageApi";
 import styles from "../../css/SellerModifyPage.module.css";
 
+const DEFAULT_IMAGE = "default/default.png";
+
 const SellerModifyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,7 +77,6 @@ const SellerModifyPage = () => {
       });
 
       originalPathsRef.current = info.simage || [];
-
       const urls = (info.simage || []).map(getImageUrl);
       setPreviewUrls({ main: urls[0] || null, intros: urls.slice(1) });
     };
@@ -102,6 +103,14 @@ const SellerModifyPage = () => {
       }
     };
   }, [location.pathname]);
+
+  const safeRemoveImage = async (path) => {
+    const isOriginal = originalPathsRef.current.includes(path);
+    if (!isOriginal && path !== DEFAULT_IMAGE) {
+      await removeImage(path);
+    }
+    deleteQueueRef.current = deleteQueueRef.current.filter(p => p !== path);
+  };
 
   if (loading || !user || !isRegistered) return null;
 
@@ -134,23 +143,32 @@ const SellerModifyPage = () => {
   };
 
   const handleIntroChange = async (e) => {
-    const files = Array.from(e.target.files);
-    const invalid = files.find(f => !f.type.startsWith("image/") || f.size > 10 * 1024 * 1024);
-    if (invalid) {
-      alert("유효한 이미지 파일을 선택해주세요.");
-      introInputRef.current.value = null;
-      return;
-    }
-    const uploaded = await uploadImage(files);
-    const paths = uploaded.map(u => u.path);
-    const urls = uploaded.map(u => u.url);
-    deleteQueueRef.current.push(...paths);
-    setFormData(prev => ({
-      ...prev,
-      simage: [prev.simage[0], ...prev.simage.slice(1), ...paths]
-    }));
-    setPreviewUrls(prev => ({ ...prev, intros: [...prev.intros, ...urls] }));
-  };
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  const invalid = files.find(f => !f.type.startsWith("image/") || f.size > 10 * 1024 * 1024);
+  if (invalid) {
+    alert("유효한 이미지 파일을 선택해주세요.");
+    introInputRef.current.value = null;
+    return;
+  }
+
+  const uploaded = await uploadImage(files);
+  const paths = uploaded.map(u => u.path);
+  const urls = uploaded.map(u => u.url);
+  deleteQueueRef.current.push(...paths);
+
+  setFormData(prev => ({
+    ...prev,
+    simage: [prev.simage[0], ...prev.simage.slice(1), ...paths]
+  }));
+  setPreviewUrls(prev => ({ ...prev, intros: [...prev.intros, ...urls] }));
+
+  
+  introInputRef.current.value = null;
+};
+
+
 
   const handleIntroRemove = async (index) => {
     const paths = [...formData.simage.slice(1)];
@@ -164,7 +182,7 @@ const SellerModifyPage = () => {
 
     const SLIDES_PER_VIEW = 3;
     const maxSlide = Math.max(0, urls.length - SLIDES_PER_VIEW);
-    setSlideIndex(prev => Math.min(prev, maxSlide));
+    setSlideIndex(prev => Math.max(0, Math.min(prev, maxSlide)));
       
     setFormData(prev => ({ ...prev, simage: [prev.simage[0], ...paths] }));
     setPreviewUrls(prev => ({ ...prev, intros: urls }));

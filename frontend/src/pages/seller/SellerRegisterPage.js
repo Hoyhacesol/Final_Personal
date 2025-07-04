@@ -13,7 +13,6 @@ import {
   removeImage
 } from "../../api/UploadImageApi";
 import styles from "../../css/SellerRegisterPage.module.css";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 

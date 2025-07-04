@@ -10,10 +10,7 @@ import "../../css/ListPage.css";
 function formatDisplayDate(isoString) {
   const d = new Date(isoString);
   const today = new Date();
-  const isToday =
-    d.getFullYear() === today.getFullYear() &&
-    d.getMonth() === today.getMonth() &&
-    d.getDate() === today.getDate();
+  const isToday = d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
 
   if (isToday) {
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -71,7 +68,7 @@ const ListPage = () => {
       })
       .catch((err) => {
         console.error("리스트 로드 실패:", err);
-        setServerData(prev => ({ ...prev, dtoList: [], pageNumList: [] }));
+        setServerData((prev) => ({ ...prev, dtoList: [], pageNumList: [] }));
       });
 
     // URL 동기화 및 스크롤 (page와 size만)
@@ -86,15 +83,18 @@ const ListPage = () => {
   }, [inputKeyword]);
 
   // 검색 타입 변경: 입력창이 비어있으면 기존 키워드도 초기화
-  const handleTypeChange = useCallback((e) => {
-    const newType = e.target.value;
-    setSearchType(newType);
-    if (!inputKeyword.trim()) {
-      setKeyword("");
-      setPage(1);
-      setSearchParams({ page: 1, size });
-    }
-  }, [inputKeyword, size, setSearchParams]);
+  const handleTypeChange = useCallback(
+    (e) => {
+      const newType = e.target.value;
+      setSearchType(newType);
+      if (!inputKeyword.trim()) {
+        setKeyword("");
+        setPage(1);
+        setSearchParams({ page: 1, size });
+      }
+    },
+    [inputKeyword, size, setSearchParams]
+  );
 
   // 페이지 변경 시 URL 동기화
   const onPageChange = useCallback((num) => {
@@ -125,12 +125,16 @@ const ListPage = () => {
             type="text"
             placeholder="게시글 검색..."
             value={inputKeyword}
-            onChange={e => setInputKeyword(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && handleSearch()}
+            onChange={(e) => setInputKeyword(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
-          <button type="button" className="btn" onClick={handleSearch}>🔍 검색</button>
+          <button type="button" className="btn" onClick={handleSearch}>
+            🔍 검색
+          </button>
         </div>
-        <div className="btn write_btn" onClick={handleClickWrite}>✏️ 글쓰기</div>
+        <div className="btn write_btn" onClick={handleClickWrite}>
+          ✏️ 글쓰기
+        </div>
       </div>
 
       <div className="board_table">
@@ -142,25 +146,15 @@ const ListPage = () => {
           <div>조회수</div>
         </div>
         {serverData.dtoList.length > 0 ? (
-          serverData.dtoList.map(item => (
-            <div
-              key={item.pno}
-              className="table_row"
-              onClick={() => navigate(`/community/read/${item.pno}?page=${page}&size=${size}`)}
-            >
+          serverData.dtoList.map((item) => (
+            <div key={item.pno} className="table_row" onClick={() => navigate(`/community/read/${item.pno}?page=${page}&size=${size}`)}>
               <div className="post_number">{item.pno}</div>
               <div className="post_title">
                 {item.ptitle}
-                {item.commentCount > 0 && (
-                  <span className="comment_count">[{item.commentCount}]</span>
-                )}
+                {item.commentCount > 0 && <span className="comment_count">[{item.commentCount}]</span>}
               </div>
-              <div className="post_meta hide_mobile">
-                {item.writerName || "탈퇴한사용자"}
-              </div>
-              <div className="post_meta hide_mobile">
-                {formatDisplayDate(item.pregdate)}
-              </div>
+              <div className="post_meta hide_mobile">{item.writerName || "(탈퇴한 사용자)"}</div>
+              <div className="post_meta hide_mobile">{formatDisplayDate(item.pregdate)}</div>
               <div className="post_meta">{item.view}</div>
             </div>
           ))

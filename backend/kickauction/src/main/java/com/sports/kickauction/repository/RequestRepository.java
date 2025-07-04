@@ -41,12 +41,15 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
            "(:finishedParam IS NULL OR r.finished = :finishedParam)")
     Page<Request> findByFinishedFilter(@Param("finishedParam") Integer finished, Pageable pageable);
 
-    // 진행 중인 order 중 가장 최신 1건
+    // 주석: 진행 중인 order 중 가장 최신 1건
     Optional<Request> findTopByMnoAndFinishedOrderByOregdateDesc(Long mno, int finished);
 
-    // 진행/완료 order
+    // 주석: 진행/완료 order
     int countByMnoAndFinished(Long mno, int finished); 
     int countByMnoAndFinishedNot(Long mno, int finished); 
     int countByMno(Long mno);
+
+    //주석: 탈퇴시 삭제처리
+      void deleteByMno(Long mno);
 
 }
