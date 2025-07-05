@@ -11,7 +11,7 @@ import "../css/MainPage.css";
 import { FaRunning, FaMapMarkerAlt, FaRegCalendarAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const bannerImages = ["img/banner1.png", "img/banner2.png", "img/banner3.jpg", "img/banner4.png", "img/banner5.png"];
+const bannerImages = ["img/banner1.png", "img/banner2.png", "img/banner3.png", "img/banner4.png"];
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -126,12 +126,6 @@ const MainPage = () => {
               </div>
             ))}
           </Slider>
-        </div>
-
-        <div className="main_news_cards">
-          <div className="news_card">🔥 축구용품 할인 이벤트 진행 중!</div>
-          <div className="news_card">📣 신규 대여 업체 등록 안내</div>
-          <div className="news_card">🆕 기능 업데이트 소식</div>
         </div>
       </section>
 
