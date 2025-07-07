@@ -139,7 +139,7 @@ export default function MessengerPanel({ targetUser, onClose }) {
   const handleSend = async () => {
     if (!input.trim() || !selectedRoom) return;
     if (selectedRoom.id === "bot") {
-      // 주석:챗봇의 경우
+      // 주석:C.B 
       const updatedBot = {
         ...selectedRoom,
         messages: [...selectedRoom.messages, { from: "me", text: input }],
@@ -147,7 +147,7 @@ export default function MessengerPanel({ targetUser, onClose }) {
       };
       setRoomList((rooms) => rooms.map((r) => (r.id === "bot" ? updatedBot : r)));
       setInput("");
-      // 챗봇 응답
+      // C.B 응답
       try {
         const userPrompt = input.trim();
 

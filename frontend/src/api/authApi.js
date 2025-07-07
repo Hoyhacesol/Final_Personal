@@ -10,12 +10,10 @@ export const checkAuth = async () => {
     });
     return response.data;
   } catch (err) {
-    // 401이면 null 리턴
+    // 401->return
     if (err.response?.status === 401) {
       return null;
     }
-    // 그 외 오류는 콘솔에 출력 (디버깅용)
-    console.error("checkAuth error:", err);
     throw err;
   }
 };

@@ -51,6 +51,7 @@
 }
 
 .orderlist_section h2 {
+  font-family: "PaperlogyMD";
   font-size: 2rem;
   font-weight: bold;
   border-left: 6px solid #15689a;
@@ -112,6 +113,7 @@
 }
 
 .community_section h2 {
+  font-family: "PaperlogyMD";
   font-size: 2rem;
   font-weight: bold;
   border-left: 6px solid #ff5e57;
@@ -165,6 +167,7 @@
 }
 
 .sellerlist_section h2 {
+  font-family: "PaperlogyMD";
   font-size: 2rem;
   font-weight: bold;
   border-left: 6px solid #28a745;

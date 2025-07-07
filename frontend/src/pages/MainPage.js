@@ -8,6 +8,7 @@ import { getImageUrl } from "../api/UploadImageApi";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../css/MainPage.css";
+import "../css/Sharesheet.css";
 import { FaRunning, FaMapMarkerAlt, FaRegCalendarAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 

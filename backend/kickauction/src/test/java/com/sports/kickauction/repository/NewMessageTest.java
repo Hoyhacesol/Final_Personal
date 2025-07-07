@@ -42,7 +42,7 @@ public class NewMessageTest {
             createMessage(member1, member2, "배고파",true, LocalDateTime.of(2025, 7, 1, 9, 45, 30)),
             createMessage(member2, member1, "ㄹㅇ", false,LocalDateTime.of(2025, 7, 1, 9, 49, 30)),
             createMessage(member2, member1, "ㅋㅋㅋㅋ", false,LocalDateTime.of(2025, 7, 1, 9, 49, 34)),
-            createMessage(member13, member1, "[킥옥션 자동발송]\n동행복권님이 \"7월 4일 4/4 실내풋살\"건에 대해 42,000원으로 새롭게 제안했어요.", false,LocalDateTime.of(2025, 7, 1, 12, 20, 18)),
+            createMessage(member13, member1, "[킥옥션 자동발송]\n래버리지20배율님이 \"7월 4일 4/4 실내풋살\"건에 대해 42,000원으로 새롭게 제안했어요.", false,LocalDateTime.of(2025, 7, 1, 12, 20, 18)),
             createMessage(member9, member1, "님아", false,LocalDateTime.of(2025, 7, 1, 14, 51, 34))
             
         );

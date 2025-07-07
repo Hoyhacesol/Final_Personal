@@ -25,12 +25,12 @@ public class MessageVerificationService {
         Message message = new Message();
         message.setFrom("01087772840");  // 발송자
         message.setTo(to);               // 수신자
-        message.setText(content);        // 메시지 
+        message.setText(content);        // 문자내용
 
         try {
-           messageService.send(message); //문자 수신 메서드
+           messageService.send(message); 
         } catch (Exception e) {
-            throw new RuntimeException("SMS 전송 실패: " + e.getMessage());
+            throw new RuntimeException("SMS 전송 실패함: " + e.getMessage());
         }
     }
 }

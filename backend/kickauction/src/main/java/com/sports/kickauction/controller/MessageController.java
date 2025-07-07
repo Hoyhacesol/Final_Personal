@@ -45,7 +45,7 @@ public class MessageController {
     private final MessageRepository messageRepository;
 
 
-    // 쪽지 보내기
+    // 채팅보내기
     @PostMapping
     @PreAuthorize("isAuthenticated()")
 

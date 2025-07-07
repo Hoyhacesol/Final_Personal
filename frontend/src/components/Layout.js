@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
 import Footer from "./Footer";
@@ -8,6 +9,7 @@ import { useAuth } from "../contexts/Authcontext";
 import MessengerPanelMobile from "./MessengerPanelMobile";
 
 const Layout = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 767px)" });
   const [chatOpen, setChatOpen] = useState(false);
   const [chatTarget, setChatTarget] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -27,10 +29,10 @@ const Layout = () => {
       }
     };
 
-    if (!chatOpen) {
+    if (!chatOpen && isMobile && user) {
       fetchUnreadCount();
     }
-  }, [chatOpen]);
+  }, [chatOpen, isMobile, user]);
 
   // 주석: Chatting.js 눌렀을댸 채티방열기
   const openMessengerWithUser = (user) => {

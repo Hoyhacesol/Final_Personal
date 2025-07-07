@@ -13,8 +13,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 2.5rem;
-  background-color: white;
-  border-bottom: 1px solid #eee;
+  background-color: #2f5b5f;
   min-width: 1300px;
   z-index: 1000; /* nav 겹쳐서 인덱스 올림*/
 }
@@ -45,7 +44,7 @@ body {
 .nav_menu li a {
   position: relative;
   text-decoration: none;
-  color: black;
+  color: white;
   padding-bottom: 6px;
   font-family: "NotoSansSB";
   font-size: 1.22rem;

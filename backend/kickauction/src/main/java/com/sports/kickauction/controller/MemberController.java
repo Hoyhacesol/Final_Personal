@@ -53,6 +53,14 @@ public class MemberController {
             return ResponseEntity.ok(Map.of("exists", exists));
         }
 
+    // 전화번호 존재 여부 확인 (아이디 찾기용)
+    @GetMapping("/phone_check")
+    public ResponseEntity<?> checkPhoneExists(@RequestParam String phone) {
+        Member member = memberService.findByPhone(phone); 
+        boolean exists = (member != null);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
     // 매핑:이메일-전화번호 동시 체크
     @GetMapping("/emaillink_check")
     public ResponseEntity<?> checkEmailPhoneMatch(@RequestParam String email, @RequestParam String phone) {
