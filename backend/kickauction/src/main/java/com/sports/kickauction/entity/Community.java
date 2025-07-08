@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "POST")
@@ -14,6 +16,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@BatchSize(size = 20) //쿼리 사이즈를 줄여서 n + 1 문제를 해결
 public class Community {
     /** 글ID (pno) */
     @Id
@@ -72,4 +75,8 @@ public class Community {
     public void changePimage(String pimage) {
         this.pimage = pimage;
     }
+
+    // n + 1 문제 해결을 위해
+    @Formula("(SELECT COUNT(*) FROM COMMENT cm WHERE cm.pno = pno)")
+    private Long commentCount;
 }

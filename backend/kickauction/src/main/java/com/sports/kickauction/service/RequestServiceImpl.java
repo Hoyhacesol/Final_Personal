@@ -32,6 +32,7 @@ import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Request;
 import com.sports.kickauction.entity.Seller;
 import com.sports.kickauction.entity.SellerIntro;
+import com.sports.kickauction.repository.MemberRepository;
 import com.sports.kickauction.repository.BizRepository;
 import com.sports.kickauction.repository.RequestRepository;
 import com.sports.kickauction.repository.ReviewRepository;
@@ -54,70 +55,74 @@ public class RequestServiceImpl implements RequestService {
     private SellerIntroRepository sellerIntroRepository;
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
 
 
 
     @Override
     public RequestDTO getOrderDetails(int ono) {
-        Optional<Request> orderOptional = requestRepository.findById(ono);  
-        Request order = orderOptional.orElse(null);  
+        // 1. 견적(Request) 정보 조회. 없으면 예외 발생.
+        Request order = requestRepository.findById(ono)
+                .orElseThrow(() -> new EntityNotFoundException("견적 정보를 찾을 수 없습니다. ID: " + ono));
 
-        if (order != null) {
-            RequestDTO dto = RequestDTO.builder()
-                .ono(order.getOno())
-                .mno(order.getMno())
-                .otitle(order.getOtitle())
-                .playType(order.getPlayType())
-                .olocation(order.getOlocation())
-                .rentalDate(order.getRentalDate())
-                .rentalTime(order.getRentalTime())
-                .person(order.getPerson())
-                .rentalEquipment(order.getRentalEquipment())
-                .ocontent(order.getOcontent())
-                .oregdate(order.getOregdate())
-                .finished(order.getFinished())
+        // 2. 작성자(Member) 정보 조회. 없으면 예외 발생.
+        Member writer = memberRepository.findById(Long.valueOf(order.getMno()))
+                .orElseThrow(() -> new EntityNotFoundException("작성자 정보를 찾을 수 없습니다. ID: " + order.getMno()));
+
+        // 3. DTO 빌드
+        RequestDTO dto = RequestDTO.builder()
+            .ono(order.getOno())
+            .mno(order.getMno())
+            .writerNickname(writer.getUserName()) // 닉네임 설정
+            .otitle(order.getOtitle())
+            .playType(order.getPlayType())
+            .olocation(order.getOlocation())
+            .rentalDate(order.getRentalDate())
+            .rentalTime(order.getRentalTime())
+            .person(order.getPerson())
+            .rentalEquipment(order.getRentalEquipment())
+            .ocontent(order.getOcontent())
+            .oregdate(order.getOregdate())
+            .finished(order.getFinished())
+            .build();
+
+        // 4. 제안한 업체(Biz) 목록 조회 및 DTO에 추가
+        //isDeleted()는 가져오지않음
+        List<Biz> bizList = bizRepository.findByRequest_Ono(ono).stream()
+        .filter(b -> !b.isDeleted())
+        .collect(Collectors.toList());
+        log.info("bizList: " + bizList);
+        List<RequestProposalResDTO> companies = bizList.stream().map(biz -> {
+            Seller bizSeller = biz.getSeller();
+            // Member member = bizSeller.getMember(); // 이 변수는 사용되지 않습니다.
+            BizRegisterDTO bizDTO = BizRegisterDTO.builder()
+                .ono(biz.getRequest().getOno())
+                .price(biz.getPrice())
+                .bcontent(biz.getBcontent())
+                .banswer(biz.getBanswer())
                 .build();
 
-                List<Biz> bizList = bizRepository.findByRequest_Ono(ono);
-                log.info("bizList: " + bizList);
-                List<RequestProposalResDTO> companies = bizList.stream().map(biz -> {
-                    Seller bizSeller = biz.getSeller();
-                    Member member = bizSeller.getMember();
-                BizRegisterDTO bizDTO = BizRegisterDTO.builder()
-                    .ono(biz.getRequest().getOno())
-                    .price(biz.getPrice())
-                    .bcontent(biz.getBcontent())
-                    .banswer(biz.getBanswer())
-                    .build();
+            Long mno = biz.getSeller().getMno();
+            SellerIntro intro = sellerIntroRepository.findById(mno)
+                .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
+            Seller seller = intro.getSeller();
+            SellerReadDTO sellerDTO = SellerReadDTO.builder()
+                .mno(seller.getMno())
+                .sname(seller.getSname())
+                .slocation(seller.getSlocation())
+                .hiredCount(intro.getHiredCount())
+                .build();
 
-                Long mno = biz.getSeller().getMno();
-                SellerIntro intro = sellerIntroRepository.findById(mno)
-                    .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
-                Seller seller = intro.getSeller();
-                SellerReadDTO sellerDTO = SellerReadDTO.builder()
-                    .mno(seller.getMno())
-                    .sname(seller.getSname())
-                    .slocation(seller.getSlocation())
-                    // .introContent(intro.getIntroContent())
-                    // .simage(simageList.toArray(new String[0]))
-                    .hiredCount(intro.getHiredCount())
-                    // .info(intro.getInfo())
-                    // .phone(Optional.ofNullable(seller.getMember())
-                    // .map(Member::getPhone)
-                    // .orElse("정보 없음"))
-                    .build();
-
-                return RequestProposalResDTO.builder()
-                    .biz(bizDTO)
-                    .seller(sellerDTO)
-                    .build();
-            }).collect(Collectors.toList());
-            dto.getAttributes().put("companies", companies);
-            
-            return dto;
-        }
-        return null;
+            return RequestProposalResDTO.builder()
+                .biz(bizDTO)
+                .seller(sellerDTO)
+                .build();
+        }).collect(Collectors.toList());
+        dto.getAttributes().put("companies", companies);
+        
+        return dto;
     }
 
     @Override

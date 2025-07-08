@@ -8,3 +8,4 @@ public class ReviewDTO {
     private Integer rating;
     private String rcontent;
 }
+    

@@ -4,7 +4,11 @@ import { API_SERVER_HOST } from "./common";
 const prefix = `${API_SERVER_HOST}`;
 
 export const getImageUrl = (path) => {
-  return `${prefix}/api/display?file=${encodeURIComponent(path)}`;
+  if (!path) return "";
+
+  // 중복된 upload/ 제거
+  const cleaned = path.startsWith("upload/") ? path.slice(7) : path;
+  return `${prefix}/api/display?file=${encodeURIComponent(cleaned)}`;
 };
 
 export const uploadImage = async (files) => {

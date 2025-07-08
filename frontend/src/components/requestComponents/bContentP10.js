@@ -6,10 +6,9 @@ import ReviewModModal from '../../components/requestComponents/ReviewModModal';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'; // 스크롤 방지 훅 임포트
 import OrderItem from './bTimerComponent';
 import { postReview, getReview, updateReview } from "../../api/reviewApi";
-import "./requestDebugStyle.css";
 import { FaPencilAlt } from 'react-icons/fa';
 
-const List = ({ title, quotes, type, onReviewUpdate }) => {
+const List = ({ title, quotes, type, onReviewUpdate, onFinish }) => {
   const navigate = useNavigate();
   // const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedQuote, setSelectedQuote] = useState(null);
@@ -80,6 +79,7 @@ const List = ({ title, quotes, type, onReviewUpdate }) => {
                 quote={quote}
                 type={type}
                 onReviewClick={handleReviewClick}
+                onFinish={onFinish}
               />
             ))
           ) : (

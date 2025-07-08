@@ -69,7 +69,7 @@ public class CommunityServiceImpl implements CommunityService {
                 Path filePath = uploadPath.resolve(filename);
                 pimageFile.transferTo(filePath.toFile());
 
-                dto.setPimage("/images/" + filename);
+                dto.setPimage("/images/community/" + filename);
             } catch (IOException e) {
                 e.printStackTrace(); // 스택트레이스 찍어보고
                 throw new RuntimeException("이미지 저장 실패: " + e.getMessage(), e);
@@ -149,7 +149,7 @@ public class CommunityServiceImpl implements CommunityService {
                 pimageFile.transferTo(filePath.toFile());
 
                 // 엔티티에 새 경로 반영
-                community.changePimage("/images/" + filename);
+                community.changePimage("/images/community/" + filename);
             } catch (IOException e) {
                 log.error("새 이미지 저장 실패", e);
                 throw new RuntimeException("이미지 저장 실패: " + e.getMessage(), e);

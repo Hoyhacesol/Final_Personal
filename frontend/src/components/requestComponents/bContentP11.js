@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useAuth } from "../../contexts/Authcontext";
+import { deleteBiz,checkBizModifiable,checkDeletedBid } from "../../api/BizApi";
+
+
 import axios from "axios";
 import { FaArrowLeft } from 'react-icons/fa';
 
-import "./requestDebugStyle.css";
 
 
 
 // 견적 상세보기
-const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onCompanyInfoClick }) => {
+const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onCompanyInfoClick,  onBidDeleted, }) => {
   const navigate = useNavigate();
   const { ono } = useParams(); // URL 파라미터 (견적 ID)
+  const { user } = useAuth(); 
+  
   const [selectedCompanyId, setSelectedCompanyId] = useState(null);
 
 // null 대비 매핑
@@ -99,7 +104,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               if (quote.finished === 11) {
                 return <span style={{ color: 'green', fontWeight: 'bold' }}>확정을 완료했어요</span>;
               }
-              if (quote.finished) {
+              if (quote.finished === 1) {
                 return <span style={{ color: 'red', fontWeight: 'bold' }}>마감되었어요</span>;
               }
               if (quote.isUrgent) {
@@ -113,13 +118,14 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
             })()}
           </p>
           <div className="font-bold text-lg mt-1">{displayOtitle}</div>
+          <div className="text-sm text-gray-500">작성자: {quote.writerNickname || '정보 없음'}</div>
           <div className="flex justify-between items-center text-sm text-gray-500 mt-1">
-            <div>종목 : {quote.playType}</div>
-            <div>지역📍 : {displayRegion}</div>
-            <div>인원 : {displayPerson}</div>
-            <div>대여 장비 목록 : {displayRentalEquipment}</div>
-            <div>요청사항 : {displayOcontent}</div>
-            <div>시간📆 : {displayDate} {displayTime}</div>
+            <div>🏃‍♂️종목 : {quote.playType}</div>
+            <div>📍지역 : {displayRegion}</div>
+            <div>👥인원 : {displayPerson}</div>
+            <div>📃대여 장비 목록 : {displayRentalEquipment}</div>
+            <div>💡요청사항 : {displayOcontent}</div>
+            <div>📆시간 : {displayDate} {displayTime}</div>
           </div>
         </div>
 
@@ -184,23 +190,70 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
               </button>
           </div>
         )}
-        {!isOwner && isSeller && !(quote.finished===11) && (
-          hasSellerBid ? (
-            <div className="flex justify-between mt-6 rq-button-group">
-              <button  className="md-button">수정</button>
-              <button  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button">포기</button>
-            </div>
-          ) : (
-            <div className="mt-6">
-            <Link
-              to={`/request/${ono}/bizregister`}
-              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
-            >
-              입찰하기
-            </Link>
-          </div>
-          )
-        )}
+        
+
+        {!isOwner && isSeller && quote.finished !== 11 && (
+  hasSellerBid ? (
+    selectedCompanyId === user?.mno ? (
+      <div className="flex justify-between mt-6 rq-button-group">
+        <button
+          className="md-button"
+          onClick={async () => {
+            try {
+              await checkBizModifiable(ono);
+              navigate(`/request/${ono}/bizmodify`);
+            } catch (err) {
+              const msg = err?.response?.data || "입찰 수정이 불가합니다.";
+              alert(msg);
+            }
+          }}
+        >
+          수정
+        </button>
+        <button
+          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button"
+          onClick={async () => {
+            const confirmed = window.confirm("정말로 입찰을 포기하시겠습니까?\n삭제 후에는 복구할 수 없습니다.");
+            if (!confirmed) return;
+
+            try {
+              await deleteBiz(ono);
+              alert("입찰이 포기되었습니다.");
+              onBidDeleted(user?.mno);
+            } catch (err) {
+              const msg = err?.response?.data || "입찰 삭제 중 오류가 발생했습니다.";
+              alert(msg);
+            }
+          }}
+        >
+          포기
+        </button>
+      </div>
+    ) : null
+  ) : (
+    <div className="mt-6 rq-button-group">
+      <button
+        onClick={async (e) => {
+          e.preventDefault();
+          try {
+            const deleted = await checkDeletedBid(ono);
+            if (deleted) {
+              alert("이전에 입찰을 포기하셨기 때문에 재입찰할 수 없습니다.");
+              return;
+            }
+            navigate(`/request/${ono}/bizregister`);
+          } catch (err) {
+            console.error(err);
+            alert("입찰 가능 여부 확인 중 오류가 발생했습니다.");
+          }
+        }}
+        className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 confirm-button block text-center"
+      >
+        입찰하기
+      </button>
+    </div>
+  )
+)}
       </div>
     </div>
   );

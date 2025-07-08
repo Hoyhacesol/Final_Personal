@@ -130,7 +130,7 @@ const HelpPage = () => {
               className="faq_question"
               onClick={() => toggleExpand(item.faqId)}
             >
-              <span>{item.question}</span>
+              <span className="faq_text">{item.question}</span>
               <span className="arrow">
                 {expandedIds.has(item.faqId) ? "▲" : "▼"}
               </span>

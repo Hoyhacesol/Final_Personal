@@ -77,6 +77,7 @@ public class RequestController {
             responseMap.put("ono", order.getOno());
             responseMap.put("mno", order.getMno());
             responseMap.put("otitle", order.getOtitle());
+            responseMap.put("writerNickname", order.getWriterNickname()); // 작성자 닉네임 추가
             responseMap.put("playType", order.getPlayType());
             responseMap.put("region", order.getOlocation()); // "olocation"을 "region"으로 매핑
 

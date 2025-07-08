@@ -31,10 +31,11 @@ public class RequestDTO {
     private String ocontent;
     private LocalDateTime oregdate;
     private int finished;
-
-
+    
+    
     private boolean hasReview; // 리뷰 여부(DB와 무관)
-
+    private String writerNickname;
+    
     @Builder.Default
     private Map<String, Object> extraAttributes = new HashMap<>();
 

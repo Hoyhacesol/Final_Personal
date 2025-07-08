@@ -24,7 +24,7 @@ public class RequestCleanupScheduler {
         LocalDateTime now = LocalDateTime.now();
         List<Request> expired = requestRepository.findByFinishedAndOregdateBefore(2, now);
         if (!expired.isEmpty()) {
-            requestRepository.deleteAll(expired); // deleteAll을 사용해야 Cascade가 정상 동작합니다.
+            requestRepository.deleteAll(expired); // deleteAll을 사용해야 Cascade가 정상 동작
             log.info("삭제된 만료 취소 견적 수: {}", expired.size());
         } else {
             log.info("삭제할 만료 취소 견적 없음.");

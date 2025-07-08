@@ -1,5 +1,6 @@
 package com.sports.kickauction.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,5 +47,9 @@ public class Biz extends BaseEntity {
   private String bcontent;
 
   private String banswer;
+
+  
+  @Column(name = "deleted", nullable = false)
+  private boolean deleted;
 }
 

@@ -12,6 +12,7 @@ import {
   removeImageOnExit,
   removeImage
 } from "../../api/UploadImageApi";
+import "../../css/Sharesheet.css"
 import styles from "../../css/SellerRegisterPage.module.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -352,7 +353,17 @@ const isFormValid = formData.info.trim() && formData.introContent.trim();
       </div>
       <input type="file" hidden ref={introInputRef} onChange={handleIntroChange} multiple accept="image/*" />
       <h2 className={styles["info_title"]}>업체 정보</h2>
-      <input name="info" className={styles["input_field"]} placeholder="업체 정보를 작성해주세요!" autoComplete="off" maxLength={255} value={formData.info} onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))} />
+      <input name="info" 
+        className={styles["input_field"]} 
+        placeholder="업체 정보를 작성해주세요!" 
+        autoComplete="off" 
+        maxLength={255} 
+        value={formData.info} 
+        onChange={(e) => setFormData((prev) => ({ ...prev, info: e.target.value }))} 
+        onDrop={(e) => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
+        />
+        
       <h2 className={styles["content_title"]}>업체 소개</h2>
       <textarea
         name="introContent"
@@ -360,6 +371,8 @@ const isFormValid = formData.info.trim() && formData.introContent.trim();
         placeholder="업체소개 글을 작성해주세요!"
         maxLength={255}
         value={formData.introContent}
+        onDrop={(e) => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
         onChange={(e) => setFormData((prev) => ({ ...prev, introContent: e.target.value }))}
       />
 

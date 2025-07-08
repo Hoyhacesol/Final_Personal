@@ -7,6 +7,7 @@ import {
   FaRunning, FaMapMarkerAlt, FaRegCalendarAlt, FaChevronDown, FaChevronUp,
 } from "react-icons/fa";
 import titleImage from "../../assets/img/title.png";
+import "../../css/Sharesheet.css"
 import "../../css/OrderListPage.css";
 
 function OrderListPage() {

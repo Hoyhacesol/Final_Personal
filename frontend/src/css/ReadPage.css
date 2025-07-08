@@ -1,3 +1,10 @@
+#read_Page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
 .btn_box {
     display: flex;
     justify-content: space-between;
@@ -26,14 +33,14 @@
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(23, 113, 167, 0.3);
+    box-shadow: 0 8px 20px rgba(23, 113, 167, 0.3);
 }
 
 .read_container {
     background: white;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 40px rgba(12, 61, 90, 0.1);
+    box-shadow: 0 10px 20px rgba(12, 61, 90, 0.1);
     margin-bottom: 2rem;
 }
 
@@ -186,7 +193,7 @@
 .comments_section {
     background: white;
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(12, 61, 90, 0.1);
+    box-shadow: 0 10px 20px rgba(12, 61, 90, 0.1);
     margin-bottom: 2rem;
 }
 

@@ -3,13 +3,13 @@
 #mainPage {
   max-width: 100%;
   max-width: 1200px;
-  overflow-x: visible;
   margin: 0 auto;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* 배너 섹션 */
@@ -24,7 +24,7 @@
 .main_banner_slider {
   width: 100%;
   aspect-ratio: 16 / 9;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
 }
 .banner_section .banner_item,
@@ -428,6 +428,11 @@
   .community_list .community_item:nth-child(5) {
     display: none;
   }
+   .orderlist_section .slick-list .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -456,6 +461,11 @@
   .community_list .community_item:nth-child(4),
   .community_list .community_item:nth-child(5) {
     display: none;
+  }
+   .orderlist_section .slick-list .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
@@ -491,5 +501,11 @@
 
   .orderlist_simple {
     justify-content: center;
+  }
+
+  .orderlist_section .slick-list .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

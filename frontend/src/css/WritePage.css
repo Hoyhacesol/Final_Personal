@@ -1,7 +1,8 @@
-#writeComponent {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
+#write_page, #modify_Page {
+ max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-x: hidden;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -16,7 +17,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .write_header h2 {
@@ -44,14 +45,14 @@
 
 .write_header button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(23, 113, 167, 0.3);
+    box-shadow: 0 8px 20px rgba(23, 113, 167, 0.3);
 }
 
 .write_content {
   background: white;
   border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
 }

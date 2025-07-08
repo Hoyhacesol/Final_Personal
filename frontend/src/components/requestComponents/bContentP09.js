@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 // 오류 발생시 참고 -> tailwind처럼 처음 사용시 npm install react-datepicker & date-fns 두개 필요***
 import DatePicker from "react-datepicker"; 
 import "react-datepicker/dist/react-datepicker.css";
-import "./requestDebugStyle.css";
 
 const formFields = {
   left: [

@@ -14,6 +14,7 @@ const OrderReadPage = lazy(() => import("../pages/request/OrderReadPage"))
 const OrderCreatePage = lazy(() => import("../pages/request/OrderCreatePage"))
 const OrderModifyPage = lazy(() => import("../pages/request/OrderModifyPage"))
 const BizRegisterPage = lazy(() => import("../pages/biz/BizRegisterPage"))
+const BizModifyPage = lazy(() => import("../pages/biz/BizModifyPage"))
 
     return [
         {   
@@ -33,6 +34,9 @@ const BizRegisterPage = lazy(() => import("../pages/biz/BizRegisterPage"))
         },
         {
             path: ":ono/bizregister",element: <Suspense fallback={Loading}><BizRegisterPage /></Suspense>
+        },
+        {
+            path: ":ono/bizmodify",element: <Suspense fallback={Loading}><BizModifyPage /></Suspense>
         }
     ]
 }

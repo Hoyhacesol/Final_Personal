@@ -175,7 +175,7 @@ public class CommunityRepositoryTests {
 
         CommunityDTO dto18 = CommunityDTO.builder()
                 .mno(6L)
-                .ptitle("제가 가장 좋아하는 풋살장은 OO 구장입니다")
+                .ptitle("제가 가장 좋아하는 풋살장은 관악구 구장입니다")
                 .pcontent("가격도 저렴하고 바닥 상태가 좋아서 추천합니다.")
                 .view(44)
                 .pimage(null)

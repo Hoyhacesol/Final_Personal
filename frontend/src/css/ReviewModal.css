@@ -19,6 +19,12 @@
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
+.rm_content h3 {
+    font-family: "PaperlogyMD";
+    margin-bottom: 5px;
+    font-size: 2rem;
+
+}
 
 .rm_stars {
     display: flex;

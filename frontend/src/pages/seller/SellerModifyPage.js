@@ -4,6 +4,7 @@ import { FaSearchLocation } from "react-icons/fa";
 import { useAuth } from "../../contexts/Authcontext";
 import { putSellerUpdate, getSellerModifyInfo, getSellerRegistered } from "../../api/SellerApi";
 import { uploadImage, getImageUrl, removeImage, removeImageOnExit } from "../../api/UploadImageApi";
+import "../../css/Sharesheet.css"
 import styles from "../../css/SellerModifyPage.module.css";
 
 const DEFAULT_IMAGE = "default/default.png";
@@ -278,6 +279,8 @@ const SellerModifyPage = () => {
       maxLength={20}
       autoComplete="off"
       value={basicInfo.sname}
+      onDrop={(e) => e.preventDefault()}
+      onDragOver={(e) => e.preventDefault()}
       onChange={(e) => setBasicInfo(prev => ({ ...prev, sname: e.target.value }))}
     />
   </div>
@@ -382,6 +385,8 @@ const SellerModifyPage = () => {
         placeholder="업체 정보를 작성해주세요!"
         maxLength={255}
         value={formData.info}
+        onDrop={(e) => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
         onChange={e => setFormData(prev => ({ ...prev, info: e.target.value }))}
       />
       <h2 className={styles["content_title"]}>업체 소개</h2>
@@ -391,6 +396,8 @@ const SellerModifyPage = () => {
         placeholder="업체소개 글을 작성해주세요!"
         maxLength={255}
         value={formData.introContent}
+        onDrop={(e) => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
         onChange={e => setFormData(prev => ({ ...prev, introContent: e.target.value }))}
       />
       <button

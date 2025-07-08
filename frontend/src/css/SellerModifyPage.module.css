@@ -53,6 +53,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  font-family: "PaperlogyMD";
 }
 
 .button_blue:hover {
@@ -67,6 +68,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  font-family: "PaperlogyMD";
 }
 
 .button_red:hover{
@@ -86,6 +88,7 @@
   margin-bottom: 0.25rem;
   font-size: 0.95rem;
   color: #444;
+  font-family: "PaperlogyMD";
 }
 
 .basic_info_form input {
@@ -225,6 +228,7 @@ textarea {
   border-bottom: 1px solid #eaeaea;
   padding-bottom: 0.3rem;
   font-weight: bold;
+  font-family: "PaperlogyMD";
 }
 
 /* 등록 버튼 */
@@ -239,6 +243,7 @@ textarea {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  font-family: "PaperlogyMD";
 }
 
 .disabled_button {

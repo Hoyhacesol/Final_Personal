@@ -8,6 +8,7 @@ import {
   FaRunning, FaMapMarkerAlt, FaToolbox, FaRegCalendarAlt,FaUsers,FaAlignLeft
 } from "react-icons/fa";
 import titleImage from "../../assets/img/title.png";
+import "../../css/Sharesheet.css"
 import "../../css/BizRegisterPage.css";
 
 const BizRegisterPage = () => {
@@ -113,6 +114,7 @@ if (loading || !isAllowed) return null; // 조건 만족 전엔 렌더링 안함
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
 
     const payload = {
       ono: parseInt(ono, 10),

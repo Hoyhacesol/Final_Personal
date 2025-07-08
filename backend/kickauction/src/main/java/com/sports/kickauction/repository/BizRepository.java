@@ -1,6 +1,7 @@
 package com.sports.kickauction.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +33,15 @@ public interface BizRepository extends JpaRepository<Biz, Long> {
 
     // 입찰 여부 확인
     boolean existsByRequest_OnoAndSeller_Mno(int ono, Long mno);
+
+    //입찰 삭제
+    Optional<Biz> findBySeller_MnoAndRequest_Ono(Long mno, Long ono);
+
+    //입찰 수정
+    Optional<Biz> findBySeller_MnoAndRequest_Ono(Long mno, int ono);
+
+    // 삭제 이력 확인용
+    boolean existsByRequest_OnoAndSeller_MnoAndDeletedTrue(int ono, Long mno);
+    
+
 }

@@ -2,7 +2,6 @@ package com.sports.kickauction.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -10,8 +9,6 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,7 +26,6 @@ import com.sports.kickauction.entity.Member;
 import com.sports.kickauction.entity.Request;
 import com.sports.kickauction.repository.BizRepository;
 import com.sports.kickauction.repository.RequestRepository;
-import com.sports.kickauction.service.MemberDetails;
 import com.sports.kickauction.service.MemberService;
 import com.sports.kickauction.service.SellerService;
 

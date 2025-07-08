@@ -313,7 +313,7 @@ const MyPage = () => {
                   <button className={styles.comp_info_button}>업체정보 수정</button>
                 </Link>
               ) : (
-                <Link to="/sellerList/register">
+                <Link to="/sellerlist/register">
                   <button className={styles.comp_info_button}>업체정보 등록</button>
                 </Link>
               )}

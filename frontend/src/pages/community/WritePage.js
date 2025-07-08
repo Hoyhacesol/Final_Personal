@@ -20,7 +20,7 @@ const WritePage = () => {
   useEffect(() => {
     if (!user) {
       if (window.confirm("글 작성을 위해 로그인해야 합니다. 로그인 페이지로 이동할까요?")) {
-         navigate("/login", { state: { from: "/community/write" } });
+        navigate("/login", { state: { from: "/community/write" } });
       } else {
         moveToList();
       }
@@ -94,6 +94,13 @@ const WritePage = () => {
             accept="image/*"
             onChange={handleFileChange}
           />
+          {community.pimage && (
+            <img
+              src={URL.createObjectURL(community.pimage)}
+              alt="이미지 미리보기"
+              style={{ width: "200px", marginTop: "1rem" }}
+            />
+          )}
         </div>
         <div>
           <label htmlFor="pcontent">내용</label>
