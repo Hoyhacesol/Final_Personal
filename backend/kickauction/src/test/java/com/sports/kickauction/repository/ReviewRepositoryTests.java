@@ -21,7 +21,7 @@ public class ReviewRepositoryTests {
     public void insert10Reviews() {
         Review r1 = Review.builder()
                 .ono(1L)
-                .mno(2L)
+                .mno(12L)
                 .rating(5)
                 .rcontent("장비 상태가 정말 좋았어요. 다음에도 또 이용하겠습니다!")
                 .build();
@@ -30,7 +30,7 @@ public class ReviewRepositoryTests {
 
         Review r2 = Review.builder()
                 .ono(2L)
-                .mno(3L)
+                .mno(13L)
                 .rating(4)
                 .rcontent("친절한 응대에 만족합니다만, 배달이 조금 늦었어요.")
                 .build();
@@ -39,7 +39,7 @@ public class ReviewRepositoryTests {
 
         Review r3 = Review.builder()
                 .ono(3L)
-                .mno(1L)
+                .mno(11L)
                 .rating(3)
                 .rcontent("가격은 괜찮은데 장비에 스크래치가 좀 있었네요.")
                 .build();
@@ -48,7 +48,7 @@ public class ReviewRepositoryTests {
 
         Review r4 = Review.builder()
                 .ono(4L)
-                .mno(5L)
+                .mno(15L)
                 .rating(5)
                 .rcontent("예약부터 반납까지 전 과정이 매끄러웠습니다.")
                 .build();
@@ -57,7 +57,7 @@ public class ReviewRepositoryTests {
 
         Review r5 = Review.builder()
                 .ono(5L)
-                .mno(4L)
+                .mno(14L)
                 .rating(2)
                 .rcontent("공기압이 너무 낮아서 직접 보충해야 했어요.")
                 .build();
@@ -66,7 +66,7 @@ public class ReviewRepositoryTests {
 
         Review r6 = Review.builder()
                 .ono(6L)
-                .mno(2L)
+                .mno(12L)
                 .rating(4)
                 .rcontent("대여료 대비 장비 품질이 좋았습니다.")
                 .build();
@@ -75,7 +75,7 @@ public class ReviewRepositoryTests {
 
         Review r7 = Review.builder()
                 .ono(7L)
-                .mno(3L)
+                .mno(13L)
                 .rating(5)
                 .rcontent("친구들과 재미있게 잘 사용했어요!")
                 .build();
@@ -84,7 +84,7 @@ public class ReviewRepositoryTests {
 
         Review r8 = Review.builder()
                 .ono(8L)
-                .mno(6L)
+                .mno(16L)
                 .rating(3)
                 .rcontent("사이트 UI는 좋지만 결제 과정에서 오류가 있었어요.")
                 .build();
@@ -93,7 +93,7 @@ public class ReviewRepositoryTests {
 
         Review r9 = Review.builder()
                 .ono(9L)
-                .mno(7L)
+                .mno(17L)
                 .rating(4)
                 .rcontent("장비 수거가 빨라서 일정 관리하기 편했어요.")
                 .build();
@@ -102,7 +102,7 @@ public class ReviewRepositoryTests {
 
         Review r10 = Review.builder()
                 .ono(10L)
-                .mno(8L)
+                .mno(18L)
                 .rating(5)
                 .rcontent("전체적으로 완벽했습니다. 강력 추천합니다!")
                 .build();

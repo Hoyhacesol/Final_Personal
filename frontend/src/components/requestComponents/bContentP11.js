@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/Authcontext";
 import { deleteBiz,checkBizModifiable,checkDeletedBid } from "../../api/BizApi";
-
-
-import axios from "axios";
+import { deleteOrder, confirmCompanySelection } from "../../api/orderApi";
 import { FaArrowLeft } from 'react-icons/fa';
-
 
 
 
@@ -42,7 +39,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
     navigate(`/request/modify/${ono}`);
   };
   const handleDeleteClick = () => {
-    axios.patch(`/api/orders/delete/${ono}`, { ono })
+    deleteOrder(ono)
     .then(res => console.log(res.data))
     .catch(err => console.error(err));
     navigate(`/request/list`);
@@ -66,9 +63,7 @@ const BContentP11 = ({ quote, companies, isOwner, isSeller, hasSellerBid, onComp
   }
     
     try {
-      await axios.patch(`/api/orders/${ono}/select`, {
-        companyId: selectedCompanyId,
-      });
+      await confirmCompanySelection(ono, selectedCompanyId);
       // alert("업체가 확정되었습니다!");
       navigate(`/request/list`);
     } catch (error) {

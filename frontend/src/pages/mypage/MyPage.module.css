@@ -173,6 +173,7 @@ body {
   font-family: "NotoSansSB";
   font-size: 1rem;
   float: right;
+  white-space: nowrap;
 }
 
 .request_info_button:hover {
@@ -224,6 +225,7 @@ body {
   font-family: "NotoSansSB";
   font-size: 1rem;
   float: right;
+  white-space: nowrap;
 }
 
 .request_info_button:hover {
@@ -240,6 +242,7 @@ body {
   font-family: "NotoSansSB";
   font-size: 0.75rem;
   float: right;
+  white-space: nowrap;
 }
 
 /* seller데이터 입력 모달 */

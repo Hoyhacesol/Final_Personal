@@ -3,9 +3,9 @@ import React, { useEffect, useState, useRef } from 'react'; // useRef 추가
 import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import { useAuth } from "../../contexts/Authcontext";
 import { useMemo } from 'react';
-import axios from 'axios';
 import { getSellerDetail } from '../../api/SellerApi'; // 업체 상세 정보 API
 import { getImageUrl } from '../../api/UploadImageApi'; // 이미지 URL API
+import { fetchOrderDetail, finishOrder } from '../../api/orderApi';
 
 import BContentP11 from "../../components/requestComponents/bContentP11";
 import useBodyScrollLock from '../../hooks/useBodyScrollLock'; // 스크롤 방지 훅 임포트
@@ -108,8 +108,7 @@ const OrderReadPage = () => {
     try {
       setLoading(true);
       // 백엔드 API 호출 - `/api/orders/${ono}`는 baseURL 또는 proxy를 통해 8080으로 연결됩니다.
-      const response = await axios.get(`/api/orders/${ono}`, { withCredentials: true });
-      const data = response.data;
+      const data = await fetchOrderDetail(ono);
 
       const now = new Date();
       const regDate = new Date(data.oregdate);
@@ -202,7 +201,7 @@ const OrderReadPage = () => {
         
         try {
           // PATCH 요청은 withCredentials를 포함해야 CORS에러 안남.
-          await axios.patch(`/api/orders/finish/${ono}`, {}, { withCredentials: true });
+          await finishOrder(ono);
           
           // 성공 시, 클라이언트 상태의 finished 속성 업데이트
           setQuoteDetail(prev => ({

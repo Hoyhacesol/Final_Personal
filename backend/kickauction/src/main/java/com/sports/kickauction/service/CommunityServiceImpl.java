@@ -54,7 +54,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public CommunityDTO register(CommunityDTO dto, MultipartFile pimageFile) {
-        // 1) DEBUG: uploadDir 주입 값 확인
+        // 1) DEBUG: 업로드 경로 확인
         System.out.println("[DEBUG] uploadDir = " + uploadDir);
 
         // 2) 이미지 저장
@@ -62,12 +62,12 @@ public class CommunityServiceImpl implements CommunityService {
             try {
                 Path uploadPath = Paths.get(uploadDir, "community");
                 if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
+                    Files.createDirectories(uploadPath); //community 폴더 없으면 생성
                 }
 
                 String filename = UUID.randomUUID() + "_" + pimageFile.getOriginalFilename();
                 Path filePath = uploadPath.resolve(filename);
-                pimageFile.transferTo(filePath.toFile());
+                pimageFile.transferTo(filePath.toFile()); // 디스크에 파일 저장
 
                 dto.setPimage("/images/community/" + filename);
             } catch (IOException e) {
@@ -92,16 +92,6 @@ public class CommunityServiceImpl implements CommunityService {
         Community entity = communityRepository.findById(pno)
                 .orElseThrow(() -> new IllegalArgumentException(pno + "번 글이 없습니다."));
         return modelMapper.map(entity, CommunityDTO.class);
-        // log.info("ID로 조회 (조회수 증가): {}", pno);
-        // // 1) 엔티티 조회
-        // Community entity = communityRepository.findById(pno)
-        // .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
-        // // 2) 조회수 1 증가
-        // Integer current = entity.getView() != null ? entity.getView() : 0;
-        // entity.setView(current + 1);
-        // Community updated = communityRepository.saveAndFlush(entity);
-        // // 3) DTO 변환
-        // return modelMapper.map(updated, CommunityDTO.class);
     }
 
     @Override
@@ -123,11 +113,10 @@ public class CommunityServiceImpl implements CommunityService {
                 .orElseThrow(() -> new IllegalArgumentException(pno + "번 게시글이 없습니다."));
 
         // 2) 새 파일 업로드 전에, 이전 파일이 있으면 삭제
-        String oldImage = community.getPimage(); // 예: "/images/uuid_oldname.jpg"
+        String oldImage = community.getPimage();
         if (pimageFile != null && !pimageFile.isEmpty()) {
             if (oldImage != null && !oldImage.isBlank()) {
                 try {
-                    // 웹에 노출되는 경로(/images/...)에서 파일명만 추출
                     String oldFilename = Paths.get(oldImage).getFileName().toString();
                     Path oldFilePath = Paths.get(uploadDir, oldFilename);
                     Files.deleteIfExists(oldFilePath);
@@ -228,14 +217,12 @@ public class CommunityServiceImpl implements CommunityService {
                     break;
             }
         } else {
-            // 검색어가 없으면 전체 목록
             result = communityRepository.findAll(pageable);
         }
 
         List<CommunityDTO> dtoList = result.getContent().stream()
                 .map(entity -> {
                     CommunityDTO cd = modelMapper.map(entity, CommunityDTO.class);
-                    // entity.member 는 @ManyToOne 으로 가져온 Member 엔티티
                     if (entity.getMember() != null) {
                         cd.setWriterName(entity.getMember().getUserName());
                     }
@@ -283,8 +270,6 @@ public class CommunityServiceImpl implements CommunityService {
                 .pregdate(e.getPregdate())
                 .view(e.getView())
                 .pimage(e.getPimage())
-                // prev/next 필드는 컨트롤러에서 채워줍니다.
                 .build();
     }
-
 }

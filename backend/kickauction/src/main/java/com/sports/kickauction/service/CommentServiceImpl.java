@@ -25,6 +25,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepo;
     private final MemberRepository memberRepo;
 
+    // 1) 댓글 조회
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getComments(Long pno) {
@@ -42,15 +43,15 @@ public class CommentServiceImpl implements CommentService {
             .collect(Collectors.toList());
     }
 
+    // 2) 댓글 등록
     @Override
     public CommentDTO writeComment(Long pno, CommentDTO dto, Authentication auth) {
         Member user = resolveUser(auth);
 
-        // ↓ 여기서 mno를 꼭 채워 주세요!
         Comment c = Comment.builder()
                 .pno(pno)
-                .mno(user.getMno())            // ← 추가
-                .member(user)                  // 연관관계도 설정
+                .mno(user.getMno())            
+                .member(user)                  
                 .content(dto.getContent())
                 .build();
 
@@ -67,6 +68,7 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
+    // 3) 댓글 수정
     @Override
     public CommentDTO updateComment(Long pno, Long cno, String content, Authentication auth) {
         Member user = resolveUser(auth);
@@ -89,6 +91,7 @@ public class CommentServiceImpl implements CommentService {
                 .build();
     }
 
+    // 4) 댓글 삭제
     @Override
     public void deleteComment(Long pno, Long cno, Authentication auth) {
         Member user = resolveUser(auth);
@@ -99,6 +102,7 @@ public class CommentServiceImpl implements CommentService {
         }
         commentRepo.delete(c);
     }
+
 
     private Member resolveUser(Authentication auth) {
         Object principal = auth.getPrincipal();

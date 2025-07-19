@@ -52,7 +52,7 @@ function SignupPageSeller() {
   // 주석: 닉네임 중복확인
   const handleNicknameCheck = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/api/members/nickname_check?nickname=${encodeURIComponent(nickname)}`, {
+      const res = await fetch(`http://192.168.219.247:8080/api/members/nickname_check?nickname=${encodeURIComponent(nickname)}`, {
         method: "GET",
         credentials: "include",
       });
@@ -150,7 +150,7 @@ function SignupPageSeller() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/sms/send",
+        "http://192.168.219.247:8080/api/sms/send",
         {
           phone: cleanedPhone,
         },
@@ -173,7 +173,7 @@ function SignupPageSeller() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/sms/verify",
+        "http://192.168.219.247:8080/api/sms/verify",
         {
           phone: cleanPhone,
           code: authCode,
@@ -265,7 +265,7 @@ function SignupPageSeller() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/members/signupseller", {
+      const response = await axios.post("http://192.168.219.247:8080/api/members/signupseller", {
         userId: email,
         userName: nickname,
         userPw: password,

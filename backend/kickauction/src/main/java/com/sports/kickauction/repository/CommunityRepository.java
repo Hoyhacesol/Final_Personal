@@ -11,10 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import com.sports.kickauction.entity.Community;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
-
-    @EntityGraph(attributePaths = {"member"})
-    Page<Community> findAll(Pageable pageable);
-
     // 제목만 검색
     @EntityGraph(attributePaths = {"member"})
     Page<Community> findByPtitleContainingIgnoreCase(String keyword, Pageable pageable);

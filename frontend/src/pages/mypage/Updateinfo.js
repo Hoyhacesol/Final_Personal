@@ -74,7 +74,7 @@ function Updateinfo() {
   // 주석: 닉네임 중복확인
   const handleNicknameCheck = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/members/nickname_check?nickname=${nickname}`);
+      const res = await axios.get(`http://192.168.219.247:8080/api/members/nickname_check?nickname=${nickname}`);
       if (res.data.exists) {
         setNicknameStatus("duplicate");
       } else {
@@ -151,7 +151,7 @@ function Updateinfo() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/sms/send",
+        "http://192.168.219.247:8080/api/sms/send",
         {
           phone: cleanedPhone,
         },
@@ -190,7 +190,7 @@ function Updateinfo() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/sms/verify",
+        "http://192.168.219.247:8080/api/sms/verify",
         {
           phone: cleanPhone,
           code: authCode,
@@ -269,7 +269,7 @@ function Updateinfo() {
     }
 
     try {
-      const res = await axios.put("http://localhost:8080/api/members/update", formData, {
+      const res = await axios.put("http://192.168.219.247:8080/api/members/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });

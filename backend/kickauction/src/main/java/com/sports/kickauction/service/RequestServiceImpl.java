@@ -93,10 +93,17 @@ public class RequestServiceImpl implements RequestService {
         List<Biz> bizList = bizRepository.findByRequest_Ono(ono).stream()
         .filter(b -> !b.isDeleted())
         .collect(Collectors.toList());
-        log.info("bizList: " + bizList);
+
+        // N+1 문제 해결: 필요한 SellerIntro 정보를 한번의 쿼리로 가져옵니다.
+        List<Long> sellerMnos = bizList.stream()
+                .map(biz -> biz.getSeller().getMno())
+                .collect(Collectors.toList());
+
+        Map<Long, SellerIntro> sellerIntroMap = sellerIntroRepository.findAllById(sellerMnos).stream()
+                .collect(Collectors.toMap(SellerIntro::getMno, intro -> intro));
+
         List<RequestProposalResDTO> companies = bizList.stream().map(biz -> {
             Seller bizSeller = biz.getSeller();
-            // Member member = bizSeller.getMember(); // 이 변수는 사용되지 않습니다.
             BizRegisterDTO bizDTO = BizRegisterDTO.builder()
                 .ono(biz.getRequest().getOno())
                 .price(biz.getPrice())
@@ -104,14 +111,13 @@ public class RequestServiceImpl implements RequestService {
                 .banswer(biz.getBanswer())
                 .build();
 
-            Long mno = biz.getSeller().getMno();
-            SellerIntro intro = sellerIntroRepository.findById(mno)
-                .orElseThrow(() -> new NoSuchElementException("해당 업체 정보 없음"));
-            Seller seller = intro.getSeller();
+            SellerIntro intro = sellerIntroMap.get(bizSeller.getMno());
+            if (intro == null) return null; // 혹시 모를 예외 상황 방지
+
             SellerReadDTO sellerDTO = SellerReadDTO.builder()
-                .mno(seller.getMno())
-                .sname(seller.getSname())
-                .slocation(seller.getSlocation())
+                .mno(bizSeller.getMno())
+                .sname(bizSeller.getSname())
+                .slocation(bizSeller.getSlocation())
                 .hiredCount(intro.getHiredCount())
                 .build();
 
@@ -119,7 +125,7 @@ public class RequestServiceImpl implements RequestService {
                 .biz(bizDTO)
                 .seller(sellerDTO)
                 .build();
-        }).collect(Collectors.toList());
+        }).filter(java.util.Objects::nonNull).collect(Collectors.toList());
         dto.getAttributes().put("companies", companies);
         
         return dto;
@@ -184,17 +190,17 @@ public class RequestServiceImpl implements RequestService {
         List<Request> allOrdersForMember = requestRepository.findByMno(memberNo); 
         Map<String, Object> myOrdersData = new HashMap<>();
 
-        LocalDateTime now = LocalDateTime.now();
+        // LocalDateTime now = LocalDateTime.now();
 
-        // 취소 후 만료된 주문은 삭제
-        List<Request> expiredCancelledOrders = allOrdersForMember.stream()
-            .filter(order -> order.getFinished() == 2 && order.getOregdate().isBefore(now))
-            .collect(Collectors.toList());
+        // // 취소 후 만료된 주문은 삭제
+        // List<Request> expiredCancelledOrders = allOrdersForMember.stream()
+        //     .filter(order -> order.getFinished() == 2 && order.getOregdate().isBefore(now))
+        //     .collect(Collectors.toList());
 
-        if (!expiredCancelledOrders.isEmpty()) {
-            requestRepository.deleteAll(expiredCancelledOrders); // deleteAll을 사용해야 Cascade가 정상 동작합니다.
-            allOrdersForMember.removeAll(expiredCancelledOrders); // 로컬 리스트에서도 제거
-        }
+        // if (!expiredCancelledOrders.isEmpty()) {
+        //     requestRepository.deleteAll(expiredCancelledOrders); // deleteAll을 사용해야 Cascade가 정상 동작합니다.
+        //     allOrdersForMember.removeAll(expiredCancelledOrders); // 로컬 리스트에서도 제거
+        // }
 
         // 활성 주문 (finished = 0)
         List<RequestDTO> activeOrders = allOrdersForMember.stream()
@@ -228,43 +234,38 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public RequestPageCustomResDTO<RequestDTO> getMyOrdersByStatusPaginated(int memberNo, RequestPageCustomReqDTO dto) {
         
-        // '취소' 상태의 견적을 먼저 삭제 getMyOrdersByMemberNo() 메서드의 로직을 페이징 메서드에도 동일하게 적용
-        List<Request> allOrdersForMember = requestRepository.findByMno(memberNo);
-        LocalDateTime now = LocalDateTime.now();
-
-        List<Request> expiredCancelledOrders = allOrdersForMember.stream()
-            .filter(order -> order.getFinished() == 2 && order.getOregdate() != null && order.getOregdate().isBefore(now))
-            .collect(Collectors.toList());
-
-        if (!expiredCancelledOrders.isEmpty()) {
-            requestRepository.deleteAll(expiredCancelledOrders);
-        }
-        
-        
         String status = dto.getStatus();
+
+        // '취소' 목록을 조회할 때만, 만료된 취소 견적을 먼저 삭제합니다.
+        if ("cancelled".equals(status)) {
+            List<Request> allOrdersForMember = requestRepository.findByMno(memberNo);
+            LocalDateTime now = LocalDateTime.now();
+
+            List<Request> expiredCancelledOrders = allOrdersForMember.stream()
+                .filter(order -> order.getFinished() == 2 && order.getOregdate() != null && order.getOregdate().isBefore(now))
+                .collect(Collectors.toList());
+
+            if (!expiredCancelledOrders.isEmpty()) {
+                requestRepository.deleteAll(expiredCancelledOrders);
+                requestRepository.flush(); // DB에 즉시 반영하여 이후 조회에서 제외되도록 합니다.
+            }
+        }
+
         Pageable pageable = dto.getPageable(Sort.by("ono").descending());
 
-        int finished;
+        Page<Request> result;
         switch (status) {
             case "active":
-                finished = 0;
+                result = requestRepository.findByMnoAndFinished(memberNo, 0, pageable);
                 break;
             case "closed":
-                finished = 1;
+                result = requestRepository.findByMnoAndFinishedIn(memberNo, List.of(1, 11), pageable);
                 break;
             case "cancelled":
-                finished = 2;
+                result = requestRepository.findByMnoAndFinished(memberNo, 2, pageable);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid status provided: " + status);
-        }
-
-        Page<Request> result;
-        if (status.equals("closed")) {
-            // '마감' 상태는 finished 값이 1 또는 11인 경우를 모두 포함
-            result = requestRepository.findByMnoAndFinishedIn(memberNo, List.of(1, 11), pageable);
-        } else {
-            result = requestRepository.findByMnoAndFinished(memberNo, finished, pageable);
         }
         
         List<RequestDTO> dtoList = result.getContent().stream()
@@ -388,23 +389,13 @@ public class RequestServiceImpl implements RequestService {
             
             final int active = 0;
             final int end = 1;
-            final int cancel = 2;
-
-            if (requestDTO.getFinished()==active) {
+            // 현재 DB의 상태가 '진행중'일 때만 '마감'으로 변경합니다.
+            // 다른 트랜잭션(예: 사용자 취소)에 의해 상태가 이미 변경된 경우, 충돌을 방지하기 위해 업데이트를 수행하지 않습니다.
+            if (existingOrder.getFinished() == active) {
                 existingOrder.setFinished(end);
-                requestRepository.save(existingOrder);  
-                return true;
+                requestRepository.save(existingOrder);
             }
-            else if (requestDTO.getFinished()==end) {
-                existingOrder.setFinished(active);
-                requestRepository.save(existingOrder);  
-                return true;
-            }
-            // else if (requestDTO.getFinished()==cancel) {
-            //     existingOrder.setFinished(active);
-            //     requestRepository.save(existingOrder);  
-            //     return true;
-            // }
+            return true; // 작업이 성공적으로 처리되었거나, 이미 처리된 상태이므로 true를 반환합니다.
         }
         return false;
     }

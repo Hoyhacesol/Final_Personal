@@ -1,7 +1,7 @@
 // 견적 수정 페이지
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { getOrderDetail, updateOrder } from '../../api/orderApi';
 
 import BContentP09 from "../../components/requestComponents/bContentP09";
 import Hero from "../../components/requestComponents/bHero";
@@ -69,8 +69,7 @@ const OrderModifyPage = () => {
     const fetchOrderData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/orders/${ono}`); // 백엔드 API 호출
-        const data = response.data;
+        const data = await getOrderDetail(ono); // 백엔드 API 호출
         const parsedRentalEquipment = parseRentalEquipmentString(data.rentalEquipment);
 
         // 백엔드에서 받은 데이터를 폼 데이터에 매핑 (null, undefined 예방)
@@ -246,7 +245,7 @@ const OrderModifyPage = () => {
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 
-      await axios.patch(`/api/orders/${ono}`, dataToSend); // PATCH 요청
+      await updateOrder(ono, dataToSend); // PATCH 요청
       // alert("견적 정보가 성공적으로 수정되었습니다.");
       navigate(`/request/read/${ono}`, { replace: true }); // 수정 후 상세 페이지로 이동 (history를 대체)
     } catch (err) {

@@ -42,7 +42,7 @@ public class CustomServletConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://localhost:3000","http://192.168.219.247:3000")
                 .allowedMethods("HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .maxAge(300)
                 .allowedHeaders("Authorization", "Cache-Control", "Content-Type")

@@ -36,12 +36,12 @@ const ModifyPage = () => {
       alert("글 수정을 위해 로그인해야 합니다.");
       navigate("/login", {
         state: { from: location.pathname + location.search },
-        replace: true
+        replace: true,
       });
       return;
     }
     getOne(pno)
-      .then(data => {
+      .then((data) => {
         if (user.mno !== data.mno) {
           alert("본인이 작성한 글만 수정 가능합니다.");
           moveToList();
@@ -57,7 +57,7 @@ const ModifyPage = () => {
           pimage: data.pimage || "",
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("데이터 조회 실패:", err);
         alert("게시글을 불러오는 데 실패했습니다.");
         moveToList();
@@ -65,13 +65,13 @@ const ModifyPage = () => {
   }, [pno, user, moveToList]);
 
   // 입력값 변경 핸들러
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setCommunity(prev => ({ ...prev, [name]: value }));
+    setCommunity((prev) => ({ ...prev, [name]: value }));
   };
 
   // 파일 선택 핸들러
-  const handleFileChange = e => {
+  const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
     }
@@ -87,7 +87,7 @@ const ModifyPage = () => {
     }
     updateOne(community.pno, formData)
       .then(() => moveToRead(community.pno))
-      .catch(err => {
+      .catch((err) => {
         console.error("수정 실패:", err);
         alert("수정에 실패했습니다.");
       });
@@ -99,12 +99,7 @@ const ModifyPage = () => {
     <div id="modify_Page">
       <div className="write_header">
         <h2>내 글 수정</h2>
-        <button
-          type="button"
-          onClick={handleClickSave}
-          disabled={isDisabled}
-          style={isDisabled ? { opacity: 0.5, cursor: "not-allowed" } : {}}
-        >
+        <button type="button" onClick={handleClickSave} disabled={isDisabled} style={isDisabled ? { opacity: 0.5, cursor: "not-allowed" } : {}}>
           저장
         </button>
       </div>
@@ -112,51 +107,19 @@ const ModifyPage = () => {
       <div className="write_content">
         <div>
           <label htmlFor="ptitle">제목</label>
-          <input
-            type="text"
-            id="ptitle"
-            name="ptitle"
-            value={community.ptitle}
-            onChange={handleChange}
-          />
+          <input type="text" id="ptitle" name="ptitle" value={community.ptitle} onChange={handleChange} />
         </div>
         <div>
           <label htmlFor="pimageFile">이미지 업로드</label>
-          <input
-            id="pimageFile"
-            type="file"
-            name="pimageFile"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <input id="pimageFile" type="file" name="pimageFile" accept="image/*" onChange={handleFileChange} />
           {/* 선택 전 기존 이미지 미리보기 */}
-          {community.pimage && !file && (
-            <img
-              src={
-                (process.env.REACT_APP_API_URL || "http://localhost:8080") +
-                community.pimage
-              }
-              alt="기존 첨부"
-              style={{ width: "200px", marginTop: "1rem" }}
-            />
-          )}
+          {community.pimage && !file && <img src={(process.env.REACT_APP_API_URL || "http://192.168.219.247:8080") + community.pimage} alt="기존 첨부" style={{ width: "200px", marginTop: "1rem" }} />}
           {/* 파일 선택 시 미리보기 */}
-          {file && (
-            <img
-              src={URL.createObjectURL(file)}
-              alt="새 첨부"
-              style={{ width: "200px", marginTop: "1rem" }}
-            />
-          )}
+          {file && <img src={URL.createObjectURL(file)} alt="새 첨부" style={{ width: "200px", marginTop: "1rem" }} />}
         </div>
         <div>
           <label htmlFor="pcontent">내용</label>
-          <textarea
-            id="pcontent"
-            name="pcontent"
-            value={community.pcontent}
-            onChange={handleChange}
-          />
+          <textarea id="pcontent" name="pcontent" value={community.pcontent} onChange={handleChange} />
         </div>
       </div>
     </div>

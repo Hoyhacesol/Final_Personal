@@ -1,7 +1,7 @@
 // 견적 신청
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 임포트
-import axios from 'axios'; // axios 임포트
+import { createOrder } from '../../api/orderApi';
 
 import BContentP08 from "../../components/requestComponents/bContentP08";
 import Hero from "../../components/requestComponents/bHero";
@@ -175,8 +175,8 @@ const OrderCreatePage = () => {
       }
       delete dataToSend.rental; // 백엔드에 rental 필드를 보내지 않으므로 삭제
 
-      const response = await axios.post('/api/orders', dataToSend);
-      const newOno = response.data.ono; // 백엔드에서 생성된 ono를 map으로 받아옴
+      const response = await createOrder(dataToSend);
+      const newOno = response.ono; // 백엔드에서 생성된 ono를 map으로 받아옴
 
       // alert("견적 생성 성공");
       navigate(`/request/read/${newOno}`, { replace: true }); // 생성 후 상세 페이지로 이동 (history를 대체)
