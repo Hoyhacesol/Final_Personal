@@ -113,7 +113,7 @@ const ModifyPage = () => {
           <label htmlFor="pimageFile">이미지 업로드</label>
           <input id="pimageFile" type="file" name="pimageFile" accept="image/*" onChange={handleFileChange} />
           {/* 선택 전 기존 이미지 미리보기 */}
-          {community.pimage && !file && <img src={(process.env.REACT_APP_API_URL || "http://192.168.219.247:8080") + community.pimage} alt="기존 첨부" style={{ width: "200px", marginTop: "1rem" }} />}
+          {community.pimage && !file && <img src={(process.env.REACT_APP_API_URL || "http://localhost:8080") + community.pimage} alt="기존 첨부" style={{ width: "200px", marginTop: "1rem" }} />}
           {/* 파일 선택 시 미리보기 */}
           {file && <img src={URL.createObjectURL(file)} alt="새 첨부" style={{ width: "200px", marginTop: "1rem" }} />}
         </div>

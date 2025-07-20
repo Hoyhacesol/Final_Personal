@@ -34,7 +34,7 @@ function PreSignupPage() {
     }
 
     try {
-      const res = await axios.get(`http://192.168.219.247:8080/api/members/email_check`, {
+      const res = await axios.get(`http://localhost:8080/api/members/email_check`, {
         params: { email: email },
       });
 
@@ -52,12 +52,12 @@ function PreSignupPage() {
 
   // 주석: 구글 회원가입
   const handleGoogleSignup = () => {
-    window.location.href = "http://192.168.219.247:8080/oauth2/authorization/google";
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   // 주석: 카카오 회원가입
   const handleKakaoSignup = () => {
-    window.location.href = "http://192.168.219.247:8080/oauth2/authorization/kakao";
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
   return (
     <div className={styles.signup_container}>

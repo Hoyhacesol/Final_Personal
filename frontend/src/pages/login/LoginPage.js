@@ -42,7 +42,7 @@ function LoginPage() {
     formData.append("password", passwd);
 
     try {
-      const res = await fetch("http://192.168.219.247:8080/login", {
+      const res = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -75,14 +75,14 @@ function LoginPage() {
   // 주석: 구글 로그인
   const handleGoogleSignup = () => {
     localStorage.setItem("redirectAfterLogin", from);
-    window.location.href = "http://192.168.219.247:8080/oauth2/authorization/google";
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   // 주석: 카카오 로그인
   const handleKakaoSignup = () => {
     // 현재 위치 저장
     localStorage.setItem("redirectAfterLogin", from);
-    window.location.href = "http://192.168.219.247:8080/oauth2/authorization/kakao";
+    window.location.href = "http://localhost:8080/oauth2/authorization/kakao";
   };
 
   return (

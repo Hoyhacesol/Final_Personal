@@ -30,7 +30,7 @@ const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
-      await fetch("http://192.168.219.247:8080/logout", {
+      await fetch("http://localhost:8080/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -119,7 +119,7 @@ const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
                 </svg>
               </button>
               <div className={`${styles.user_dropdown_box} ${dropdownOpen ? styles.open : ""}`}>
-                <img className={styles.profile_img_dropdown} src={`http://192.168.219.247:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
+                <img className={styles.profile_img_dropdown} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
                 <p>
                   안녕하세요! <br />
                   <strong>{user.nickname}</strong> 님
@@ -167,7 +167,7 @@ const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
         <div className={styles.sidebar_userbox}>
           {!user ? (
             <>
-              <img className={styles.profile_img} src={`http://192.168.219.247:8080/images/baseprofile.png`} alt="비로그인 프로필 사진" />
+              <img className={styles.profile_img} src={`http://localhost:8080/images/baseprofile.png`} alt="비로그인 프로필 사진" />
               <p>비로그인 상태입니다.</p>
               <div className={styles.sidebar_buttons}>
                 <Link to="/login" state={{ from: location.pathname }} onClick={handleLinkClick} className={styles.sidebar_btn}>
@@ -180,7 +180,7 @@ const Nav = ({ onChatClick, chatOpen, unreadCount }) => {
             </>
           ) : (
             <>
-              <img className={styles.profile_img} src={`http://192.168.219.247:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
+              <img className={styles.profile_img} src={`http://localhost:8080/images/${user.profileimg || "baseprofile.png"}`} alt="프로필 사진" />
               <p>
                 안녕하세요! <br />
                 <strong>{user.nickname}</strong> 님
